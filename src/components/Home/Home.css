@@ -1,0 +1,72 @@
+.hero {
+    height: 200px;
+    background: linear-gradient(120deg, darkblue, purple);
+    padding-top: 15%;
+}
+
+.l1 {
+    border-top-left-radius: 5px;
+}
+
+.l3 {
+    border-top-right-radius: 5px;
+}
+
+.l7 {
+    border-bottom-left-radius: 5px;
+}
+
+.l9 {
+    border-bottom-right-radius: 5px;
+}
+
+.l1,.l2,.l3,.l4,.l5,.l6,.l7,.l8,.l9 {
+    font-size: 0.4rem;
+    font-weight: 900;
+}
+
+.edit-container {
+    padding-left: .5rem;
+    padding-right: .5rem;
+}
+@media (max-width: 425px) {
+    .edit-container {
+        margin-top: 5.5rem;
+    }
+}
+@media (max-width: 375px) {
+    .edit-container {
+        margin-top: 5rem;
+    }
+}
+@media (max-width: 320px) {
+    .edit-container {
+        margin-top: 5.5rem;
+    }
+}
+@media (min-width:768px) {
+    .hero {
+        height: 300px;
+        padding-top: 13%;
+    }
+    .l1,.l2,.l3,.l4,.l5,.l6,.l7,.l8,.l9 {
+        font-size: 0.8rem;
+    }
+    .edit-container {
+        margin-top: 6rem;
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+@media (min-width: 1024px) {
+    .edit-container {
+        margin-top: 9rem;
+    }
+}
+
+@media (min-width: 1366px) {
+    .edit-container {
+        margin-top: 14rem;
+    }
+}
