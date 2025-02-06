@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const AdminLogin = () => {
@@ -26,38 +26,42 @@ const AdminLogin = () => {
     };
 
     return (
-        <div className="flex justify-center items-center h-screen bg-gradient-to-r from-darkblue to-purple">
-            <div className="bg-white p-8 rounded-2xl shadow-lg w-96">
+        <div className="container">
+            <div className="vw-100 vh-100 p-0 d-flex align-items-center justify-content-center flex-column gap-2">
                 <h2 className="text-2xl font-bold text-center mb-4">Admin Login</h2>
-                {error && <p className="text-red-500 text-center">{error}</p>}
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
+                {error && <p className="text-danger text-center">{error}</p>}
+                <form onSubmit={handleSubmit} className="p-4 bg-white shadow rounded d-flex flex-column gap-2">
+                    <div className="d-flex flex-column gap-1">
                         <label className="block text-sm font-medium">Email</label>
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="border-0 bg-secondary-subtle rounded p-2 focus-0"
                             required
                         />
                     </div>
-                    <div className="mb-4">
+                    <div className="d-flex flex-column gap-1">
                         <label className="block text-sm font-medium">Password</label>
                         <input
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="border-0 bg-secondary-subtle rounded p-2 focus-0"
                             required
                         />
                     </div>
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+                        className="border-0 rounded-pill p-2 bg-primary text-white"
                     >
                         Login
                     </button>
                 </form>
+                <div className="d-flex gap-2 my-4">
+                <h6 className="text-dark fs-6">Don't have an account?</h6>
+                <Link to='../admin/register' className="text-decoration-none fs-6 font-italic">Register here</Link>
+                </div>
             </div>
         </div>
     );

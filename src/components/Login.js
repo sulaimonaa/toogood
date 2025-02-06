@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
     const [agent_email, setEmail] = useState("");
@@ -22,14 +22,18 @@ const Login = () => {
     };
 
     return (
-        <div className="container">
+        <div className="container vw-100 vh-100 d-flex align-items-center justify-content-center flex-column gap-2">
             <h2>Agent Login</h2>
             {error && <p className="error">{error}</p>}
-            <form onSubmit={handleLogin}>
-                <input type="email" placeholder="Email" value={agent_email} onChange={(e) => setEmail(e.target.value)} required />
-                <input type="password" placeholder="Password" value={agent_password} onChange={(e) => setPassword(e.target.value)} required />
-                <button type="submit">Login</button>
+            <form onSubmit={handleLogin} className="p-4 bg-white shadow rounded d-flex flex-column gap-2">
+                <input className="border-0 bg-secondary-subtle rounded p-2 focus-0" type="email" placeholder="Email" value={agent_email} onChange={(e) => setEmail(e.target.value)} required />
+                <input className="border-0 bg-secondary-subtle rounded p-2 focus-0" type="password" placeholder="Password" value={agent_password} onChange={(e) => setPassword(e.target.value)} required />
+                <button type="submit" className="border-0 rounded-pill p-2 bg-primary text-white">Login</button>
             </form>
+            <div className="d-flex gap-2 my-4">
+                <h6 className="text-dark fs-6">Don't have an account?</h6>
+                <Link to='../register' className="text-decoration-none fs-6 font-italic">Register here</Link>
+                </div>
         </div>
     );
 };

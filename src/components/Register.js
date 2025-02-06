@@ -32,16 +32,16 @@ const Register = () => {
     };
 
     return (
-        <div className="container">
+        <div className="container vw-100 vh-100 d-flex align-items-center justify-content-center flex-column gap-2">
             <h2>Agent Registration</h2>
-            {error && <p className="error">{error}</p>}
-            {success && <p className="success">{success}</p>}
-            <form onSubmit={handleRegister}>
-                <input type="text" name="agent_name" placeholder="Full Name" onChange={handleChange} required />
-                <input type="text" name="agent_phone" placeholder="Phone Number" onChange={handleChange} required />
-                <input type="email" name="agent_email" placeholder="Email" onChange={handleChange} required />
-                <input type="password" name="agent_password" placeholder="Password" onChange={handleChange} required />
-                <button type="submit">Register</button>
+            {error && <p className="error text-danger">{error}</p>}
+            {success && <p className="success text-success">{success}</p>}
+            <form onSubmit={handleRegister} className="p-4 bg-white shadow rounded d-flex flex-column gap-2">
+                <input type="text" className="border-0 bg-secondary-subtle rounded p-2 focus-0" name="agent_name" placeholder="Full Name" onChange={handleChange} required />
+                <input type="text" className="border-0 bg-secondary-subtle rounded p-2 focus-0" name="agent_phone" placeholder="Phone Number" onChange={handleChange} required />
+                <input type="email" className="border-0 bg-secondary-subtle rounded p-2 focus-0" name="agent_email" placeholder="Email" onChange={handleChange} required />
+                <input type="password" className="border-0 bg-secondary-subtle rounded p-2 focus-0" name="agent_password" placeholder="Password" onChange={handleChange} required />
+                <button type="submit" className="border-0 rounded-pill p-2 bg-primary text-white">Register</button>
             </form>
         </div>
     );

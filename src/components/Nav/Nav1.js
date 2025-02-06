@@ -21,13 +21,18 @@ const Nav1 = () => {
             // Fetch agent profile image
             const fetchAgentImage = async () => {
                 try {
-                    const response = await fetch("http://localhost:5000/agent-profile", {
+                    const response = await fetch("http://localhost:5000/agents/agent-profile", {
                         method: "GET",
                         headers: { "Authorization": `Bearer ${token}` }
                     });
 
                     const data = await response.json();
-                    setAgentImage(data.agentImage || null); // Set agent image if available
+                    if (data.agent_image) {
+                        setAgentImage(`http://localhost:5000${data.agent_image}`); 
+                    } else {
+                        setAgentImage(null);
+                    }
+
                 } catch (error) {
                     console.error("Error fetching agent image:", error);
                 }
@@ -51,14 +56,18 @@ const Nav1 = () => {
                 <div className='w-100 mx-auto d-flex justify-content-between align-items-center bg-dark-subtle rounded-pill p-2'>
                     {/* Show Agent Image if Logged In, Otherwise Show Dummy Image */}
                     <div className='d-flex items-center w-10 h-10 rounded-full border-blue-900 border-2'>
-                    {isLogin && agentImage ? agentImage : <FaUserCircle />}
+                    {isLogin && agentImage ? (
+                        <img src={agentImage} alt="Agent Profile" className="profile-img" />
+                    ) : (
+                        <FaUserCircle size={30} />
+                    )}
                     </div>
                     <div className='brand'><img src={Logo} alt='logo' className='w-100'/></div>
                     <div className='d-flex gap-2 items-center'>
                         {isLogin ? (
-                            <div onClick={handleLogout}><IoMdLogOut/></div>
+                            <div onClick={handleLogout}><IoMdLogOut size={30}/></div>
                         ) : (
-                            <Link to='/login' className='text-decoration-none text-dark fs-6'><IoMdLogIn/></Link>
+                            <Link to='/login' className='text-decoration-none text-dark fs-6'><IoMdLogIn size={30}/></Link>
                         )}
                     </div>
                 </div>

@@ -1,33 +1,58 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const ProfileUpload = () => {
-    const [image, setImage] = useState(null);
+    const [agent_image, setImage] = useState(null);
     const [preview, setPreview] = useState(null);
     const [message, setMessage] = useState("");
+    const navigate = useNavigate();
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
-        setImage(file);
-        setPreview(URL.createObjectURL(file));
+        if (file) {
+            setImage(file);
+            setPreview(URL.createObjectURL(file));
+        }
     };
 
+    const [agentId, setAgentId] = useState(null); 
+
+    useEffect(() => {
+        // Get agentId from localStorage or authenticated user details
+        const storedAgentId = localStorage.getItem("agentId"); // Ensure agentId is stored during login
+        if (storedAgentId) {
+            setAgentId(storedAgentId);
+        } else {
+            setMessage("Agent ID not found. Please log in again.");
+        }
+    }, []);
+
     const handleUpload = async () => {
-        if (!image) {
+        if (!agent_image) {
             setMessage("Please select an image first.");
             return;
         }
 
+        if (!agentId) {
+            setMessage("Agent ID is missing. Please log in again.");
+            return;
+        }
+
         const formData = new FormData();
-        formData.append("profileImage", image);
+        formData.append("agent_image", agent_image); // Ensure this matches backend
 
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.post("http://localhost:5000/upload-agent-profile", formData, {
-                headers: { "Authorization": `Bearer ${token}`, "Content-Type": "multipart/form-data" }
+            const response = await axios.post("http://localhost:5000/agents/upload-agent-profile", formData, {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data"
+                }
             });
 
-            setMessage(response.data.message);
+            setMessage(response.data.message || "Image uploaded successfully.");
+            setTimeout(() => navigate('/', 2000));
         } catch (error) {
             console.error("Upload error:", error);
             setMessage("Error uploading image.");

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Nav1 from '../Nav/Nav1'
 import '../Home/Home.css'
-import { FaUserCircle } from "react-icons/fa";
 import { LiaUserEditSolid } from "react-icons/lia";
 import { Link } from 'react-router-dom';
 import { MdOutlineFlightTakeoff } from "react-icons/md";
@@ -15,6 +14,7 @@ import { MdSecurity } from "react-icons/md";
 import { MdTravelExplore } from "react-icons/md";
 import PopularDeals from '../Popular/PopularDeals';
 import Footer from '../Footer';
+import { FaPersonWalkingDashedLineArrowRight } from "react-icons/fa6";
 
 const Home = () => {
   const [isLogin, setLogin] = useState(false);
@@ -29,13 +29,17 @@ const Home = () => {
             // Fetch agent profile image
             const fetchAgentImage = async () => {
                 try {
-                    const response = await fetch("http://localhost:5000/agent-profile", {
+                    const response = await fetch("http://localhost:5000/agents/agent-profile", {
                         method: "GET",
                         headers: { "Authorization": `Bearer ${token}` }
                     });
 
                     const data = await response.json();
-                    setAgentImage(data.agentImage || null); // Set agent image if available
+                    if (data.agent_image) {
+                      setAgentImage(`http://localhost:5000${data.agent_image}`); 
+                  } else {
+                      setAgentImage(null);
+                  }
                 } catch (error) {
                     console.error("Error fetching agent image:", error);
                 }
@@ -114,11 +118,15 @@ const Home = () => {
     </div>
     <div className='edit-container'>
     <div className='edit-profile container d-flex justify-content-between align-items-center rounded-pill p-2 bg-danger-subtle'>
-    {isLogin && agentImage ? agentImage : <FaUserCircle />}
+    {isLogin && agentImage ? (
+                        <img src={agentImage} alt="Agent Profile" className="profile-img" />
+                    ) : (
+                      <FaPersonWalkingDashedLineArrowRight size={30} />
+                    )}
     {isLogin ? (
-      <Link to='/update-profile' className='text-dark'><LiaUserEditSolid /></Link>
+      <Link to='/update-profile' className='text-dark'><LiaUserEditSolid size={30} /></Link>
     ) : (
-      <div className='text-white-50' disabled><LiaUserEditSolid /></div>
+      <div className='text-white-50' disabled><LiaUserEditSolid size={30} /></div>
     )}
     </div>
     </div>

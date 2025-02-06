@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { FaUserCircle } from "react-icons/fa";
 
 const UpdateAgentForm = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ const UpdateAgentForm = () => {
 
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
+  const [agentImage, setAgentImage] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,8 +35,21 @@ const UpdateAgentForm = () => {
           agent_name: response.data.agent_name,
           agent_phone: response.data.agent_phone,
           agent_email: response.data.agent_email,
-          agent_password: "",
+          agent_password: ""
         });
+
+        const resp = await fetch("http://localhost:5000/agents/agent-profile", {
+          method: "GET",
+          headers: { "Authorization": `Bearer ${token}` }
+      });
+
+      const data = await resp.json();
+      if (data.agent_image) {
+          setAgentImage(`http://localhost:5000${data.agent_image}`); 
+      } else {
+          setAgentImage(null);
+      }
+
       } catch (error) {
         setMessage("Error fetching agent details");
       } finally {
@@ -65,6 +80,7 @@ const UpdateAgentForm = () => {
       });
 
       setMessage(response.data.success || response.data.message);
+      setTimeout(() => navigate('/', 2000));
     } catch (error) {
       setMessage("Error updating details");
     }
@@ -129,6 +145,9 @@ const UpdateAgentForm = () => {
           Update
         </button>
       </form>
+      {/* upload image */}
+      { !agentImage ? (<FaUserCircle />) : (<img src={agentImage} alt="Agent Profile" className="w-25 rounded" />)}
+      <Link to='../upload-profile' className="bg-primary border-0 rounded-full p-2 text-white">Change Profile Image</Link>
     </div>
   );
 };

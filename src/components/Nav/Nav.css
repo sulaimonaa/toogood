@@ -1,3 +1,9 @@
 .brand {
     width: 60px;
 }
+.profile-img {
+    width: 30px;
+    height: 30px;
+    border-radius: 60px;
+    border: 2px solid #0b048e;
+}
