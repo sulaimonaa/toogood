@@ -24,7 +24,7 @@ const Login = () => {
     return (
         <div className="container vw-100 vh-100 d-flex align-items-center justify-content-center flex-column gap-2">
             <h2>Agent Login</h2>
-            {error && <p className="error">{error}</p>}
+            {error && <p className="error text-danger">{error}</p>}
             <form onSubmit={handleLogin} className="p-4 bg-white shadow rounded d-flex flex-column gap-2">
                 <input className="border-0 bg-secondary-subtle rounded p-2 focus-0" type="email" placeholder="Email" value={agent_email} onChange={(e) => setEmail(e.target.value)} required />
                 <input className="border-0 bg-secondary-subtle rounded p-2 focus-0" type="password" placeholder="Password" value={agent_password} onChange={(e) => setPassword(e.target.value)} required />

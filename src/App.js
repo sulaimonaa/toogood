@@ -12,12 +12,15 @@ import AdminLogin from './components/Admin/AdminLogin'
 import AdminDashboard from './components/Admin/AdminDashboard'
 import AdminRegister from './components/Admin/AdminRegister'
 import ProfileUpload from './components/ProfileUpload'
+import AddVisa from './components/Admin/AddVisa'
+import Visa from './components/Visa/Visa'
 
 const App = () => {
   return (
     <Router>
       <Routes>
         <Route path='/' element={<Home/>} />
+        <Route path='/e-visa' element={<Visa />} />
         <Route path='/login' element={<Login/>} />
         <Route path='/register' element={<Register />} />
         <Route path='/reset-password' element={<ResetPassword />} />
@@ -26,6 +29,7 @@ const App = () => {
         <Route path='/admin/login' element={<AdminLogin />} />
         <Route path='/admin/register' element={<AdminRegister />} />
         <Route path='/admin/dashboard' element={<AdminDashboard />} />
+        <Route path='/admin/add_visa' element={<AddVisa />} />
         <Route path='/update-agent-status' element={<AdminApproveAgents />} />
         <Route path='/dashboard' element={<Dashboard />} />
       </Routes>

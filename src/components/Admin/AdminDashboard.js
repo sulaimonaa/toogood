@@ -5,10 +5,18 @@ const AdminDashboard = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const token = localStorage.getItem("adminToken");
-        if (!token) {
-            navigate("/admin/login");
+        const verifyAdmin = async () => {
+            
+            const token = localStorage.getItem("adminToken");
+            console.log("Admin Token:", token);
+
+            if (!token) {
+                setTimeout(navigate("/admin/login"), 2000);
+            }
         }
+
+        verifyAdmin();
+        
     }, [navigate]);
 
     return <h1>Welcome, Admin</h1>;
