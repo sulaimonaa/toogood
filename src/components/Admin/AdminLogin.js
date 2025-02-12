@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AdminLogin = () => {
     const [email, setEmail] = useState("");
@@ -26,7 +26,7 @@ const AdminLogin = () => {
     };
 
     return (
-        <div className="container">
+        <div className="container-fluid">
             <div className="vw-100 vh-100 p-0 d-flex align-items-center justify-content-center flex-column gap-2">
                 <h2 className="text-2xl font-bold text-center mb-4">Admin Login</h2>
                 {error && <p className="text-danger text-center">{error}</p>}
@@ -58,10 +58,6 @@ const AdminLogin = () => {
                         Login
                     </button>
                 </form>
-                <div className="d-flex gap-2 my-4">
-                <h6 className="text-dark fs-6">Don't have an account?</h6>
-                <Link to='../admin/register' className="text-decoration-none fs-6 font-italic">Register here</Link>
-                </div>
             </div>
         </div>
     );

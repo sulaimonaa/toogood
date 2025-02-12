@@ -7,6 +7,21 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.hero2 {
+  background: linear-gradient(120deg, darkblue, purple);
+}
+
+.self-section {
+  margin-top: -20px;
+  min-height: 625px;
+}
+
+.info-list {
+  border-bottom: 1px solid #d7d6d6;
+  padding-bottom: 10px;
+}
+
 .chat {
   position: fixed;
   bottom: 2rem;
@@ -15,4 +30,13 @@ body {
 }
 .ftext {
   font-size: .8rem;
+}
+
+.whatsapp {
+  width: 25px;
+  height: 25px;
+}
+
+.spacer {
+  height: 50px;
 }

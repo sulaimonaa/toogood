@@ -1,5 +1,5 @@
 import React from 'react'
-import { SiWechat } from "react-icons/si";
+import WALogo from '../assets/images/wa.png';
 
 const Footer = () => {
   return (
@@ -9,7 +9,9 @@ const Footer = () => {
         </div>
         <div className='chat'>
             <a href='https://api.whatsapp.com/send?phone=08035969519' target='_blank' rel="noopener noreferrer">
-                <SiWechat className='text-danger bg-danger-subtle rounded-pill p-2 fs-2'/>
+                <div className='text-danger bg-danger-subtle rounded-pill p-2'>
+                  <img src={WALogo} alt='WhatsApp logo' className='whatsapp' />
+                </div>
             </a>
         </div>
     </div>

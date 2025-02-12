@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
 import { FaHome } from "react-icons/fa";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
-const AdminApproveAgents = () => {
+const AllAgent = () => {
     const [agents, setAgents] = useState([]);
-    const navigate = useNavigate();
     const token = localStorage.getItem("adminToken");
 
     useEffect(() => {
-        axios.get("http://localhost:5000/agents/pending", {
+        axios.get("http://localhost:5000/agents/all-agent", {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(response => setAgents(response.data))
@@ -39,20 +38,21 @@ const AdminApproveAgents = () => {
     };
 
     return (
-        <div className="container-fluid">
+        <div className="container-fluid overflow-scroll">
             <div className="spacer"></div>
-            <div className="container overflow-scroll">
+            <div className="container">
             <div className="d-flex justify-content-between align-items-center">
-            <h2 className="mb-3">All Pending Agents</h2>
+            <h2 className="mb-3">All Registered Agents</h2>
             <Link to='../admin/dashboard'>
             <FaHome size={25} className="text-secondary" />
             </Link>
-            </div>  
+            </div>         
             <table className="w-100">
                 <thead>
                     <tr>
                         <th className="text-center border border-secondary-subtle bg-dark text-white p-2">Name</th>
                         <th className="text-center border border-secondary-subtle bg-dark text-white p-2">Email</th>
+                        <th className="text-center border border-secondary-subtle bg-dark text-white p-2">Status</th>
                         <th className="text-center border border-secondary-subtle bg-dark text-white p-2">Action</th>
                     </tr>
                 </thead>
@@ -61,10 +61,18 @@ const AdminApproveAgents = () => {
                         <tr key={agent.id}>
                             <td className="p-2 border-secondary-subtle border text-center">{agent.agent_name}</td>
                             <td className="p-2 border-secondary-subtle border text-center">{agent.agent_email}</td>
+                            <td className="p-2 border-secondary-subtle border text-center">{agent.status}</td>
                             <td className="p-2 border-secondary-subtle border text-center">
-                                <button onClick={() => handleApproval(agent.id, "approved")} style={{background: '#00008B', color: '#fff', fontSize: '0.8rem'}} className="border-0 py-1 px-2 rounded mx-1">
+                                {(agent.status) === 'approved' ? (
+                                    <button onClick={() => handleApproval(agent.id, "approved")} style={{background: '#000000', color: '#fff', fontSize: '0.8rem'}} disabled className="border-0 py-1 px-2 rounded mx-1">
                                     Approve
                                 </button>
+                                ) : (
+                                    <button onClick={() => handleApproval(agent.id, "approved")} style={{background: '#00008B', color: '#fff', fontSize: '0.8rem'}} className="border-0 py-1 px-2 rounded mx-1">
+                                    Approve
+                                </button>
+                                )}
+                                
                                 <button onClick={() => handleApproval(agent.id, "pending")} style={{background: '#ffcc00', fontSize: '0.8rem'}} className="border-0 py-1 px-2 rounded mx-1">
                                     Reject
                                 </button>
@@ -76,13 +84,9 @@ const AdminApproveAgents = () => {
                     ))}
                 </tbody>
             </table>
-            <div className="spacer"></div>
-            <div>
-                <button onClick={() => navigate(-1)} className="btn btn-secondary">Go Back</button>
             </div>
-        </div>
         </div>
     );
 };
 
-export default AdminApproveAgents;
+export default AllAgent;

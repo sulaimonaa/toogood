@@ -65,7 +65,7 @@ const Nav1 = () => {
                     <div className='brand'><img src={Logo} alt='logo' className='w-100'/></div>
                     <div className='d-flex gap-2 items-center'>
                         {isLogin ? (
-                            <div onClick={handleLogout}><IoMdLogOut size={30}/></div>
+                            <div onClick={handleLogout} style={{cursor: 'pointer'}}><IoMdLogOut size={30}/></div>
                         ) : (
                             <Link to='/login' className='text-decoration-none text-dark fs-6'><IoMdLogIn size={30}/></Link>
                         )}

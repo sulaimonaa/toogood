@@ -73,7 +73,7 @@ const AddVisa = () => {
             {message && <p className="text-center text-red-500">{message}</p>}
             {error && <p className="error text-danger">{error}</p>}
             {success && <p className="success text-success">{success}</p>}
-            <form onSubmit={handleAddVisa} className='p-4 shadow rounded d-flex flex-column gap-2'>
+            <form onSubmit={handleAddVisa} className='p-4 shadow rounded d-flex flex-column gap-2 w-100'>
                 <div className='d-flex flex-column gap-1'>
                     <label>Visa Destination</label>
                     <input type='text' name='destination' onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2 focus-0 rounded' />
@@ -94,7 +94,7 @@ const AddVisa = () => {
                     <label>Visa Agent Price</label>
                     <input type='number' name='visa_agent_price' onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2 focus-0 rounded' />
                 </div>
-                <button type="submit" className="border-0 rounded-pill p-2 bg-primary text-white">Add Visa</button>
+                <button type="submit" className="border-0 rounded-pill p-2 bg-primary text-white mt-3">Add Visa</button>
             </form>
         </div>
     </div>

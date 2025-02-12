@@ -14,6 +14,19 @@ import AdminRegister from './components/Admin/AdminRegister'
 import ProfileUpload from './components/ProfileUpload'
 import AddVisa from './components/Admin/AddVisa'
 import Visa from './components/Visa/Visa'
+import ApprovedAgent from './components/Admin/ApprovedAdmin'
+import AllAgent from './components/Admin/AllAgent'
+import VisaApplication from './components/Visa/VisaApplication'
+import VisaPayment from './components/Visa/VisaPayment'
+import VisaAppAgent from './components/Visa/VisaAppAgent'
+import VisaList from './components/Admin/VisaList'
+import TrackVisa from './components/Visa/TrackVisa'
+import VisaStatus from './components/Visa/VisaStatus'
+import ApprovedVisa from './components/Visa/ApprovedVisa'
+import PendingVisa from './components/Visa/PendingVisa'
+import DeniedVisa from './components/Visa/DeniedVisa'
+import PaidVisa from './components/Visa/PaidVisa'
+import NotPaidVisa from './components/Visa/NotPaidVisa'
 
 const App = () => {
   return (
@@ -30,8 +43,21 @@ const App = () => {
         <Route path='/admin/register' element={<AdminRegister />} />
         <Route path='/admin/dashboard' element={<AdminDashboard />} />
         <Route path='/admin/add_visa' element={<AddVisa />} />
+        <Route path='/agent-status' element={<AllAgent />} />
         <Route path='/update-agent-status' element={<AdminApproveAgents />} />
+        <Route path='/approved-agent' element={<ApprovedAgent />} />
         <Route path='/dashboard' element={<Dashboard />} />
+        <Route path='/admin/visa-list' element={<VisaList />} />
+        <Route path='/visa/:id' element={<VisaApplication />} />
+        <Route path='/visa-agent/:id' element={<VisaAppAgent />} />
+        <Route path='/payment' element={<VisaPayment />} />
+        <Route path='/visa-status/:id' element={<VisaStatus />} />
+        <Route path='/track-visa' element={<TrackVisa />} />
+        <Route path='/approved-visa' element={<ApprovedVisa />} />
+        <Route path='/pending-visa' element={<PendingVisa />} />
+        <Route path='/denied-visa' element={<DeniedVisa />} />
+        <Route path='/paid-visa' element={<PaidVisa />} />
+        <Route path='/not-paid-visa' element={<NotPaidVisa />} />
       </Routes>
     </Router>
   )

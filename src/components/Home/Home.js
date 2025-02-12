@@ -65,15 +65,15 @@ const Home = () => {
                 <MdOutlineFlightTakeoff />
                 Flight</div>
                 </Link>
-                <Link to='/check-visa' className='p-3 bg-white mb-1 col-4 shadow text-dark text-decoration-none l2'>
+                <Link to='/hotel' className='p-3 bg-white mb-1 col-4 shadow text-dark text-decoration-none l6'>
               <div className='d-flex flex-column align-items-center gap-2'>
-                <GiPassport />
-                Visa Check</div>
+                <FaHotel />
+                Hotel Booking</div>
                 </Link>
-                <Link to='/permit' className='p-3 bg-white mb-1 col-4 shadow text-dark text-decoration-none l3'>
+                <Link to='/e-sim' className='p-3 bg-white mb-1 col-4 shadow text-dark text-decoration-none l5'>
               <div className='d-flex flex-column align-items-center gap-2'>
-                <FaCheckToSlot />
-                Permit</div>
+                <BsFillSimFill />
+                E-sim</div>
                 </Link>
             </div>
             
@@ -83,15 +83,15 @@ const Home = () => {
                 <GiPoliceOfficerHead />
                 E-visa</div>
                 </Link>
-                <Link to='/e-sim' className='p-3 bg-white mb-1 col-4 shadow text-dark text-decoration-none l5'>
+                <Link to='/track-visa' className='p-3 bg-white mb-1 col-4 shadow text-dark text-decoration-none l2'>
               <div className='d-flex flex-column align-items-center gap-2'>
-                <BsFillSimFill />
-                E-sim</div>
+                <GiPassport />
+                Visa Check</div>
                 </Link>
-                <Link to='/hotel' className='p-3 bg-white mb-1 col-4 shadow text-dark text-decoration-none l6'>
+                <Link to='/permit' className='p-3 bg-white mb-1 col-4 shadow text-dark text-decoration-none l3'>
               <div className='d-flex flex-column align-items-center gap-2'>
-                <FaHotel />
-                Hotel Booking</div>
+                <FaCheckToSlot />
+                Permit</div>
                 </Link>
             </div>
             

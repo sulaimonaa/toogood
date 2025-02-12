@@ -20,7 +20,7 @@ const ProfileUpload = () => {
 
     useEffect(() => {
         // Get agentId from localStorage or authenticated user details
-        const storedAgentId = localStorage.getItem("agentId"); // Ensure agentId is stored during login
+        const storedAgentId = localStorage.getItem("agentId"); 
         if (storedAgentId) {
             setAgentId(storedAgentId);
         } else {

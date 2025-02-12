@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { FaHome } from "react-icons/fa";
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -33,6 +34,9 @@ const Register = () => {
 
     return (
         <div className="container vw-100 vh-100 d-flex align-items-center justify-content-center flex-column gap-2">
+            <div className="text-secondary fs-6 mb-4 text-center">
+                <Link to='../' className="text-decoration-none text-secondary"><FaHome  size={25}/><h6 className="m-0">Back to Home</h6></Link>
+            </div>
             <h2>Agent Registration</h2>
             {error && <p className="error text-danger">{error}</p>}
             {success && <p className="success text-success">{success}</p>}

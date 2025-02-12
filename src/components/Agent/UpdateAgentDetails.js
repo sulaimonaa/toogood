@@ -145,9 +145,10 @@ const UpdateAgentForm = () => {
           Update
         </button>
       </form>
-      {/* upload image */}
+      <div className="d-flex flex-column gap-3">
       { !agentImage ? (<FaUserCircle />) : (<img src={agentImage} alt="Agent Profile" className="w-25 rounded" />)}
-      <Link to='../upload-profile' className="bg-primary border-0 rounded-full p-2 text-white">Change Profile Image</Link>
+      <Link to='../upload-profile' className="bg-primary border-0 rounded-pill p-2 text-white">Change Profile Image</Link>
+      </div>
     </div>
   );
 };
