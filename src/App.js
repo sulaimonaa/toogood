@@ -27,6 +27,13 @@ import PendingVisa from './components/Visa/PendingVisa'
 import DeniedVisa from './components/Visa/DeniedVisa'
 import PaidVisa from './components/Visa/PaidVisa'
 import NotPaidVisa from './components/Visa/NotPaidVisa'
+import Flight from './components/Flight/Flight'
+import Hotel from './components/Hotel/Hotel'
+import Esim from './components/Esim/Home'
+import Embassy from './components/Embassy/Home'
+import Insurance from './components/Insurance/Home'
+import Itinerary from './components/Itinerary/Home'
+import Permit from './components/Permit/Permit'
 
 const App = () => {
   return (
@@ -58,6 +65,13 @@ const App = () => {
         <Route path='/denied-visa' element={<DeniedVisa />} />
         <Route path='/paid-visa' element={<PaidVisa />} />
         <Route path='/not-paid-visa' element={<NotPaidVisa />} />
+        <Route path='/flight' element={<Flight />} />
+        <Route path='/hotel' element={<Hotel />} />
+        <Route path='/e-sim' element={<Esim />} />
+        <Route path='/permit' element={<Permit />} />
+        <Route path='/embassy' element={<Embassy />} />
+        <Route path='/insurance' element={<Insurance />} />
+        <Route path='/travel-itinerary' element={<Itinerary />} />
       </Routes>
     </Router>
   )
