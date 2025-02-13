@@ -31,7 +31,7 @@ const Accounting = () => {
         <div className='col-12 col-md-6 p-4 rounded'>
             <div className='p-4 d-flex flex-column bg-white shadow justify-content-center gap-2 align-items-center'>
                 <div className='fw-bold text-xl text-center text-secondary'>Paid Visa</div>
-                <div className='text-dark fw-bold'>&#x20A6;{totalPaidFees}</div>
+                <div className='text-dark fw-bold'>&#x20A6;{Number(totalPaidFees).toLocaleString()}</div>
                 <Link to='../paid-visa' className='bg-secondary-subtle rounded-pill shadow text-decoration-none'>
                 <div style={{background: '#fff', fontSize: '0.8rem', width: '200px', color: 'GrayText'}} className='shadow rounded-pill p-2 text-center'>Check list</div>
                 </Link>
@@ -40,7 +40,7 @@ const Accounting = () => {
         <div className='col-12 col-md-6 p-4 rounded'>
             <div className='p-4 d-flex flex-column bg-white shadow justify-content-center gap-2 align-items-center'>
                 <div className='fw-bold text-xl text-center text-secondary'>Pending Payment</div>
-                <div className='text-dark fw-bold'>&#x20A6;{totalNotPaid}</div>
+                <div className='text-dark fw-bold'>&#x20A6;{Number(totalNotPaid).toLocaleString()}</div>
                 <Link to='../not-paid-visa' className='bg-secondary-subtle rounded-pill shadow text-decoration-none'>
                 <div style={{background: '#fff', fontSize: '0.8rem', width: '200px', color: 'GrayText'}} className='shadow rounded-pill p-2 text-center'>Check list</div>
                 </Link>

@@ -56,7 +56,7 @@ const VisaDetails = () => {
                             <tr key={index} className='p-2 mb-2' style={{fontSize: '0.8rem'}}>
                                 <td className='p-2 border-secondary-subtle border text-center'>{visa.visa_destination}</td>
                                 <td className='p-2 border-secondary-subtle border text-center'>{visa.first_name} {visa.last_name}</td>
-                                <td className='p-2 border-secondary-subtle border text-center'>{visa.visa_fee}</td>
+                                <td className='p-2 border-secondary-subtle border text-center'>&#x20A6;{Number(visa.visa_fee).toLocaleString()}</td>
                                 <td className='p-2 border-secondary-subtle border text-center'>{visa.payment_status}</td>
                                 <td className='p-2 border-secondary-subtle border text-center'>{visa.visa_status}</td>
                                 <td className='p-2 border-secondary-subtle border text-center'>

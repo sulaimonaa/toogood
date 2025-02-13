@@ -60,12 +60,15 @@ const ProfileUpload = () => {
     };
 
     return (
-        <div>
-            <h2>Upload Profile Image</h2>
-            <input type="file" onChange={handleFileChange} accept="image/*" />
+        <div className="container vw-100 vh-100 d-flex flex-column align-items-center justify-content-center gap-3">
+            <h2 className="mb-3">Upload Profile Image</h2>
+            <input type="file" onChange={handleFileChange} accept="image/*" className="mb-3"/>
             {preview && <img src={preview} alt="Preview" style={{ width: "100px", height: "100px", borderRadius: "50%" }} />}
-            <button onClick={handleUpload}>Upload</button>
-            {message && <p>{message}</p>}
+            <button onClick={handleUpload} className="bg-primary border-0 rounded-pill py-2 px-5 text-white">Upload</button>
+            {message && <p className="mt-3">{message}</p>}
+        <div>
+          <button onClick={() => navigate(-1)} className="btn bg-secondary-subtle rounded-pill">Go Back</button>
+        </div>
         </div>
     );
 };

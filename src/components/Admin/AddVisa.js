@@ -1,7 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-// import verifyAdmin from '../../../../server/middlewares/authMiddleware'
 
 const AddVisa = () => {
     
@@ -10,7 +9,10 @@ const AddVisa = () => {
         visa_excerpt: "",
         visa_description: "",
         visa_price: "",
-        visa_agent_price: ""
+        visa_agent_price: "",
+        process_time: "", 
+        process_type: "",
+        available_country: "",
     })
 
     const [error, setError] = useState("")
@@ -79,7 +81,7 @@ const AddVisa = () => {
                     <input type='text' name='destination' onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2 focus-0 rounded' />
                 </div>
                 <div className='d-flex flex-column gap-1'>
-                    <label>Visa Excerpt</label>
+                    <label>Visa Entry</label>
                     <input type='text' name='visa_excerpt' onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2 focus-0 rounded' />
                 </div>
                 <div className='d-flex flex-column gap-1'>
@@ -93,6 +95,18 @@ const AddVisa = () => {
                 <div className='d-flex flex-column gap-1'>
                     <label>Visa Agent Price</label>
                     <input type='number' name='visa_agent_price' onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2 focus-0 rounded' />
+                </div>
+                <div className='d-flex flex-column gap-1'>
+                    <label>Processing Time</label>
+                    <input type='text' name='process_time' onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2 focus-0 rounded' />
+                </div>
+                <div className='d-flex flex-column gap-1'>
+                    <label>Processing Type</label>
+                    <input type='text' name='process_type' onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2 focus-0 rounded' />
+                </div>
+                <div className='d-flex flex-column gap-1'>
+                    <label>Available Countries - separate with |</label>
+                    <input type='text' name='available_country' onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2 focus-0 rounded' />
                 </div>
                 <button type="submit" className="border-0 rounded-pill p-2 bg-primary text-white mt-3">Add Visa</button>
             </form>

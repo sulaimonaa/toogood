@@ -7,6 +7,9 @@ const VisaAppAgent = () => {
         destination: "",
         visa_excerpt: "",
         visa_agent_price: "",
+        process_time: "",
+        process_type: "",
+        available_country: "",
       });
     const [ formData, setFormData ] = useState({
         first_name: "",
@@ -100,9 +103,14 @@ const VisaAppAgent = () => {
         <div className='container'>
         <div className='spacer'></div>
         <h4>Visa Destination: {visaById.destination}</h4>
-        <h5>Type of Visa: {visaById.visa_excerpt}</h5>
-        <h5>Processing Fee: {visaById.visa_agent_price}</h5>
+        <h5>Visa Entry: {visaById.visa_excerpt}</h5>
+        <h5 className='mb-2'>Processing Fee: &#x20A6;{Number(visaById.visa_agent_price).toLocaleString()}</h5>
+        <h5 className='mb-2'>Processing Time: {visaById.process_time}</h5>
+        <h5 className='mb-2'>Processing Type: {visaById.process_type}</h5>
+        <h6 className='mb-4 fw-bold' style={{fontStyle: 'italic'}}>Only Available To: {visaById.available_country}</h6>
+        <p className='p-4 bg-secondary-subtle rounded'>{visaById.visa_description}</p>
         <div className='spacer'></div>
+        <h6 className='text-secondary-subtle'>Complete the form below with valid information.</h6>
         <form style={{fontSize: '0.8rem'}} onSubmit={handleSubmit}>
             <div className='d-md-flex mb-3 bg-white rounded shadow'>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
@@ -148,11 +156,11 @@ const VisaAppAgent = () => {
             </div>
             <div className='d-md-flex mb-4 bg-white rounded shadow'>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
-                    <label>Utility Bill</label>
+                    <label>Bank Statement</label>
                     <input name='utility_bill' type='file' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' />
                 </div>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
-                    <label>Supporting Document</label>
+                    <label>Supporting Document - Insurance</label>
                     <input name='supporting_document' type='file' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' />
                 </div>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
@@ -163,8 +171,14 @@ const VisaAppAgent = () => {
             <input type='hidden' name='tracking_id' value={formData.tracking_id} />
             <input type='hidden' name='visa_destination' value={visaById.destination} />
             <input type='hidden' name='visa_fee' value={visaById.visa_agent_price} />
+            <input type='hidden' name='process_time' value={visaById.process_time} />
+            <input type='hidden' name='process_type' value={visaById.process_type} />
             <input type='submit' className='p-2 px-md-4 rounded-pill bg-primary text-white fw-bold border-0' value='Complete Application & Proceed to Payment' style={{fontSize: '0.8rem'}}/>
         </form>
+        <div className='spacer'></div>
+        <div>
+            <button onClick={() => navigate(-1)} className="btn btn-secondary">Go Back</button> 
+        </div>
         <div className='spacer'></div>
         </div>
     </>

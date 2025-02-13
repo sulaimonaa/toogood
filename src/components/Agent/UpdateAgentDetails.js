@@ -90,64 +90,71 @@ const UpdateAgentForm = () => {
 
   return (
     <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
+      <div className="container">
+      <div className="spacer"></div>
       <h2 className="text-2xl font-semibold text-center mb-4">Update Profile</h2>
       {message && <p className="text-center text-red-500">{message}</p>}
       
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
+        <div className="d-flex flex-column gap-2 mb-3">
           <label className="block text-sm font-medium">Name</label>
           <input
             type="text"
             name="agent_name"
             value={formData.agent_name}
             onChange={handleChange}
-            className="w-full border p-2 rounded"
+            className="w-full border-0 bg-secondary-subtle p-2 rounded"
           />
         </div>
 
-        <div>
+        <div className="d-flex flex-column gap-2 mb-3">
           <label className="block text-sm font-medium">Phone</label>
           <input
             type="text"
             name="agent_phone"
             value={formData.agent_phone}
             onChange={handleChange}
-            className="w-full border p-2 rounded"
+            className="w-full border-0 bg-secondary-subtle p-2 rounded"
           />
         </div>
 
-        <div>
+        <div className="d-flex flex-column gap-2 mb-3">
           <label className="block text-sm font-medium">Email</label>
           <input
             type="text"
             name="agent_email"
             value={formData.agent_email}
             onChange={handleChange}
-            className="w-full border p-2 rounded"
+            className="w-full border-0 bg-secondary-subtle p-2 rounded"
           />
         </div>
 
-        <div>
+        <div className="d-flex flex-column gap-2 mb-3">
           <label className="block text-sm font-medium">New Password</label>
           <input
             type="password"
             name="agent_password"
             value={formData.agent_password}
             onChange={handleChange}
-            className="w-full border p-2 rounded"
+            className="w-full border-0 bg-secondary-subtle p-2 rounded"
           />
         </div>
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          className="w-full bg-primary text-white py-2 px-4 border-0 mb-4 rounded-pill hover:bg-blue-700"
         >
           Update
         </button>
       </form>
-      <div className="d-flex flex-column gap-3">
+      <div className="d-flex flex-column gap-3 mb-3">
       { !agentImage ? (<FaUserCircle />) : (<img src={agentImage} alt="Agent Profile" className="w-25 rounded" />)}
-      <Link to='../upload-profile' className="bg-primary border-0 rounded-pill p-2 text-white">Change Profile Image</Link>
+      <Link to='../upload-profile' className="bg-primary border-0 rounded-pill p-2 text-white py-2 px-3 text-decoration-none" style={{width: '200px'}}>Change Profile Image</Link>
+      </div>
+      <div>
+          <button onClick={() => navigate(-1)} className="btn btn-secondary">Go Back</button>
+      </div>
+      <div className="spacer"></div>
       </div>
     </div>
   );

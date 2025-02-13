@@ -16,6 +16,7 @@ const Login = () => {
         try {
             const response = await axios.post("http://localhost:5000/agents/login", { agent_email, agent_password });
             localStorage.setItem("token", response.data.token);
+            localStorage.setItem("agentId", response.data.id);
             navigate("/dashboard"); // Redirect to dashboard after login
         } catch (err) {
             setError(err.response?.data?.message || "Login failed");

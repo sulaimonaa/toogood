@@ -21,7 +21,7 @@
 }
 
 .l1,.l2,.l3,.l4,.l5,.l6,.l7,.l8,.l9 {
-    font-size: 0.4rem;
+    font-size: 0.6rem;
     font-weight: 900;
 }
 
@@ -50,7 +50,7 @@
         padding-top: 13%;
     }
     .l1,.l2,.l3,.l4,.l5,.l6,.l7,.l8,.l9 {
-        font-size: 0.8rem;
+        font-size: 1rem;
     }
     .edit-container {
         margin-top: 6rem;
@@ -61,7 +61,7 @@
 
 @media (min-width: 1024px) {
     .edit-container {
-        margin-top: 9rem;
+        margin-top: 12rem;
     }
 }
 

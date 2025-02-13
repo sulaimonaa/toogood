@@ -123,7 +123,7 @@ const VisaStatus = () => {
                             <div className='d-flex gap-0 align-items-center'>
                                 <div className='bg-dark text-white p-2 w-25'>Visa Fee</div>
                                 <div className='bg-secondary-subtle p-2 w-75'>
-                                    {status?.visa_fee}
+                                &#x20A6;{Number(status?.visa_fee).toLocaleString()}
                                 </div>
                             </div>
                             <div className='d-flex gap-0 align-items-center'>

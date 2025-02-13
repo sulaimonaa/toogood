@@ -62,7 +62,11 @@ const Nav1 = () => {
                         <FaUserCircle size={30} />
                     )}
                     </div>
-                    <div className='brand'><img src={Logo} alt='logo' className='w-100'/></div>
+                    <div className='brand'>
+                        <Link to="../">
+                        <img src={Logo} alt='logo' className='w-100'/>
+                        </Link>
+                    </div>
                     <div className='d-flex gap-2 items-center'>
                         {isLogin ? (
                             <div onClick={handleLogout} style={{cursor: 'pointer'}}><IoMdLogOut size={30}/></div>

@@ -5,6 +5,8 @@ import { FaCheck } from "react-icons/fa";
 
 const VisaInfo = () => {
   return (
+    <>
+    <h5 className='text-secondary'>How it works!</h5>
     <div className="py-4 d-flex gap-2 flex-column flex-md-row col-12">
                 <div className="col-12 col-md-4 d-flex gap-2 align-items-center info-list mb-3">
                     <IoSearch className="p-2 rounded-circle bg-success text-white" size={30} />
@@ -28,6 +30,7 @@ const VisaInfo = () => {
                     </div>
                 </div>
             </div>
+            </>
   )
 }
 
