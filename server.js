@@ -14,13 +14,7 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-
-app.use(express.static(path.join(__dirname, "public")))
-app.use(express.static(path.join(__dirname, "client", "build")))
-
-
 app.use("/uploads", express.static("uploads"))
-
 
 app.use('/agents', agentRoutes)
 app.use('/admin', adminRoutes)
@@ -28,10 +22,11 @@ app.use('/visa', visaRoutes)
 app.use('/permit', permitRoutes)
 app.use('/insurance', insuranceRoutes)
 
+app.use(express.static(path.join(__dirname)));
 
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, "client", "build", "index.html"))
-})
+    res.sendFile(path.join(__dirname, "index.html"));
+});
 
 const port = process.env.PORT || 5000
 
