@@ -12,7 +12,7 @@ const InsuranceDetails = () => {
             console.warn("No admin token found, skipping API call.");
             return;
         }
-        axios.get("http://localhost:5000/permit/first-ten", {
+        axios.get("https://toogood-1.onrender.com/permit/first-ten", {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(response => setAllInsur(response.data))

@@ -10,7 +10,7 @@ const PaidPermit = () => {
 
     useEffect(() => {
 
-        axios.get("http://localhost:5000/permit/all-paid-visa", {
+        axios.get("https://toogood-1.onrender.com/permit/all-paid-visa", {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(response => setApproved(response.data))

@@ -8,7 +8,7 @@ const AllAgent = () => {
     const token = localStorage.getItem("adminToken");
 
     useEffect(() => {
-        axios.get("http://localhost:5000/agents/all-agent", {
+        axios.get("https://toogood-1.onrender.com/agents/all-agent", {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(response => setAgents(response.data))
@@ -16,7 +16,7 @@ const AllAgent = () => {
     }, [token]);
 
     const handleApproval = (agentId, status) => {
-        axios.put(`http://localhost:5000/admin/approve-agent/${agentId}`, { status }, {
+        axios.put(`https://toogood-1.onrender.com/admin/approve-agent/${agentId}`, { status }, {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(() => {
@@ -28,7 +28,7 @@ const AllAgent = () => {
     const handleDelete = (agentId) => {
         if (!window.confirm("Are you sure you want to delete this agent?")) return;
 
-        axios.delete(`http://localhost:5000/admin/delete-agent/${agentId}`, {
+        axios.delete(`https://toogood-1.onrender.com/admin/delete-agent/${agentId}`, {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(() => {

@@ -10,7 +10,7 @@ const DeniedPermit = () => {
 
     useEffect(() => {
 
-        axios.get("http://localhost:5000/permit/denied", {
+        axios.get("https://toogood-1.onrender.com/permit/denied", {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(response => setApproved(response.data))

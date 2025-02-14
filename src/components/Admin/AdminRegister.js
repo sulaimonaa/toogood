@@ -22,7 +22,7 @@ const AdminRegister = () => {
         setSuccess("");
 
         try {
-            const response = await axios.post("http://localhost:5000/admin/register", formData);
+            const response = await axios.post("https://toogood-1.onrender.com/admin/register", formData);
             setSuccess(response.data.success);
             setTimeout(() => navigate("../admin/login"), 2000);
         } catch (err) {

@@ -29,14 +29,14 @@ const Home = () => {
             // Fetch agent profile image
             const fetchAgentImage = async () => {
                 try {
-                    const response = await fetch("http://localhost:5000/agents/agent-profile", {
+                    const response = await fetch("https://toogood-1.onrender.com/agents/agent-profile", {
                         method: "GET",
                         headers: { "Authorization": `Bearer ${token}` }
                     });
 
                     const data = await response.json();
                     if (data.agent_image) {
-                      setAgentImage(`http://localhost:5000${data.agent_image}`); 
+                      setAgentImage(`https://toogood-1.onrender.com${data.agent_image}`); 
                   } else {
                       setAgentImage(null);
                   }

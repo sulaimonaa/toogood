@@ -27,7 +27,7 @@ const UpdateAgentForm = () => {
           return;
         }
 
-        const response = await axios.get("http://localhost:5000/agents/details", {
+        const response = await axios.get("https://toogood-1.onrender.com/agents/details", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -38,14 +38,14 @@ const UpdateAgentForm = () => {
           agent_password: ""
         });
 
-        const resp = await fetch("http://localhost:5000/agents/agent-profile", {
+        const resp = await fetch("https://toogood-1.onrender.com/agents/agent-profile", {
           method: "GET",
           headers: { "Authorization": `Bearer ${token}` }
       });
 
       const data = await resp.json();
       if (data.agent_image) {
-          setAgentImage(`http://localhost:5000${data.agent_image}`); 
+          setAgentImage(`https://toogood-1.onrender.com${data.agent_image}`); 
       } else {
           setAgentImage(null);
       }
@@ -75,7 +75,7 @@ const UpdateAgentForm = () => {
         return;
       }
 
-      const response = await axios.put("http://localhost:5000/agents/update", formData, {
+      const response = await axios.put("https://toogood-1.onrender.com/agents/update", formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

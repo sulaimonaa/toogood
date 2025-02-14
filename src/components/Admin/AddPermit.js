@@ -46,7 +46,7 @@ const AddPermit = () => {
             const token = localStorage.getItem("adminToken");
     
             const response = await axios.post(
-                "http://localhost:5000/permit/add_permit",
+                "https://toogood-1.onrender.com/permit/add_permit",
                 formData,
                 {
                     headers: { "Authorization": `Bearer ${token}` }

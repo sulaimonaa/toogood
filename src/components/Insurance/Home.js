@@ -53,7 +53,7 @@ const handleSubmit = async (e) => {
   });
 
   try {
-      const response = await fetch("http://localhost:5000/insurance/application", {
+      const response = await fetch("https://toogood-1.onrender.com/insurance/application", {
           method: "POST",
           body: formDataObj,
 

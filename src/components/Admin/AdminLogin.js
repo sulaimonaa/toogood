@@ -13,7 +13,7 @@ const AdminLogin = () => {
         setError(""); 
 
         try {
-            const response = await axios.post("http://localhost:5000/admin/login", {
+            const response = await axios.post("https://toogood-1.onrender.com/admin/login", {
                 admin_email: email,
                 admin_password: password
             });

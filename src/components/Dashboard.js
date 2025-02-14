@@ -14,7 +14,7 @@ const Visa = () => {
     useEffect(() => {
         const fetchDestinations = async () => {
             try {
-                const response = await fetch("http://localhost:5000/visa/destinations");
+                const response = await fetch("https://toogood-1.onrender.com/visa/destinations");
                 if (!response.ok) {
                     throw new Error("Failed to fetch visa destinations");
                 }

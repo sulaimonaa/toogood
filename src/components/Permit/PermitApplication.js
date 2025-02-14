@@ -28,7 +28,7 @@ const PermitApplication = () => {
         if (!id) return;
         const fetchVisaById = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/permit/destinations/${id}`);
+                const response = await fetch(`https://toogood-1.onrender.com/permit/destinations/${id}`);
                 if (!response.ok) {
                     throw new Error("Failed to fetch permit destinations");
                 }
@@ -67,7 +67,7 @@ const PermitApplication = () => {
         formDataObj.append("visa_fee", visaById.visa_price);
     
         try {
-            const response = await fetch("http://localhost:5000/permit/application", {
+            const response = await fetch("https://toogood-1.onrender.com/permit/application", {
                 method: "POST",
                 body: formDataObj
             });

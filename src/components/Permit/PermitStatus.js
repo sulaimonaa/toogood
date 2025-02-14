@@ -13,7 +13,7 @@ const PermitStatus = () => {
         if (!id || !token) return; 
         
         console.log("Fetching visa status for ID:", id);
-        axios.get(`http://localhost:5000/permit/status/${id}`, {
+        axios.get(`https://toogood-1.onrender.com/permit/status/${id}`, {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(response => {
@@ -26,7 +26,7 @@ const PermitStatus = () => {
     }, [id, token]);
 
     const updatePayment = (visa_id, newPayStatus) => {
-        axios.put(`http://localhost:5000/admin/permit-payment-update/${visa_id}`, { status: newPayStatus }, {
+        axios.put(`https://toogood-1.onrender.com/admin/permit-payment-update/${visa_id}`, { status: newPayStatus }, {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(() => {
@@ -39,7 +39,7 @@ const PermitStatus = () => {
     };
 
     const visaStatus = (visa_id, newStatus) => {
-        axios.put(`http://localhost:5000/admin/permit-update/${visa_id}`, { status: newStatus }, {
+        axios.put(`https://toogood-1.onrender.com/admin/permit-update/${visa_id}`, { status: newStatus }, {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(() => {
@@ -101,7 +101,7 @@ const PermitStatus = () => {
                                 <div key={key} className='d-flex gap-0 align-items-center'>
                                     <div className='bg-dark text-white p-2 w-25'>{key.replace('_', ' ').toUpperCase()}</div>
                                     <div className='bg-secondary-subtle p-2 w-75'>
-                                        <a href={`http://localhost:5000/uploads/${status[key]}`} target='_blank' rel="noopener noreferrer" className='text-decoration-none'>
+                                        <a href={`https://toogood-1.onrender.com/uploads/${status[key]}`} target='_blank' rel="noopener noreferrer" className='text-decoration-none'>
                                             View/Download
                                         </a>
                                     </div>

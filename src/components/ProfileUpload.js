@@ -44,7 +44,7 @@ const ProfileUpload = () => {
 
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.post("http://localhost:5000/agents/upload-agent-profile", formData, {
+            const response = await axios.post("https://toogood-1.onrender.com/agents/upload-agent-profile", formData, {
                 headers: {
                     "Authorization": `Bearer ${token}`,
                     "Content-Type": "multipart/form-data"

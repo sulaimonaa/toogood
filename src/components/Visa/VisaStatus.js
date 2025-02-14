@@ -13,7 +13,7 @@ const VisaStatus = () => {
         if (!id || !token) return; 
         
         console.log("Fetching visa status for ID:", id);
-        axios.get(`http://localhost:5000/visa/status/${id}`, {
+        axios.get(`https://toogood-1.onrender.com/visa/status/${id}`, {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(response => {
@@ -26,7 +26,7 @@ const VisaStatus = () => {
     }, [id, token]);
 
     const updatePayment = (visa_id, newPayStatus) => {
-        axios.put(`http://localhost:5000/admin/payment-update/${visa_id}`, { status: newPayStatus }, {
+        axios.put(`https://toogood-1.onrender.com/admin/payment-update/${visa_id}`, { status: newPayStatus }, {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(() => {
@@ -39,7 +39,7 @@ const VisaStatus = () => {
     };
 
     const visaStatus = (visa_id, newStatus) => {
-        axios.put(`http://localhost:5000/admin/visa-update/${visa_id}`, { status: newStatus }, {
+        axios.put(`https://toogood-1.onrender.com/admin/visa-update/${visa_id}`, { status: newStatus }, {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(() => {
@@ -101,7 +101,7 @@ const VisaStatus = () => {
                                 <div key={key} className='d-flex gap-0 align-items-center'>
                                     <div className='bg-dark text-white p-2 w-25'>{key.replace('_', ' ').toUpperCase()}</div>
                                     <div className='bg-secondary-subtle p-2 w-75'>
-                                        <a href={`http://localhost:5000/uploads/${status[key]}`} target='_blank' rel="noopener noreferrer" className='text-decoration-none'>
+                                        <a href={`https://toogood-1.onrender.com/uploads/${status[key]}`} target='_blank' rel="noopener noreferrer" className='text-decoration-none'>
                                             View/Download
                                         </a>
                                     </div>

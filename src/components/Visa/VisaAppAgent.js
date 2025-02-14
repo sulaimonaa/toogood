@@ -32,7 +32,7 @@ const VisaAppAgent = () => {
         if (!id) return;
         const fetchVisaById = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/visa/destinations/${id}`);
+                const response = await fetch(`https://toogood-1.onrender.com/visa/destinations/${id}`);
                 if (!response.ok) {
                     throw new Error("Failed to fetch visa destinations");
                 }
@@ -71,7 +71,7 @@ const VisaAppAgent = () => {
         formDataObj.append("visa_fee", visaById.visa_agent_price);
     
         try {
-            const response = await fetch("http://localhost:5000/visa/application", {
+            const response = await fetch("https://toogood-1.onrender.com/visa/application", {
                 method: "POST",
                 body: formDataObj
             });

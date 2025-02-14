@@ -24,7 +24,7 @@ const Register = () => {
         setSuccess("");
 
         try {
-            const response = await axios.post("http://localhost:5000/agents/register", formData);
+            const response = await axios.post("https://toogood-1.onrender.com/agents/register", formData);
             setSuccess(response.data.success);
             setTimeout(() => navigate("/login"), 2000);
         } catch (err) {

@@ -17,7 +17,7 @@ const TrackVisa = () => {
     
         setLoading(true);
         
-        axios.post("http://localhost:5000/visa/track-visa", { tracking_id: trackingID })
+        axios.post("https://toogood-1.onrender.com/visa/track-visa", { tracking_id: trackingID })
             .then(response => {
                 setStatus(response.data);
             })
@@ -101,7 +101,7 @@ const TrackVisa = () => {
                                 <div key={key} className='d-flex gap-0 align-items-center'>
                                     <div className='bg-dark text-white p-2 w-25'>{key.replace('_', ' ').toUpperCase()}</div>
                                     <div className='bg-secondary-subtle p-2 w-75'>
-                                        <a href={`http://localhost:5000/uploads/${status[key]}`} target='_blank' rel="noopener noreferrer" className='text-decoration-none'>
+                                        <a href={`https://toogood-1.onrender.com/uploads/${status[key]}`} target='_blank' rel="noopener noreferrer" className='text-decoration-none'>
                                             View/Download
                                         </a>
                                     </div>

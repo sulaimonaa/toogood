@@ -51,7 +51,7 @@ const AddVisa = () => {
             const token = localStorage.getItem("adminToken");
     
             const response = await axios.post(
-                "http://localhost:5000/visa/add_visa",
+                "https://toogood-1.onrender.com/visa/add_visa",
                 formData,
                 {
                     headers: { "Authorization": `Bearer ${token}` }

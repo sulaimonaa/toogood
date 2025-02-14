@@ -16,7 +16,7 @@ const ResetPassword = () => {
         setMessage("");
 
         try {
-            const response = await axios.post("http://localhost:5000/agents/reset-password", {
+            const response = await axios.post("https://toogood-1.onrender.com/agents/reset-password", {
                 agent_email: agentEmail,
                 new_password: newPassword,
             });

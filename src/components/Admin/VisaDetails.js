@@ -11,25 +11,25 @@ const VisaDetails = () => {
     const token = localStorage.getItem("adminToken"); 
 
     useEffect(() => {
-        axios.get("http://localhost:5000/visa/first-ten", {
+        axios.get("https://toogood-1.onrender.com/visa/first-ten", {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(response => setAllVisa(response.data))
         .catch(error => console.error("Error fetching approved visa:", error));
 
-        axios.get("http://localhost:5000/visa/approved", {
+        axios.get("https://toogood-1.onrender.com/visa/approved", {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(response => setApproved(response.data))
         .catch(error => console.error("Error fetching approved visa:", error));
 
-        axios.get("http://localhost:5000/visa/pending", {
+        axios.get("https://toogood-1.onrender.com/visa/pending", {
             headers: { Authorization: `Bearer ${token}`}
         })
         .then(response => setPending(response.data))
         .catch(error => console.error("Error fetching pending visa:", error));
 
-        axios.get("http://localhost:5000/visa/denied", {
+        axios.get("https://toogood-1.onrender.com/visa/denied", {
             headers: { Authorization: `Bearer ${token}`}
         })
         .then(response => setDeniedVisa(response.data))

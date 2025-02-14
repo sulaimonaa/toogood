@@ -10,7 +10,7 @@ const ApprovedVisa = () => {
 
     useEffect(() => {
 
-        axios.get("http://localhost:5000/visa/approved", {
+        axios.get("https://toogood-1.onrender.com/visa/approved", {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(response => setApproved(response.data))

@@ -9,7 +9,7 @@ const PermitList = () => {
     const token = localStorage.getItem("adminToken"); 
 
     useEffect(() => {
-        axios.get("http://localhost:5000/permit/all", {
+        axios.get("https://toogood-1.onrender.com/permit/all", {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(response => setAllVisa(response.data))

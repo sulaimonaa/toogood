@@ -10,19 +10,19 @@ const AgentDetails = () => {
     const token = localStorage.getItem("adminToken"); 
 
     useEffect(() => {
-        axios.get("http://localhost:5000/agents/approved", {
+        axios.get("https://toogood-1.onrender.com/agents/approved", {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(response => setApproved(response.data))
         .catch(error => console.error("Error fetching approved agents:", error));
 
-        axios.get("http://localhost:5000/agents/pending", {
+        axios.get("https://toogood-1.onrender.com/agents/pending", {
             headers: { Authorization: `Bearer ${token}`}
         })
         .then(response => setPending(response.data))
         .catch(error => console.error("Error fetching pending agents:", error));
 
-        axios.get("http://localhost:5000/agents/all-agent", {
+        axios.get("https://toogood-1.onrender.com/agents/all-agent", {
             headers: { Authorization: `Bearer ${token}`}
         })
         .then(response => setAllAgent(response.data))

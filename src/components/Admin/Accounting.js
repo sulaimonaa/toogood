@@ -10,7 +10,7 @@ const Accounting = () => {
     const [ allPayment, setAllPayment ] = useState(0);
 
     useEffect(() => {
-        axios.get('http://localhost:5000/admin/total-paid-fees') 
+        axios.get('https://toogood-1.onrender.com/admin/total-paid-fees') 
             .then(response => {
                 setTotalPaidFees(response.data.total_paid_fees || 0);
             })
@@ -18,7 +18,7 @@ const Accounting = () => {
                 console.error("Error fetching total visa fees:", error);
             });
 
-            axios.get('http://localhost:5000/admin/total-not-paid-fees') 
+            axios.get('https://toogood-1.onrender.com/admin/total-not-paid-fees') 
             .then(response => {
                 setTotalNotPaid(response.data.total_not_paid_fees || 0);
             })
@@ -26,7 +26,7 @@ const Accounting = () => {
                 console.error("Error fetching total visa fees:", error);
             });
 
-            axios.get('http://localhost:5000/admin/total-paid-permit') 
+            axios.get('https://toogood-1.onrender.com/admin/total-paid-permit') 
             .then(response => {
                 setTotalPaidPermit(response.data.total_paid_fees || 0);
             })
@@ -34,7 +34,7 @@ const Accounting = () => {
                 console.error("Error fetching total visa fees:", error);
             });
 
-            axios.get('http://localhost:5000/admin/total-not-paid-permit') 
+            axios.get('https://toogood-1.onrender.com/admin/total-not-paid-permit') 
             .then(response => {
                 setTotalNotPaidPermit(response.data.total_not_paid_fees || 0);
             })
