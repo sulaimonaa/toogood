@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const VisaPayment = () => {
+const CompletePermit = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [transfer, setTransfer] = useState(false);
 
-    const { tracking_id, destination, price, first_name, last_name } = location.state || {};
+    const { destination, price, first_name, last_name } = location.state || {};
 
     const handlePayment =  () => {
         setTransfer(true)    
@@ -20,12 +20,11 @@ const VisaPayment = () => {
         <>
         <div className="spacer"></div>
         <div className="container d-flex flex-column align-items-center justify-content-center">
-            <h2 className="mb-3">Visa Payment</h2>
-            <p className="text-center mb-4">You are about to make payment for your eVisa processing, confirm your details below, copy and save your tracking ID before proceeding to make payment.</p>
+            <h2 className="mb-3">Permit Payment</h2>
+            <p className="text-center mb-4">You are about to make payment for your permit processing, confirm your details below before proceeding to make payment.</p>
             <div className="p-4 rounded shadow bg-white">
             <p><strong>Destination:</strong> {destination}</p>
             <p><strong>Applicant:</strong> {first_name} {last_name}</p>
-            <p><strong>Tracking ID:</strong> {tracking_id}</p>
             <p><strong>Amount to Pay:</strong> &#x20A6;{price}</p>
 
             <button onClick={handlePayment} className="btn btn-primary border-0 fw-bold rounded-pill mb-4">
@@ -49,4 +48,4 @@ const VisaPayment = () => {
     );
 };
 
-export default VisaPayment;
+export default CompletePermit;

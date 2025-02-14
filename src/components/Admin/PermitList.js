@@ -3,13 +3,13 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 
-const VisaList = () => {
+const PermitList = () => {
     const [allVisa, setAllVisa] = useState([]);
     const navigate = useNavigate();
     const token = localStorage.getItem("adminToken"); 
 
     useEffect(() => {
-        axios.get("http://localhost:5000/visa/all", {
+        axios.get("http://localhost:5000/permit/all", {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(response => setAllVisa(response.data))
@@ -19,11 +19,11 @@ const VisaList = () => {
     <>
         <div className='container'>
             <div className='spacer'></div>
-                <h6>List of Visa Applications</h6>
+                <h6>List of Permit Applications</h6>
                 <table className='w-100'>
                     <thead>
                         <tr style={{fontSize: '0.8rem'}}>
-                        <th className="text-center border border-secondary-subtle bg-dark text-white p-2">Visa</th>
+                        <th className="text-center border border-secondary-subtle bg-dark text-white p-2">Permit</th>
                         <th className="text-center border border-secondary-subtle bg-dark text-white p-2">Applicant</th>
                         <th className="text-center border border-secondary-subtle bg-dark text-white p-2">Fee</th>
                         <th className="text-center border border-secondary-subtle bg-dark text-white p-2">Payment</th>
@@ -40,7 +40,7 @@ const VisaList = () => {
                                 <td className='p-2 border-secondary-subtle border text-center'>{visa.payment_status}</td>
                                 <td className='p-2 border-secondary-subtle border text-center'>{visa.visa_status}</td>
                                 <td className='p-2 border-secondary-subtle border text-center'>
-                                    <Link to={`../visa-status/${visa.id}`} className='border-0 p-2 bg-primary text-white text-decoration-none rounded-pill'>
+                                    <Link to={`../permit-status/${visa.id}`} className='border-0 p-2 bg-primary text-white text-decoration-none rounded-pill'>
                                         Check
                                     </Link>
                                 </td>
@@ -59,4 +59,4 @@ const VisaList = () => {
   )
 }
 
-export default VisaList
+export default PermitList

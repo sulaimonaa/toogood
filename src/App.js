@@ -33,7 +33,17 @@ import Esim from './components/Esim/Home'
 import Embassy from './components/Embassy/Home'
 import Insurance from './components/Insurance/Home'
 import Itinerary from './components/Itinerary/Home'
-import Permit from './components/Permit/Permit'
+import PermitDashboard from './components/Permit/Dashboard'
+import PermitApplication from './components/Permit/PermitApplication'
+import CompletePermit from './components/Permit/CompletePermit'
+import AddPermit from './components/Admin/AddPermit'
+import PermitList from './components/Admin/PermitList'
+import ApprovedPermit from './components/Permit/ApprovedPermit'
+import PendingPermit from './components/Permit/PendingPermit'
+import DeniedPermit from './components/Permit/DeniedPermit'
+import PaidPermit from './components/Permit/PaidPermit'
+import NotPaidPermit from './components/Permit/NotPaidPermit'
+import PermitStatus from './components/Permit/PermitStatus'
 
 const App = () => {
   return (
@@ -50,25 +60,35 @@ const App = () => {
         <Route path='/admin/register' element={<AdminRegister />} />
         <Route path='/admin/dashboard' element={<AdminDashboard />} />
         <Route path='/admin/add_visa' element={<AddVisa />} />
+        <Route path='/admin/add_permit' element={<AddPermit />} />
         <Route path='/agent-status' element={<AllAgent />} />
         <Route path='/update-agent-status' element={<AdminApproveAgents />} />
         <Route path='/approved-agent' element={<ApprovedAgent />} />
         <Route path='/dashboard' element={<Dashboard />} />
         <Route path='/admin/visa-list' element={<VisaList />} />
+        <Route path='/admin/permit-list' element={<PermitList />} />
         <Route path='/visa/:id' element={<VisaApplication />} />
+        <Route path='/permit/:id' element={<PermitApplication />} />
         <Route path='/visa-agent/:id' element={<VisaAppAgent />} />
         <Route path='/payment' element={<VisaPayment />} />
+        <Route path='/complete-permit' element={<CompletePermit />} />
         <Route path='/visa-status/:id' element={<VisaStatus />} />
+        <Route path='/permit-status/:id' element={<PermitStatus />} />
         <Route path='/track-visa' element={<TrackVisa />} />
         <Route path='/approved-visa' element={<ApprovedVisa />} />
+        <Route path='/approved-permit' element={<ApprovedPermit />} />
         <Route path='/pending-visa' element={<PendingVisa />} />
+        <Route path='/pending-permit' element={<PendingPermit />} />
         <Route path='/denied-visa' element={<DeniedVisa />} />
+        <Route path='/denied-permit' element={<DeniedPermit />} />
         <Route path='/paid-visa' element={<PaidVisa />} />
+        <Route path='/paid-permit' element={<PaidPermit />} />
         <Route path='/not-paid-visa' element={<NotPaidVisa />} />
+        <Route path='/not-paid-permit' element={<NotPaidPermit />} />
         <Route path='/flight' element={<Flight />} />
         <Route path='/hotel' element={<Hotel />} />
         <Route path='/e-sim' element={<Esim />} />
-        <Route path='/permit' element={<Permit />} />
+        <Route path='/permit' element={<PermitDashboard />} />
         <Route path='/embassy' element={<Embassy />} />
         <Route path='/insurance' element={<Insurance />} />
         <Route path='/travel-itinerary' element={<Itinerary />} />

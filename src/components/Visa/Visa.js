@@ -73,7 +73,7 @@ const Visa = () => {
                                 <div className="fw-bold mb-2 d-flex justify-content-between">
                                     <div>{destination.visa_excerpt}</div>
                                     <div className="d-flex flex-column">
-                                        <div className="text-dark fw-bold" style={{fontSize: '0.5rem'}}>available to:</div>
+                                        <div className="text-dark fw-bold" style={{fontSize: '0.5rem'}}>available to this passport holders:</div>
                                         <div className="text-secondary" style={{fontSize: '0.7rem', fontStyle: 'italic'}}>{destination.available_country}</div>
                                     </div>
                                 </div>

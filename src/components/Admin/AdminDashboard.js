@@ -4,6 +4,8 @@ import { IoMdLogOut } from "react-icons/io";
 import AgentDetails from "./AgentDetails";
 import VisaDetails from "./VisaDetails";
 import Accounting from "./Accounting";
+import PermitDetails from "./PermitDetails";
+import InsuranceDetails from "./InsuranceDetails";
 
 const AdminDashboard = () => {
     const [isLogin, setLogin] = useState(true);
@@ -31,6 +33,16 @@ const AdminDashboard = () => {
         setLogin(false);
         navigate("../admin/login");
     };
+    const [ showInsur, setShowInsur] = useState(false);
+    const [ showBtn, setShowBtn ] = useState(true);
+    const showInsurance = () => {
+        setShowInsur(true)
+        setShowBtn(false)
+    }
+    const closeIns = () => {
+        setShowInsur(false)
+        setShowBtn(true)
+    }
 
     return (
         <> < div className = "container-fluid" > 
@@ -50,6 +62,20 @@ const AdminDashboard = () => {
                 <div className="spacer"></div>
                 <VisaDetails />
                 <div className="spacer"></div>
+                <PermitDetails />
+                <div className="spacer"></div>
+                {
+                    showBtn ? (
+                        <div className="bg-secondary-subtle p-2 rounded-pill w-25 text-center" onClick={showInsurance}>Check Insurance Applications</div>
+                    ) : ('')
+                }
+                <div className="spacer"></div>
+                    {showInsur ? (
+                        <div>
+                            <InsuranceDetails />
+                            <div className="bg-danger rounded-pill text-white p-2 mt-3 mb-3 w-25 text-center" onClick={closeIns}>Close</div>
+                        </div>
+                    ) : ('')}
                 <Accounting />
                 </div>
             </div>
