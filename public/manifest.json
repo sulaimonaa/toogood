@@ -3,17 +3,17 @@
   "name": "Too Good Travels Ltd",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "../src/assets/images/tg-favicon.png",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "../src/assets/images/tg-favicon.png",
+      "src": "../src/assets/images/tgt.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "../src/assets/images/tg-favicon.png",
+      "src": "../src/assets/images/tgt.png",
       "type": "image/png",
       "sizes": "512x512"
     }
