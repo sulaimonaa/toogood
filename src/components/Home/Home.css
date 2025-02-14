@@ -1,7 +1,7 @@
 .hero {
     height: 200px;
     background: linear-gradient(120deg, darkblue, purple);
-    padding-top: 15%;
+    padding-top: 10%;
 }
 
 .l1 {
@@ -21,8 +21,12 @@
 }
 
 .l1,.l2,.l3,.l4,.l5,.l6,.l7,.l8,.l9 {
-    font-size: 0.6rem;
-    font-weight: 900;
+    width: 33.333%;
+    height: 105px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
 }
 
 .edit-container {
@@ -31,29 +35,48 @@
 }
 @media (max-width: 425px) {
     .edit-container {
-        margin-top: 5.5rem;
+        margin-top: 15rem;
+    }
+    .l1,.l2,.l3,.l4,.l5,.l6,.l7,.l8,.l9 {
+        width: 33.333%;
+        height: 105px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
     }
 }
 @media (max-width: 375px) {
     .edit-container {
-        margin-top: 5rem;
+        margin-top: 14rem;
     }
 }
 @media (max-width: 320px) {
     .edit-container {
-        margin-top: 5.5rem;
+        margin-top: 14rem;
+    }
+    .l1,.l2,.l3,.l4,.l5,.l6,.l7,.l8,.l9 {
+        width: 105px;
+        height: 105px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+    }
+    .l9 {
+        text-align: center;
     }
 }
 @media (min-width:768px) {
     .hero {
         height: 300px;
-        padding-top: 13%;
+        padding-top: 5%;
     }
     .l1,.l2,.l3,.l4,.l5,.l6,.l7,.l8,.l9 {
         font-size: 1rem;
     }
     .edit-container {
-        margin-top: 6rem;
+        margin-top: 10rem;
         padding-left: 0;
         padding-right: 0;
     }
