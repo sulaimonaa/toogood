@@ -1,6 +1,7 @@
 {
   "name": "client",
   "version": "0.1.0",
+  "proxy": "https://toogoodtravels.net",
   "private": true,
   "dependencies": {
     "@tailwindcss/cli": "^4.0.1",
