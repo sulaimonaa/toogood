@@ -59,6 +59,24 @@ const Home = () => {
       <div className='container relative p-0 px-md-2'>
         <div className='w-100 absolute top-0'>
           <div className='d-flex flex-column bg-light-subtle'>
+          <div className='d-flex align-items-center justify-content-center gap-1'>
+            <Link to='/e-visa' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l4'>
+              <div className='d-flex flex-column align-items-center gap-2'>
+                <GiPoliceOfficerHead />
+                E-visa</div>
+                </Link>
+                <Link to='/track-visa' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l2'>
+              <div className='d-flex flex-column align-items-center gap-2'>
+                <GiPassport />
+                Visa Check</div>
+                </Link>
+                <Link to='/permit' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l3'>
+              <div className='d-flex flex-column align-items-center gap-2'>
+                <FaCheckToSlot />
+                Permit</div>
+                </Link>
+            </div>
+            
             <div className='d-flex align-items-center justify-content-center gap-1'>
             <Link to='/flight' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l1'>
               <div className='d-flex flex-column align-items-center gap-2'>
@@ -74,24 +92,6 @@ const Home = () => {
               <div className='d-flex flex-column align-items-center gap-2'>
                 <BsFillSimFill />
                 E-sim</div>
-                </Link>
-            </div>
-            
-            <div className='d-flex align-items-center justify-content-center gap-1'>
-            <Link to='/e-visa' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l4'>
-              <div className='d-flex flex-column align-items-center gap-2'>
-                <GiPoliceOfficerHead />
-                E-visa</div>
-                </Link>
-                <Link to='/track-visa' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l2'>
-              <div className='d-flex flex-column align-items-center gap-2'>
-                <GiPassport />
-                Visa Check</div>
-                </Link>
-                <Link to='/permit' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l3'>
-              <div className='d-flex flex-column align-items-center gap-2'>
-                <FaCheckToSlot />
-                Permit</div>
                 </Link>
             </div>
             
