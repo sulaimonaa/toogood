@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const db = require('../db');
+const authenticateAdmin = require('../middlewares/adminAuth');
 const router = express.Router();
 
 
@@ -55,6 +56,14 @@ router.post("/application", upload.fields([
         console.error("Server error:", error);
         res.status(500).json({ message: "Server error" });
     }
+});
+
+router.get('/all', authenticateAdmin, (req, res) => {
+    const sql = "SELECT * FROM insurance_applications ORDER BY created_at DESC";
+    db.query(sql, (err, results) => {
+        if (err) return res.status(500).json({ message: "Database error" });
+        res.json(results);
+    });
 });
 
 module.exports = router;
