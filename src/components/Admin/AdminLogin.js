@@ -1,16 +1,19 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Loading from "../Loading";
 
 const AdminLogin = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [ loading, setLoading ] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(""); 
+        setLoading(true);
 
         try {
             const response = await axios.post("https://toogood-1.onrender.com/admin/login", {
@@ -22,11 +25,15 @@ const AdminLogin = () => {
             navigate("../admin/dashboard"); 
         } catch (err) {
             setError(err.response?.data?.message || "Login failed");
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="container-fluid">
+        <>
+            {loading && <Loading message='Logging in as admin...'/> }
+            <div className="container-fluid">
             <div className="vw-100 vh-100 p-0 d-flex align-items-center justify-content-center flex-column gap-2">
                 <h2 className="text-2xl font-bold text-center mb-4">Admin Login</h2>
                 {error && <p className="text-danger text-center">{error}</p>}
@@ -60,6 +67,8 @@ const AdminLogin = () => {
                 </form>
             </div>
         </div>
+        </>
+        
     );
 };
 

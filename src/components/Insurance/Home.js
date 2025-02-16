@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import Loading from '../Loading';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ const Home = () => {
     heard_policy: "",
     upload_signature: null,
 });
+const [ loading, setLoading ] = useState(false);
 
 const handleChange = (e) => {
   const { name, type, value, checked, files } = e.target;
@@ -52,6 +54,8 @@ const handleSubmit = async (e) => {
       formDataObj.append(key, formData[key]);
   });
 
+  setLoading(true);
+
   try {
       const response = await fetch("https://toogood-1.onrender.com/insurance/application", {
           method: "POST",
@@ -63,15 +67,49 @@ const handleSubmit = async (e) => {
       });
 
       const data = await response.json();
+      if (response.ok) {
+        alert("Application submitted successfully!");
+        setFormData({  
+          first_name: "",
+          middle_name: "",
+          last_name: "",
+          phone_number: "",
+          contact_email: "",
+          date_of_birth: "",
+          passport_number: "",
+          address: "",
+          occupation: "",
+          gender: "",
+          marital_status: "",
+          travel_type: "",
+          purpose_travel: "",
+          other_reason: "",
+          next_of_kin: "",
+          next_of_kin_address: "",
+          relationship: "",
+          coverage_begin: "",
+          coverage_end: "",
+          destination: "",
+          more_ninety: "",
+          medical_condition: "",
+          more_medical_condition: "",
+          heard_policy: "",
+          upload_signature: ""
+        });
+        navigate(-1);
+      }
       setMessage(data.message);
       console.log(data);
   } catch (error) {
       console.error("Application Error:", error);
-      alert("Failed to submit visa application.");
+      alert("Failed to submit insurance application. Try again later");
+  } finally {
+    setLoading(false);
   }
 };
   return (
     <>
+        {loading && <Loading message='Submitting insurance application...'/>}
         <div className='container py-4'>
             <h2 className='mb-3'>Travel Insurance Application</h2>
             <h6 style={{fontStyle: 'italic', fontWeight: 'bolder'}}>Please read the declaration below before filling the form:</h6>
@@ -88,7 +126,7 @@ const handleSubmit = async (e) => {
                 </div>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>Middle Name</label>
-                    <input name='middle_name' value={formData.middle_name} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
+                    <input name='middle_name' value={formData.middle_name} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0'/>
                 </div>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>Last Name</label>
@@ -177,7 +215,7 @@ const handleSubmit = async (e) => {
             <div className='d-md-flex mb-4 bg-white rounded shadow'>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>Other Reason(s)</label>
-                    <input name='other_reason' value={formData.other_reason} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
+                    <input name='other_reason' value={formData.other_reason} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0'/>
                 </div>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>Passport Number</label>
@@ -237,20 +275,28 @@ const handleSubmit = async (e) => {
                 </div>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>If Yes, please state:</label>
-                    <input name='more_medical_condition' value={formData.more_medical_condition} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
+                    <input name='more_medical_condition' value={formData.more_medical_condition} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0'/>
                 </div>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>How did you hear about this Travel Insurance Policy?</label>
-                    <input name='heard_policy' value={formData.heard_policy} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
+                    <input name='heard_policy' value={formData.heard_policy} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0'/>
                 </div>
             </div>
             <div className='d-md-flex mb-4 bg-white rounded shadow'>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>Upload Passport Data Page</label>
-                    <input name='upload_signature' type='file' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' />
+                    <input name='upload_signature' type='file' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
                 </div>
             </div>
-            <input type='submit' className='p-2 px-md-4 rounded-pill bg-primary text-white fw-bold border-0' value='Complete Application' style={{fontSize: '0.8rem'}}/>
+            <div className="text-start mt-3">
+                    <button 
+                        type="submit" 
+                        className="btn btn-primary"
+                        disabled={loading}
+                    >
+                        {loading ? "Submitting..." : "Submit Application"}
+                    </button>
+                </div>
         </form>
         <div className='spacer'></div>
         <div>

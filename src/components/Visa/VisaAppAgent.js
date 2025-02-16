@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import Loading from '../Loading';
 
 const VisaAppAgent = () => {
     const { id } = useParams()
@@ -27,6 +28,7 @@ const VisaAppAgent = () => {
         other_document: null,
     })
     
+    const [ loading, setLoading ] = useState(false);
 
     useEffect(() => {
         if (!id) return;
@@ -69,6 +71,8 @@ const VisaAppAgent = () => {
         });
         formDataObj.append("visa_destination", visaById.destination);
         formDataObj.append("visa_fee", visaById.visa_agent_price);
+
+        setLoading(true);
     
         try {
             const response = await fetch("https://toogood-1.onrender.com/visa/application", {
@@ -94,12 +98,15 @@ const VisaAppAgent = () => {
         } catch (error) {
             console.error("Application Error:", error);
             alert("Failed to submit visa application.");
+        } finally {
+            setLoading(false);
         }
     };
     
     
   return (
     <>
+        {loading && <Loading message='Submitting visa application...'/>}
         <div className='container'>
         <div className='spacer'></div>
         <h4>Visa Destination: {visaById.destination}</h4>

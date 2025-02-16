@@ -66,14 +66,14 @@ const AdminDashboard = () => {
                 <div className="spacer"></div>
                 {
                     showBtn ? (
-                        <div className="bg-secondary-subtle p-2 rounded-pill w-25 text-center" onClick={showInsurance}>Check Insurance Applications</div>
+                        <div className="bg-secondary-subtle p-2 rounded-pill w-25 text-center" onClick={showInsurance} style={{cursor: 'pointer'}}>Check Insurance Applications</div>
                     ) : ('')
                 }
                 <div className="spacer"></div>
                     {showInsur ? (
                         <div>
                             <InsuranceDetails />
-                            <div className="bg-danger rounded-pill text-white p-2 mt-3 mb-3 w-25 text-center" onClick={closeIns}>Close</div>
+                            <div className="bg-danger rounded-pill text-white p-2 mt-3 mb-3 w-25 text-center" onClick={closeIns} style={{cursor: 'pointer'}}>Close</div>
                         </div>
                     ) : ('')}
                 <Accounting />

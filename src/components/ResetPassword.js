@@ -31,29 +31,29 @@ const ResetPassword = () => {
     };
 
     return (
-        <div className="flex items-center justify-center h-screen bg-gray-100">
+        <div className="d-flex align-items-center justify-content-center vh-100 vw-100 bg-gray-100">
             <div className="bg-white p-6 rounded-lg shadow-md w-96">
                 <h2 className="text-xl font-semibold text-center mb-4">Reset Password</h2>
                 
                 {message && <p className="text-center text-sm text-red-500 mb-2">{message}</p>}
 
                 <form onSubmit={handleResetPassword}>
-                    <div className="mb-4">
+                    <div className="mb-4 d-flex flex-column gap-1">
                         <label className="block text-gray-600 text-sm mb-1">Email</label>
                         <input 
                             type="email" 
-                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" 
+                            className="w-100 border-0 bg-secondary-subtle px-3 py-2 border rounded-pill focus:outline-none focus:ring-2 focus:ring-blue-400" 
                             value={agentEmail}
                             onChange={(e) => setAgentEmail(e.target.value)}
                             required
                         />
                     </div>
 
-                    <div className="mb-4">
+                    <div className="mb-4  d-flex flex-column gap-1">
                         <label className="block text-gray-600 text-sm mb-1">New Password</label>
                         <input 
                             type="password" 
-                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" 
+                            className="w-100 border-0 bg-secondary-subtle px-3 py-2 border rounded-pill focus:outline-none focus:ring-2 focus:ring-blue-400" 
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
                             required
@@ -62,10 +62,10 @@ const ResetPassword = () => {
 
                     <button 
                         type="submit" 
-                        className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+                        className="w-100 border-0 bg-primary text-white py-2 rounded-pill hover:bg-blue-600 transition"
                         disabled={loading}
                     >
-                        {loading ? "Resetting..." : "Reset Password"}
+                        {loading ? "Resetting password..." : "Reset Password"}
                     </button>
                 </form>
             </div>

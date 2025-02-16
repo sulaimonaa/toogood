@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import Loading from '../Loading';
 
 const PermitApplication = () => {
     const { id } = useParams()
@@ -22,6 +23,8 @@ const PermitApplication = () => {
         supporting_document: null,
         other_document: null,
     })
+
+    const [loading, setLoading ] = useState(false);
     
 
     useEffect(() => {
@@ -65,6 +68,8 @@ const PermitApplication = () => {
         });
         formDataObj.append("visa_destination", visaById.destination);
         formDataObj.append("visa_fee", visaById.visa_price);
+
+        setLoading(true);
     
         try {
             const response = await fetch("https://toogood-1.onrender.com/permit/application", {
@@ -89,12 +94,15 @@ const PermitApplication = () => {
         } catch (error) {
             console.error("Application Error:", error);
             alert("Failed to submit permit application.");
+        } finally {
+            setLoading(false);
         }
     };
     
     
   return (
     <>
+        {loading && <Loading message='Submitting permit application...'/>}
         <div className='container'>
         <div className='spacer'></div>
         <h4>Visa Destination: {visaById.destination}</h4>

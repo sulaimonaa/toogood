@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { FaHome } from "react-icons/fa";
+import Loading from "./Loading";
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ const Register = () => {
     });
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [ loading, setLoading ] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -20,6 +22,7 @@ const Register = () => {
 
     const handleRegister = async (e) => {
         e.preventDefault();
+        setLoading(true)
         setError("");
         setSuccess("");
 
@@ -29,11 +32,15 @@ const Register = () => {
             setTimeout(() => navigate("/login"), 2000);
         } catch (err) {
             setError(err.response?.data?.message || "Registration failed");
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="container vw-100 vh-100 d-flex align-items-center justify-content-center flex-column gap-2">
+        <>
+            {loading && <Loading message='Registering as agent...'/> }
+            <div className="container vw-100 vh-100 d-flex align-items-center justify-content-center flex-column gap-2">
             <div className="text-secondary fs-6 mb-4 text-center">
                 <Link to='../' className="text-decoration-none text-secondary"><FaHome  size={25}/><h6 className="m-0">Back to Home</h6></Link>
             </div>
@@ -48,6 +55,7 @@ const Register = () => {
                 <button type="submit" className="border-0 rounded-pill p-2 bg-primary text-white">Register</button>
             </form>
         </div>
+        </>
     );
 };
 

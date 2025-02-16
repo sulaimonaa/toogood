@@ -42,7 +42,7 @@ const Visa = () => {
         setFilteredDestinations(filtered);
     };
 
-    if (loading) return <p>Loading visa destinations...</p>;
+    if (loading) return <p>Loading permit destinations...</p>;
     if (error) return <p className="text-red-500">{error}</p>;
 
     return (

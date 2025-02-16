@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Loading from "../Loading";
 
 const AdminRegister = () => {
     const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ const AdminRegister = () => {
     });
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [ loading, setLoading ] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -20,6 +22,7 @@ const AdminRegister = () => {
         e.preventDefault();
         setError("");
         setSuccess("");
+        setLoading(true);
 
         try {
             const response = await axios.post("https://toogood-1.onrender.com/admin/register", formData);
@@ -27,10 +30,14 @@ const AdminRegister = () => {
             setTimeout(() => navigate("../admin/login"), 2000);
         } catch (err) {
             setError(err.response?.data?.message || "Registration failed");
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
+        <>
+            {loading && <Loading message='Logging in as admin...'/> }
         <div className="container vw-100 vh-100 d-flex align-items-center justify-content-center flex-column gap-2">
             <h2>Agent Registration</h2>
             {error && <p className="error text-danger">{error}</p>}
@@ -42,6 +49,7 @@ const AdminRegister = () => {
                 <button type="submit" className="border-0 rounded-pill p-2 bg-primary text-white">Register</button>
             </form>
         </div>
+        </>
     );
 };
 

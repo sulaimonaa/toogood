@@ -12,7 +12,7 @@ const InsuranceDetails = () => {
             console.warn("No admin token found, skipping API call.");
             return;
         }
-        axios.get("https://toogood-1.onrender.com/permit/first-ten", {
+        axios.get("https://toogood-1.onrender.com/insurance/all", {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(response => setAllInsur(response.data))
@@ -36,7 +36,7 @@ const InsuranceDetails = () => {
                     <tbody>
                         {allInsur.map((visa, index) => (
                             <tr key={index} className='p-2 mb-2' style={{fontSize: '0.8rem'}}>
-                                <td className='p-2 border-secondary-subtle border text-center'>{visa.visa_destination}</td>
+                                <td className='p-2 border-secondary-subtle border text-center'>{visa.destination}</td>
                                 <td className='p-2 border-secondary-subtle border text-center'>{visa.first_name} {visa.last_name}</td>
                                 <td className='p-2 border-secondary-subtle border text-center'>{visa.contact_email}</td>
                                 <td className='p-2 border-secondary-subtle border text-center'>{visa.phone_number}</td>
