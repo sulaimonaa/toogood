@@ -20,6 +20,16 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+const transporter = nodemailer.createTransport({
+    host: "mail.toogoodtravels.net",
+    port: 465, 
+    secure: true,
+    auth: {
+        user: "noreply@toogoodtravels.net", 
+        pass: process.env.EMAIL_PASSKEY,
+    },
+});
+
 router.post("/application", upload.fields([
     { name: "upload_signature", maxCount: 1 }
 ]), async (req, res) => {
@@ -49,6 +59,41 @@ router.post("/application", upload.fields([
                 return res.status(500).json({ message: "Database error" });
             }
 
+            // Email content
+            const mailOptions = {
+                from: '"Too Good Travels" <noreply@toogoodtravels.net>',
+                to: contact_email, 
+                cc:"insurance@toogoodtravels.net",
+                subject: "Insurance Application Submitted Successfully",
+                html: `
+                    <p>Dear ${first_name} ${last_name},</p>
+                    <p>Thank you for submitting your insurance application.</p>
+                    <p>Details:</p>
+                    <ul>
+                        <li><strong>Full Name:</strong> ${first_name} ${middle_name} ${last_name}</li>
+                        <li><strong>Phone Number:</strong> ${phone_number}</li>
+                        <li><strong>Email:</strong> ${contact_email}</li>
+                        <li><strong>Passport Number:</strong> ${passport_number}</li>
+                        <li><strong>Destination:</strong> ${destination}</li>
+                        <li><strong>Travel Type:</strong> ${travel_type}</li>
+                        <li><strong>Coverage Period:</strong> ${coverage_begin} to ${coverage_end}</li>
+                        <li><strong>Passport Data Page:</strong> <a href="https://toogood-1.onrender.com/uploads/${upload_signature}"">Download/View</a></li>
+                    </ul>
+                    <p>We will review your application and get back to you soon.</p>
+                    <p>Best regards,</p>
+                    <p>Your Company Name</p>
+                `,
+            };
+
+            // Send email inside the callback function
+            transporter.sendMail(mailOptions, (emailError, info) => {
+                if (emailError) {
+                    console.error("Email sending error:", emailError);
+                } else {
+                    console.log("Email sent successfully:", info.response);
+                }
+            });
+
             res.json({ success: "Insurance application submitted successfully"});
         });
 
@@ -60,6 +105,14 @@ router.post("/application", upload.fields([
 
 router.get('/all', authenticateAdmin, (req, res) => {
     const sql = "SELECT * FROM insurance_applications ORDER BY created_at DESC";
+    db.query(sql, (err, results) => {
+        if (err) return res.status(500).json({ message: "Database error" });
+        res.json(results);
+    });
+});
+
+router.get('/first-ten', authenticateAdmin, (req, res) => {
+    const sql = "SELECT * FROM insurance_applications ORDER BY created_at DESC LIMIT 10";
     db.query(sql, (err, results) => {
         if (err) return res.status(500).json({ message: "Database error" });
         res.json(results);
