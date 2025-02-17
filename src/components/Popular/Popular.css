@@ -38,6 +38,15 @@
 .pd a {
     font-size: .5rem;
 }
+@media (max-width: 425px) {
+    .pop-list {
+        height: 150px;
+    }
+
+    .pop-list a {
+        width: 100px !important;
+    }
+}
 @media (min-width: 768px) {
     .pd {
         height: 300px;
