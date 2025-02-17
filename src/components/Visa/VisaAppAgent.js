@@ -180,7 +180,7 @@ const VisaAppAgent = () => {
             <input type='hidden' name='visa_fee' value={visaById.visa_agent_price} />
             <input type='hidden' name='process_time' value={visaById.process_time} />
             <input type='hidden' name='process_type' value={visaById.process_type} />
-            <input type='submit' className='p-2 px-md-4 rounded-pill bg-primary text-white fw-bold border-0' value='Complete Application & Proceed to Payment' style={{fontSize: '0.8rem'}}/>
+            <input type='submit' disabled={loading}  className='p-2 px-md-4 rounded-pill bg-primary text-white fw-bold border-0' value='Complete Application & Proceed to Payment' style={{fontSize: '0.8rem'}}/>
         </form>
         <div className='spacer'></div>
         <div>

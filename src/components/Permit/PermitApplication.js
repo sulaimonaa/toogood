@@ -169,7 +169,7 @@ const PermitApplication = () => {
             </div>
             <input type='hidden' name='visa_destination' value={visaById.destination} />
             <input type='hidden' name='visa_fee' value={visaById.visa_price} />
-            <input type='submit' className='p-2 px-md-4 rounded-pill bg-primary text-white fw-bold border-0' value='Complete Application & Proceed to Payment' style={{fontSize: '0.8rem'}}/>
+            <input type='submit' disabled={loading}  className='p-2 px-md-4 rounded-pill bg-primary text-white fw-bold border-0' value='Complete Application & Proceed to Payment' style={{fontSize: '0.8rem'}}/>
         </form>
         <div className='spacer'></div>
         <div>

@@ -3,6 +3,7 @@ import Nav1 from "../Nav/Nav1";
 import Footer from "../Footer";
 import VisaInfo from "../Visa/VisaInfo";
 import { Link } from "react-router-dom";
+import Loading from "../Loading";
 
 const Visa = () => {
     const [destinations, setDestinations] = useState([]);
@@ -42,7 +43,7 @@ const Visa = () => {
         setFilteredDestinations(filtered);
     };
 
-    if (loading) return <p>Loading permit destinations...</p>;
+    if (loading) return <Loading message="Loading permit destinations..."/>;
     if (error) return <p className="text-red-500">{error}</p>;
 
     return (
