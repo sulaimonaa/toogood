@@ -67,22 +67,28 @@ router.post("/application", upload.fields([
                 cc:"insurance@toogoodtravels.net",
                 subject: "Insurance Application Submitted Successfully",
                 html: `
-                    <p>Dear ${first_name} ${last_name},</p>
-                    <p>Thank you for submitting your insurance application.</p>
-                    <p>Details:</p>
-                    <ul>
-                        <li><strong>Full Name:</strong> ${first_name} ${middle_name} ${last_name}</li>
-                        <li><strong>Phone Number:</strong> ${phone_number}</li>
-                        <li><strong>Email:</strong> ${contact_email}</li>
-                        <li><strong>Passport Number:</strong> ${passport_number}</li>
-                        <li><strong>Destination:</strong> ${destination}</li>
-                        <li><strong>Travel Type:</strong> ${travel_type}</li>
-                        <li><strong>Coverage Period:</strong> ${coverage_begin} to ${coverage_end}</li>
-                        <li><strong>Passport Data Page:</strong> <a href="https://toogood-1.onrender.com/uploads/${upload_signature}"">Download/View</a></li>
-                    </ul>
-                    <p>We will review your application and get back to you soon.</p>
-                    <p>Best regards,</p>
-                    <p>Your Company Name</p>
+                    <div style="padding: 20px; font-family: Arial, sans-serif; background-color: #f8f8f8; border-radius: 5px;">
+                        <h2 style="color: #333;">Dear ${first_name} ${last_name},</h2>
+                        <p style="color: #555;">Thank you for submitting your insurance application.</p>
+
+                        <div style="background-color: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ddd;">
+                            <h3 style="color: #333;">Application Details:</h3>
+                            <ul style="padding-left: 20px;">
+                                <li><strong>Full Name:</strong> ${first_name} ${middle_name} ${last_name}</li>
+                                <li><strong>Phone Number:</strong> ${phone_number}</li>
+                                <li><strong>Email:</strong> ${contact_email}</li>
+                                <li><strong>Passport Number:</strong> ${passport_number}</li>
+                                <li><strong>Destination:</strong> ${destination}</li>
+                                <li><strong>Travel Type:</strong> ${travel_type}</li>
+                                <li><strong>Coverage Period:</strong> ${coverage_begin} to ${coverage_end}</li>
+                                <li><strong>Passport Data Page:</strong> <a href="https://toogood-1.onrender.com/uploads/${upload_signature}"">Download/View</a></li>
+                            </ul>
+                        </div>
+
+                        <p style="color: #555; margin-top: 20px;">We will review your application and get back to you soon.</p>
+                        <p style="color: #333;"><strong>Best regards,</strong></p>
+                        <p style="color: #333;">Too Good Travels</p>
+                    </div>
                 `,
             };
 
