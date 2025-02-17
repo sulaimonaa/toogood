@@ -126,4 +126,16 @@ router.get('/first-ten', authenticateAdmin, (req, res) => {
     });
 });
 
+router.get('/status/:id', authenticateAdmin, (req, res) => {
+    const { id } = req.params;
+    const sql = "SELECT * FROM insurance_applications WHERE id = ?";
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ message: "Error fetching visa details" });
+        }
+        res.json(result[0]);
+    });
+});
+
 module.exports = router;

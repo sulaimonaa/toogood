@@ -193,6 +193,6 @@ router.get('/status/:id', authenticateAdmin, (req, res) => {
         }
         res.json(result[0]);
     });
-})
+});
 
 module.exports = router;
