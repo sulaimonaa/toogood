@@ -73,7 +73,7 @@ const AdminDashboard = () => {
                     {showInsur ? (
                         <div>
                             <InsuranceDetails />
-                            <div className="bg-danger rounded-pill text-white p-2 mt-3 mb-3 w-25 text-center" onClick={closeIns} style={{cursor: 'pointer'}}>Close</div>
+                            <div className="bg-danger rounded-pill text-white py-2 px-3 mt-3 mb-3 text-center" onClick={closeIns} style={{cursor: 'pointer'}}>Close</div>
                         </div>
                     ) : ('')}
                 <Accounting />

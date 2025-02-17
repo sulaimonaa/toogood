@@ -44,6 +44,8 @@ import DeniedPermit from './components/Permit/DeniedPermit'
 import PaidPermit from './components/Permit/PaidPermit'
 import NotPaidPermit from './components/Permit/NotPaidPermit'
 import PermitStatus from './components/Permit/PermitStatus'
+import InsuranceStatus from './components/Insurance/InsuranceStatus'
+import InsuranceList from './components/Admin/InsuranceList'
 
 const App = () => {
   return (
@@ -67,6 +69,7 @@ const App = () => {
         <Route path='/dashboard' element={<Dashboard />} />
         <Route path='/admin/visa-list' element={<VisaList />} />
         <Route path='/admin/permit-list' element={<PermitList />} />
+        <Route path='/admin/insurance-list' element={<InsuranceList />} />
         <Route path='/visa/:id' element={<VisaApplication />} />
         <Route path='/permit/:id' element={<PermitApplication />} />
         <Route path='/visa-agent/:id' element={<VisaAppAgent />} />
@@ -74,6 +77,7 @@ const App = () => {
         <Route path='/complete-permit' element={<CompletePermit />} />
         <Route path='/visa-status/:id' element={<VisaStatus />} />
         <Route path='/permit-status/:id' element={<PermitStatus />} />
+        <Route path='/insurance-status/:id' element={<InsuranceStatus />} />
         <Route path='/track-visa' element={<TrackVisa />} />
         <Route path='/approved-visa' element={<ApprovedVisa />} />
         <Route path='/approved-permit' element={<ApprovedPermit />} />

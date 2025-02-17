@@ -1,10 +1,11 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-const InsuranceDetails = () => {
+const InsuranceList = () => {
     const [allInsur, setAllInsur] = useState([]);
+    const navigate = useNavigate();
     
 
     useEffect(() => {
@@ -13,7 +14,7 @@ const InsuranceDetails = () => {
             console.warn("No admin token found, skipping API call.");
             return;
         }
-        axios.get("https://toogood-1.onrender.com/insurance/first-ten", {
+        axios.get("https://toogood-1.onrender.com/insurance/all", {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(response => setAllInsur(response.data))
@@ -54,15 +55,14 @@ const InsuranceDetails = () => {
                         }
                     </tbody>
                 </table>
-                <Link to='../admin/insurance-list' className='text-dark text-decoration-none'>
-                    <div style={{background: '#f8f8f8', fontSize: '1rem', width: '320px'}} className='rounded-pill py-2 px-4 text-center mt-3 shadow'>
-                        View all
-                    </div>
-                    </Link>
             </div>
+            <div className='spacer'></div>
+                <div>
+                    <button onClick={() => navigate(-1)} className="btn btn-secondary">Go Back</button>
+                </div>
         </div>
     </>
   )
 }
 
-export default InsuranceDetails
+export default InsuranceList
