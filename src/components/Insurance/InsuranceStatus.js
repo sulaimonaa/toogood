@@ -37,7 +37,7 @@ const InsuranceStatus = () => {
                             <div className='d-flex gap-0 align-items-center'>
                                 <div className='bg-dark text-white p-2 w-25'>Insurance Application</div>
                                 <div className='bg-secondary-subtle p-2 w-75'>
-                                    {status?.visa_destination}
+                                    {status?.destination}
                                 </div>
                             </div>
                             <div className='d-flex gap-0 align-items-center'>
@@ -133,13 +133,13 @@ const InsuranceStatus = () => {
                             <div className='d-flex gap-0 align-items-center'>
                                 <div className='bg-dark text-white p-2 w-25'>Coverage Begin</div>
                                 <div className='bg-secondary-subtle p-2 w-75'>
-                                    {status?.coverage_begin} 
+                                    {status?.coverage_begin ? new Date(status.coverage_begin).toLocaleDateString() : "N/A"} 
                                 </div>
                             </div>
                             <div className='d-flex gap-0 align-items-center'>
                                 <div className='bg-dark text-white p-2 w-25'>Coverage End</div>
                                 <div className='bg-secondary-subtle p-2 w-75'>
-                                    {status?.coverage_end} 
+                                    {status?.coverage_end ? new Date(status.coverage_end).toLocaleDateString() : "N/A"} 
                                 </div>
                             </div>
                             <div className='d-flex gap-0 align-items-center'>
@@ -183,11 +183,13 @@ const InsuranceStatus = () => {
                         <p>No insurance status found.</p> 
                     )}
                     <div className='spacer'></div>
-                    <div>
-                        <button onClick={() => navigate(-1)} className="btn btn-secondary">Go Back</button>
-                    </div>
+                <div>
+                    <button onClick={() => navigate(-1)} className="btn btn-secondary">Go Back</button>
                 </div>
+                </div>
+                <div className='spacer'></div>
             </div>
+            
         </>
     );
 };

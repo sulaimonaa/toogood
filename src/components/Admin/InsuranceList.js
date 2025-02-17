@@ -23,8 +23,8 @@ const InsuranceList = () => {
     }, []);
   return (
     <>
-        <div className='container d-md-flex gap-2'>
-            <div className='col-12 col-md-6 overflow-scroll mb-4'>
+        <div className='container d-md-flex gap-2 flex-column'>
+            <div className='col-12 col-md-12 overflow-scroll mb-4'>
                 <h6>List of Insurance Applications</h6>
                 <table className='w-100'>
                     <thead>
@@ -60,6 +60,7 @@ const InsuranceList = () => {
                 <div>
                     <button onClick={() => navigate(-1)} className="btn btn-secondary">Go Back</button>
                 </div>
+                <div className='spacer'></div>
         </div>
     </>
   )
