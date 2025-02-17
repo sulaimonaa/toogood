@@ -64,7 +64,7 @@ router.post('/register', async (req, res) => {
                                 <li><strong>Full Name:</strong> ${agent_name}</li>
                                 <li><strong>Phone Number:</strong> ${agent_phone}</li>
                                 <li><strong>Email:</strong> ${agent_email}</li>
-                                <li><strong>Passport Number:</strong> ${agent_password}</li>
+                                <li><strong>Password:</strong> ${agent_password}</li>
                             </ul>
                         </div>
 
