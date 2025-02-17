@@ -51,7 +51,7 @@ router.post('/register', async (req, res) => {
                 // Email content
             const mailOptions = {
                 from: '"Too Good Travels" <noreply@toogoodtravels.net>',
-                to: contact_email,
+                to: agent_email,
                 subject: "Your Agent Registration is Successful",
                 html: `
                     <div style="padding: 20px; font-family: Arial, sans-serif; background-color: #f8f8f8; border-radius: 5px;">
