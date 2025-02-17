@@ -4,10 +4,20 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('../db');
 const verifyToken = require('../middlewares/authMiddleware');
+const nodemailer = require("nodemailer"); 
 const router = express.Router();
 
 const JWT_SECRET = process.env.SECRET_KEY;
 
+const transporter = nodemailer.createTransport({
+    host: "mail.toogoodtravels.net",
+    port: 465, 
+    secure: true,
+    auth: {
+        user: "noreply@toogoodtravels.net", 
+        pass: process.env.EMAIL_PASSKEY,
+    },
+});
 // Agent Registration Route (Checks for duplicate email)
 router.post('/register', async (req, res) => {
     try {
@@ -37,6 +47,42 @@ router.post('/register', async (req, res) => {
                     console.error("Database error:", err);
                     return res.status(500).json({ message: "Error registering agent" });
                 }
+
+                // Email content
+            const mailOptions = {
+                from: '"Too Good Travels" <noreply@toogoodtravels.net>',
+                to: contact_email,
+                subject: "Your Agent Registration is Successful",
+                html: `
+                    <div style="padding: 20px; font-family: Arial, sans-serif; background-color: #f8f8f8; border-radius: 5px;">
+                        <h2 style="color: #333;">Dear ${agent_name},</h2>
+                        <p style="color: #555;">Thank you for registering to become an agent with Too Good Travels.</p>
+
+                        <div style="background-color: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ddd;">
+                            <h3 style="color: #333;">Application Details:</h3>
+                            <ul style="padding-left: 20px;">
+                                <li><strong>Full Name:</strong> ${agent_name}</li>
+                                <li><strong>Phone Number:</strong> ${agent_phone}</li>
+                                <li><strong>Email:</strong> ${agent_email}</li>
+                                <li><strong>Passport Number:</strong> ${agent_password}</li>
+                            </ul>
+                        </div>
+
+                        <p style="color: #555; margin-top: 20px;">Thank you for your registration, we will get back to you soon.</p>
+                        <p style="color: #333; margin-bottom: 0"><strong>Best regards,</strong></p>
+                        <p style="color: #333;"><strong>Too Good Travels</strong></p>
+                    </div>
+                `,
+            };
+
+            // Send email inside the callback function
+            transporter.sendMail(mailOptions, (emailError, info) => {
+                if (emailError) {
+                    console.error("Email sending error:", emailError);
+                } else {
+                    console.log("Email sent successfully:", info.response);
+                }
+            });
                 res.json({ success: "Agent registration successful" });
             });
         });

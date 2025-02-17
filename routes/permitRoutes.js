@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const db = require('../db');
 const authenticateAdmin = require('../middlewares/adminAuth');
+const nodemailer = require("nodemailer"); 
 const router = express.Router();
 
 // Add Visa Destination (Admin Only)
@@ -78,6 +79,16 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+const transporter = nodemailer.createTransport({
+    host: "mail.toogoodtravels.net",
+    port: 465, 
+    secure: true,
+    auth: {
+        user: "noreply@toogoodtravels.net", 
+        pass: process.env.EMAIL_PASSKEY,
+    },
+});
+
 // Create Visa Application Route
 router.post("/application", upload.fields([
     { name: "data_page", maxCount: 1 },
@@ -117,6 +128,46 @@ router.post("/application", upload.fields([
                 console.error("Database error:", err);
                 return res.status(500).json({ message: "Database error" });
             }
+
+            // Email content
+            const mailOptions = {
+                from: '"Too Good Travels" <noreply@toogoodtravels.net>',
+                to: contact_email, 
+                cc:"toogoodtravelsnigeria@gmail.com",
+                subject: "Permit Application Submitted Successfully",
+                html: `
+                    <div style="padding: 20px; font-family: Arial, sans-serif; background-color: #f8f8f8; border-radius: 5px;">
+                        <h2 style="color: #333;">Dear ${first_name} ${last_name},</h2>
+                        <p style="color: #555;">Thank you for submitting your permit application.</p>
+
+                        <div style="background-color: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ddd;">
+                            <h3 style="color: #333;">Application Details:</h3>
+                            <ul style="padding-left: 20px;">
+                                <li><strong>Full Name:</strong> ${first_name} ${middle_name} ${last_name}</li>
+                                <li><strong>Phone Number:</strong> ${phone_number}</li>
+                                <li><strong>Email:</strong> ${contact_email}</li>
+                                <li><strong>Passport Number:</strong> ${passport_number}</li>
+                                <li><strong>Destination:</strong> ${visa_destination}</li>
+                                <li><strong>Processing Fee:</strong> ${visa_fee}</li>
+                                <li><strong>Passport Data Page:</strong> <a href="https://toogood-1.onrender.com/uploads/${data_page}"">Download/View</a></li>
+                            </ul>
+                        </div>
+
+                        <p style="color: #555; margin-top: 20px;">We will review your application and get back to you soon.</p>
+                        <p style="color: #333; margin-bottom: 0"><strong>Best regards,</strong></p>
+                        <p style="color: #333;"><strong>Too Good Travels</strong></p>
+                    </div>
+                `,
+            };
+
+            // Send email inside the callback function
+            transporter.sendMail(mailOptions, (emailError, info) => {
+                if (emailError) {
+                    console.error("Email sending error:", emailError);
+                } else {
+                    console.log("Email sent successfully:", info.response);
+                }
+            });
 
             res.json({ success: "Permit application submitted successfully" });
         });

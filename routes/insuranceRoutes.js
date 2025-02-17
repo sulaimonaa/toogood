@@ -64,7 +64,7 @@ router.post("/application", upload.fields([
             const mailOptions = {
                 from: '"Too Good Travels" <noreply@toogoodtravels.net>',
                 to: contact_email, 
-                cc:"insurance@toogoodtravels.net",
+                cc:"toogoodtravelsnigeria@gmail.com",
                 subject: "Insurance Application Submitted Successfully",
                 html: `
                     <div style="padding: 20px; font-family: Arial, sans-serif; background-color: #f8f8f8; border-radius: 5px;">
@@ -86,8 +86,8 @@ router.post("/application", upload.fields([
                         </div>
 
                         <p style="color: #555; margin-top: 20px;">We will review your application and get back to you soon.</p>
-                        <p style="color: #333;"><strong>Best regards,</strong></p>
-                        <p style="color: #333;">Too Good Travels</p>
+                        <p style="color: #333; margin-bottom: 0"><strong>Best regards,</strong></p>
+                        <p style="color: #333;"><strong>Too Good Travels</strong></p>
                     </div>
                 `,
             };
