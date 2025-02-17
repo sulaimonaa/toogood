@@ -126,7 +126,7 @@ const VisaAppAgent = () => {
                 </div>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>Middle Name</label>
-                    <input name='middle_name' value={formData.middle_name} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
+                    <input name='middle_name' value={formData.middle_name} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0'/>
                 </div>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>Last Name</label>
