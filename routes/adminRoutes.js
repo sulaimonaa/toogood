@@ -247,4 +247,59 @@ router.get('/insur-app', authenticateAdmin, (req, res) => {
         res.json(result);
     });
 })
+
+//Get visa destinations
+router.get('/destinations', authenticateAdmin, (req, res) => {
+
+    db.query(
+        "SELECT id, destination, visa_excerpt, visa_description, visa_price, visa_agent_price, process_time, process_type, available_country FROM visa_destinations",
+        (err, results) => {
+            if (err) {
+                console.error("Database error:", err);
+                return res.status(500).json({ message: "Database error", error: err });
+            }
+
+            if (results.length === 0) {
+                return res.json({ message: "No visa destinations found", data: [] });
+            }
+
+            res.json({ message: "Visa destinations fetched successfully", data: results });
+        }
+    );
+});
+
+router.get('/destinations/:id', authenticateAdmin, (req, res) => {
+    const id = req.params.id
+    if(!id) {
+        console.log("No ID received")
+    }
+    db.query(
+        "SELECT * FROM visa_destinations WHERE id = ?", [id],
+        (err, results) => {
+            if (err) {
+                console.error("Database error:", err);
+                return res.status(500).json({ message: "Database error" });
+            }
+            if (results.length === 0) {
+                return res.status(404).json({ message: "Destination not found" });
+            }
+    
+            res.json(results[0]);
+        });
+})
+
+// Delete an Agent
+router.delete('/delete-agent/:visa_id', authenticateAdmin, (req, res) => {
+    const { visa_id } = req.params;
+
+    const sql = "DELETE FROM visa_destinations WHERE id = ?";
+    db.query(sql, [visa_id], (err, result) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ message: "Error deleting agent" });
+        }
+        res.json({ success: "Visa destination deleted successfully" });
+    });
+});
+
 module.exports = router;
