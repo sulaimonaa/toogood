@@ -91,7 +91,7 @@ const AddPermit = () => {
                     <label>Available Passport Holders Countries - separate with |</label>
                     <input type='text' name='available_country' onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2 focus-0 rounded' />
                 </div>
-                <button type="submit" className="border-0 rounded-pill p-2 bg-primary text-white mt-3">Add Permit</button>
+                <button type="submit" disabled={loading} className="border-0 rounded-pill p-2 bg-primary text-white mt-3">Add Permit</button>
             </form>
         </div>
     </div>

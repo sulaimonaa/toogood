@@ -126,7 +126,7 @@ const EditPermit = () => {
                         <input type='text' name='available_country' value={formData.available_country} onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2' />
                     </div>
                     <input type='hidden' name='visa_id' value={formData.visa_id} />
-                    <button type="submit" className="border-0 rounded-pill p-2 bg-primary text-white mt-3">Update Permit Destination</button>
+                    <button type="submit" disabled={loading} className="border-0 rounded-pill p-2 bg-primary text-white mt-3">Update Permit Destination</button>
                 </form>
             </div>
             <div className='spacer'></div>
