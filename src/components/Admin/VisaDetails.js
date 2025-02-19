@@ -112,6 +112,10 @@ const VisaDetails = () => {
                         Create new visa destination
                     </div>
                     </Link>
+                <Link to="../admin/visa-destinations" className='text-dark text-decoration-none text-secondary-subtle'>
+                <div style={{background: '#f8f8f8', fontSize: '1rem', width: '320px'}} className='rounded-pill py-2 px-4 text-center mt-3 shadow'>
+                Update visa destinations
+                </div></Link>
             </div>
         </div>
     </>

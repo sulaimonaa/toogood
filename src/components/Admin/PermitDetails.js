@@ -112,6 +112,10 @@ const PermitDetails = () => {
                         Create permit destination
                     </div>
                     </Link>
+                    <Link to="../admin/permit" className='text-dark text-decoration-none text-secondary-subtle'>
+                <div style={{background: '#f8f8f8', fontSize: '1rem', width: '320px'}} className='rounded-pill py-2 px-4 text-center mt-3 shadow'>
+                Update permit destinations
+                </div></Link>
             </div>
         </div>
     </>
