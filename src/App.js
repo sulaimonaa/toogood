@@ -46,6 +46,12 @@ import NotPaidPermit from './components/Permit/NotPaidPermit'
 import PermitStatus from './components/Permit/PermitStatus'
 import InsuranceStatus from './components/Insurance/InsuranceStatus'
 import InsuranceList from './components/Admin/InsuranceList'
+import VisaDestinations from './components/Admin/VisaDestinations'
+import EditVisa from './components/Admin/EditVisa'
+import PermitDestinations from './components/Admin/PermitDestinations'
+import EditPermit from './components/Admin/EditPermit'
+import PermitAgent from './components/Permit/PermitAgent'
+import PermitAgentDB from './components/Permit/PermitAgentDB'
 
 const App = () => {
   return (
@@ -68,10 +74,15 @@ const App = () => {
         <Route path='/approved-agent' element={<ApprovedAgent />} />
         <Route path='/dashboard' element={<Dashboard />} />
         <Route path='/admin/visa-list' element={<VisaList />} />
+        <Route path='/admin/visa-destinations' element={<VisaDestinations />} />
+        <Route path='/admin/permit' element={<PermitDestinations />} />
+        <Route path='/admin/visa-destination-update/:id' element={<EditVisa />} />
+        <Route path='/admin/permit-update/:id' element={<EditPermit />} />
         <Route path='/admin/permit-list' element={<PermitList />} />
         <Route path='/admin/insurance-list' element={<InsuranceList />} />
         <Route path='/visa/:id' element={<VisaApplication />} />
         <Route path='/permit/:id' element={<PermitApplication />} />
+        <Route path='/permit-agent/:id' element={<PermitAgent />} />
         <Route path='/visa-agent/:id' element={<VisaAppAgent />} />
         <Route path='/payment' element={<VisaPayment />} />
         <Route path='/complete-permit' element={<CompletePermit />} />
@@ -93,6 +104,7 @@ const App = () => {
         <Route path='/hotel' element={<Hotel />} />
         <Route path='/e-sim' element={<Esim />} />
         <Route path='/permit' element={<PermitDashboard />} />
+        <Route path='/permit-agent' element={<PermitAgentDB />} />
         <Route path='/embassy' element={<Embassy />} />
         <Route path='/insurance' element={<Insurance />} />
         <Route path='/travel-itinerary' element={<Itinerary />} />

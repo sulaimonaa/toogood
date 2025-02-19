@@ -108,6 +108,7 @@ const PermitApplication = () => {
         <h4>Visa Destination: {visaById.destination}</h4>
         <h5 className='mb-2'>Processing Fee: &#x20A6;{Number(visaById.visa_price).toLocaleString()}</h5>
         <h6 className='mb-2 fw-bold' style={{fontStyle: 'italic'}}>Permit applying for: {visaById.available_country} </h6>
+        <p className='p-4 bg-secondary-subtle rounded'>{visaById.visa_description}</p>
         <div className='spacer'></div>
         <h6 className='text-secondary-subtle'>Complete the form below with valid information.</h6>
         <form style={{fontSize: '0.8rem'}} onSubmit={handleSubmit}>

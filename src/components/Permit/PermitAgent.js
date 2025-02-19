@@ -2,14 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import Loading from '../Loading';
 
-const VisaAppAgent = () => {
+const PermitAgent = () => {
     const { id } = useParams()
     const [visaById, setVisaById] = useState({
         destination: "",
-        visa_excerpt: "",
-        visa_agent_price: "",
-        process_time: "",
-        process_type: "",
+        visa_price: "",
         available_country: "",
       });
     const [ formData, setFormData ] = useState({
@@ -20,29 +17,23 @@ const VisaAppAgent = () => {
         contact_email: "",
         date_of_birth: "",
         passport_number: "",
-        tracking_id: "",
         data_page: null,
         passport_photograph: null,
         utility_bill: null,
         supporting_document: null,
         other_document: null,
     })
+
+    const [loading, setLoading ] = useState(false);
     
-    const [ loading, setLoading ] = useState(false);
-    const token = localStorage.getItem("token"); 
-    const navigate = useNavigate();
 
     useEffect(() => {
-        if(!token) {
-            <div>You need to login as agent to access page</div>
-            setTimeout(navigate('../login'), 5000);
-        }
         if (!id) return;
         const fetchVisaById = async () => {
             try {
-                const response = await fetch(`https://toogood-1.onrender.com/visa/destinations/${id}`);
+                const response = await fetch(`https://toogood-1.onrender.com/permit/destinations/${id}`);
                 if (!response.ok) {
-                    throw new Error("Failed to fetch visa destinations");
+                    throw new Error("Failed to fetch permit destinations");
                 }
                 const data = await response.json();
                 setVisaById(data);
@@ -52,7 +43,7 @@ const VisaAppAgent = () => {
         }
 
         fetchVisaById()
-    }, [id, token, navigate])
+    }, [id])
 
     const handleChange = (e) => {
         const { name, type, value, files } = e.target;
@@ -65,6 +56,8 @@ const VisaAppAgent = () => {
         }));
     };
     
+
+    const navigate = useNavigate()
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formDataObj = new FormData();
@@ -74,12 +67,12 @@ const VisaAppAgent = () => {
             formDataObj.append(key, formData[key]);
         });
         formDataObj.append("visa_destination", visaById.destination);
-        formDataObj.append("visa_fee", visaById.visa_agent_price);
+        formDataObj.append("visa_fee", visaById.visa_price);
 
         setLoading(true);
     
         try {
-            const response = await fetch("https://toogood-1.onrender.com/visa/application", {
+            const response = await fetch("https://toogood-1.onrender.com/permit/application", {
                 method: "POST",
                 body: formDataObj
             });
@@ -87,9 +80,8 @@ const VisaAppAgent = () => {
             const data = await response.json();
             if (response.ok) {
                 // Redirect to payment page with necessary details
-                navigate(`/payment`, {
+                navigate(`/complete-permit`, {
                     state: {
-                        tracking_id: data.tracking_id,
                         destination: visaById.destination,
                         price: visaById.visa_agent_price,
                         first_name: formData.first_name,
@@ -101,7 +93,7 @@ const VisaAppAgent = () => {
             }
         } catch (error) {
             console.error("Application Error:", error);
-            alert("Failed to submit visa application.");
+            alert("Failed to submit permit application.");
         } finally {
             setLoading(false);
         }
@@ -110,15 +102,12 @@ const VisaAppAgent = () => {
     
   return (
     <>
-        {loading && <Loading message='Submitting visa application...'/>}
+        {loading && <Loading message='Submitting permit application...'/>}
         <div className='container'>
         <div className='spacer'></div>
         <h4>Visa Destination: {visaById.destination}</h4>
-        <h5>Visa Entry: {visaById.visa_excerpt}</h5>
         <h5 className='mb-2'>Processing Fee: &#x20A6;{Number(visaById.visa_agent_price).toLocaleString()}</h5>
-        <h5 className='mb-2'>Processing Time: {visaById.process_time}</h5>
-        <h5 className='mb-2'>Processing Type: {visaById.process_type}</h5>
-        <h6 className='mb-4 fw-bold' style={{fontStyle: 'italic'}}>Only Available To: {visaById.available_country}</h6>
+        <h6 className='mb-2 fw-bold' style={{fontStyle: 'italic'}}>Permit applying for: {visaById.available_country} </h6>
         <p className='p-4 bg-secondary-subtle rounded'>{visaById.visa_description}</p>
         <div className='spacer'></div>
         <h6 className='text-secondary-subtle'>Complete the form below with valid information.</h6>
@@ -179,11 +168,8 @@ const VisaAppAgent = () => {
                     <input name='other_document' type='file' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' />
                 </div>
             </div>
-            <input type='hidden' name='tracking_id' value={formData.tracking_id} />
             <input type='hidden' name='visa_destination' value={visaById.destination} />
             <input type='hidden' name='visa_fee' value={visaById.visa_agent_price} />
-            <input type='hidden' name='process_time' value={visaById.process_time} />
-            <input type='hidden' name='process_type' value={visaById.process_type} />
             <input type='submit' disabled={loading}  className='p-2 px-md-4 rounded-pill bg-primary text-white fw-bold border-0' value='Complete Application & Proceed to Payment' style={{fontSize: '0.8rem'}}/>
         </form>
         <div className='spacer'></div>
@@ -197,4 +183,4 @@ const VisaAppAgent = () => {
   )
 }
 
-export default VisaAppAgent
+export default PermitAgent

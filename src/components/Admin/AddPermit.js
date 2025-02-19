@@ -76,8 +76,16 @@ const AddPermit = () => {
                     <input type='text' name='destination' onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2 focus-0 rounded' />
                 </div>
                 <div className='d-flex flex-column gap-1'>
+                    <label>Permit Description</label>
+                    <textarea type='text' name='visa_description' onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2 focus-0 rounded' rows='5' />
+                </div>
+                <div className='d-flex flex-column gap-1'>
                     <label>Permit Price</label>
                     <input type='number' name='visa_price' onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2 focus-0 rounded' />
+                </div>
+                <div className='d-flex flex-column gap-1'>
+                    <label>Permit Agent Price</label>
+                    <input type='number' name='visa_agent_price' onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2 focus-0 rounded' />
                 </div>
                 <div className='d-flex flex-column gap-1'>
                     <label>Available Passport Holders Countries - separate with |</label>
