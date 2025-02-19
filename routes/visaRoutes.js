@@ -67,6 +67,85 @@ router.get('/destinations/:id', (req, res) => {
         });
 })
 
+router.put('/update', authenticateAdmin, async (req, res) => {
+    const { destination, visa_excerpt, visa_description, visa_price, visa_agent_price, process_time, process_type, available_country } = req.body;
+    const { visa_id } = req.body; 
+
+    if (!destination && !visa_excerpt && !visa_description && !visa_price && !visa_agent_price && !process_time && !process_type && !available_country) {
+        return res.status(400).json({ message: "At least one field must be provided to update" });
+    }
+
+    try {
+        // Step 1: Fetch current details
+        db.query("SELECT * FROM visa_destinations WHERE id = ?", [visa_id], async (err, results) => {
+            if (err) {
+                console.error("Database error:", err);
+                return res.status(500).json({ message: "Database error" });
+            }
+            if (results.length === 0) {
+                return res.status(404).json({ message: "Destination not found" });
+            }
+
+            const visa = results[0];
+            let updateFields = [];
+            let values = [];
+
+            // Step 2: Only update if new value is provided and different from current one
+            if (destination && destination !== visa.destination) {
+                updateFields.push("destination = ?");
+                values.push(destination);
+            }
+            if (visa_excerpt && visa_excerpt !== visa.visa_excerpt) {
+                updateFields.push("visa_excerpt = ?");
+                values.push(visa_excerpt);
+            }
+            if (visa_description && visa_description !== visa.visa_description) {
+                updateFields.push("visa_description = ?");
+                values.push(visa_description);
+            }
+            if (visa_price && visa_price !== visa.visa_price) {
+                updateFields.push("visa_price = ?");
+                values.push(visa_price);
+            }
+            if (visa_agent_price && visa_agent_price !== visa.visa_agent_price) {
+                updateFields.push("visa_agent_price = ?");
+                values.push(visa_agent_price);
+            }
+            if (process_time && process_time !== visa.process_time) {
+                updateFields.push("process_time= ?");
+                values.push(process_time);
+            }
+            if (process_type && process_type !== visa.process_type) {
+                updateFields.push("process_type= ?");
+                values.push(process_type);
+            }
+            if (available_country && available_country !== visa.available_country) {
+                updateFields.push("available_country= ?");
+                values.push(available_country);
+            }
+            if (updateFields.length === 0) {
+                return res.json({ message: "No changes detected" });
+            }
+
+            // Step 3: Execute update query
+            values.push(visa_id);
+            const sql = `UPDATE visa_destinations SET ${updateFields.join(", ")} WHERE id = ?`;
+
+            db.query(sql, values, (updateErr, result) => {
+                if (updateErr) {
+                    console.error("Update error:", updateErr);
+                    return res.status(500).json({ message: "Error updating visa details" });
+                }
+                res.json({ success: "Visa details updated successfully" });
+            });
+        });
+
+    } catch (error) {
+        console.error("Unexpected error:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
 
 // Configure file upload storage
 const storage = multer.diskStorage({

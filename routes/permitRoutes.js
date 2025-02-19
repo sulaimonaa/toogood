@@ -7,14 +7,14 @@ const router = express.Router();
 
 // Add Visa Destination (Admin Only)
 router.post('/add_permit', authenticateAdmin, (req, res) => {
-    const { destination, visa_price, available_country } = req.body;
+    const { destination, visa_description, visa_price, visa_agent_price, available_country } = req.body;
 
-    if (!destination || !visa_price || !available_country) {
+    if (!destination || !visa_description || !visa_price || !visa_agent_price || !available_country) {
         return res.status(400).json({ message: "All fields are required" });
     }
 
-    const sql = "INSERT INTO permit_destinations (destination, visa_price, available_country) VALUES (?, ?, ?)";
-    const values = [destination, visa_price, available_country];
+    const sql = "INSERT INTO permit_destinations (destination, visa_description, visa_price, visa_agent_price, available_country) VALUES (?, ?, ?, ?, ?)";
+    const values = [destination, visa_description, visa_price, visa_agent_price, available_country];
 
     db.query(sql, values, (err, result) => {
         if (err) {
@@ -66,6 +66,72 @@ router.get('/destinations/:id', (req, res) => {
         });
 })
 
+router.put('/update', authenticateAdmin, async (req, res) => {
+    const { destination, visa_description, visa_price, visa_agent_price, available_country } = req.body;
+    const { visa_id } = req.body; 
+
+    if (!destination && !visa_description && !visa_price && !visa_agent_price && !available_country) {
+        return res.status(400).json({ message: "At least one field must be provided to update" });
+    }
+
+    try {
+        // Step 1: Fetch current details
+        db.query("SELECT * FROM permit_destinations WHERE id = ?", [visa_id], async (err, results) => {
+            if (err) {
+                console.error("Database error:", err);
+                return res.status(500).json({ message: "Database error" });
+            }
+            if (results.length === 0) {
+                return res.status(404).json({ message: "Destination not found" });
+            }
+
+            const visa = results[0];
+            let updateFields = [];
+            let values = [];
+
+            // Step 2: Only update if new value is provided and different from current one
+            if (destination && destination !== visa.destination) {
+                updateFields.push("destination = ?");
+                values.push(destination);
+            }
+            if (visa_description && visa_description !== visa.visa_description) {
+                updateFields.push("visa_description = ?");
+                values.push(visa_description);
+            }
+            if (visa_price && visa_price !== visa.visa_price) {
+                updateFields.push("visa_price = ?");
+                values.push(visa_price);
+            }
+            if (visa_agent_price && visa_agent_price !== visa.visa_agent_price) {
+                updateFields.push("visa_agent_price = ?");
+                values.push(visa_agent_price);
+            }
+            if (available_country && available_country !== visa.available_country) {
+                updateFields.push("available_country= ?");
+                values.push(available_country);
+            }
+            if (updateFields.length === 0) {
+                return res.json({ message: "No changes detected" });
+            }
+
+            // Step 3: Execute update query
+            values.push(visa_id);
+            const sql = `UPDATE permit_destinations SET ${updateFields.join(", ")} WHERE id = ?`;
+
+            db.query(sql, values, (updateErr, result) => {
+                if (updateErr) {
+                    console.error("Update error:", updateErr);
+                    return res.status(500).json({ message: "Error updating permit details" });
+                }
+                res.json({ success: "Permit details updated successfully" });
+            });
+        });
+
+    } catch (error) {
+        console.error("Unexpected error:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
 
 // Configure file upload storage
 const storage = multer.diskStorage({
