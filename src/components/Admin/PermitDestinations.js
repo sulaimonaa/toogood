@@ -54,7 +54,7 @@ const PermitDestinations = () => {
     <>
         <div className='container'>
             <div className='spacer'></div>
-                <h6>List of Visa Destinations</h6>
+                <h6>List of Permit Destinations</h6>
                 <table className='w-100'>
                     <thead>
                         <tr style={{fontSize: '0.8rem'}}>
