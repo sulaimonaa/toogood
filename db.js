@@ -21,4 +21,15 @@ db.query('SELECT 1', (err) => {
     }
 });
 
+async function keepDBAlive() {
+    try {
+      const [rows] = await pool.query("SELECT 1"); 
+      console.log("Database connection active:", rows);
+    } catch (error) {
+      console.error("Database ping failed:", error.message);
+    }
+  }
+  
+  setInterval(keepDBAlive, 5 * 60 * 1000);
+
 module.exports = db;
