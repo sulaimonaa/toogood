@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Nav1 from "../Nav/Nav1";
 import Footer from "../Footer";
 import VisaInfo from "../Visa/VisaInfo";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Loading from "../Loading";
 
 const Visa = () => {
@@ -11,6 +11,7 @@ const Visa = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchDestinations = async () => {
@@ -23,13 +24,14 @@ const Visa = () => {
                 setDestinations(data.data);
             } catch (error) {
                 setError(error.message);
+                navigate(-1);
             } finally {
                 setLoading(false);
             }
         };
 
         fetchDestinations();
-    }, []);
+    }, [navigate]);
 
     const handleSearchChange = (e) => {
         const term = e.target.value.toLowerCase();
