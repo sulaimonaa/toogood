@@ -25,7 +25,7 @@ db.query('SELECT 1', (err) => {
 
 async function keepDBAlive() {
     try {
-      const [rows] = await pool.query("SELECT 1"); 
+      const [rows] = await db.query("SELECT 1"); 
       console.log("Database connection active:", rows);
     } catch (error) {
       console.error("Database ping failed:", error.message);
