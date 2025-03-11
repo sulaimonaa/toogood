@@ -1,4 +1,4 @@
-const mysql = require('mysql2')
+const mysql = require('mysql2/promise')
 
 const db = mysql.createPool({
     host: process.env.DB_HOST,
@@ -6,10 +6,10 @@ const db = mysql.createPool({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     port: process.env.DB_PORT || 3306,
-    connectTimeout: 10000,
+    connectTimeout: 30000,
     connectionLimit: 20,
     queueLimit: 0,
-    keepAliveInitialDelay: 10000,
+    keepAliveInitialDelay: 30000,
     waitForConnections: true,
     enableKeepAlive: true,
 });
