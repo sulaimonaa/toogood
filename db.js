@@ -1,4 +1,4 @@
-const mysql = require('mysql2/promise')
+const mysql = require('mysql2');
 
 const db = mysql.createPool({
     host: process.env.DB_HOST,
@@ -14,8 +14,7 @@ const db = mysql.createPool({
     enableKeepAlive: true,
 });
 
-
-db.query('SELECT 1', (err) => {
+db.query('SELECT 1', (err, results) => {
     if (err) {
         console.error("Database connection failed:", err);
     } else {
@@ -23,15 +22,16 @@ db.query('SELECT 1', (err) => {
     }
 });
 
-async function keepDBAlive() {
-    try {
-      const [rows] = await db.query("SELECT 1"); 
-      console.log("Database connection active:", rows);
-    } catch (error) {
-      console.error("Database ping failed:", error.message);
-    }
-  }
-  
-  setInterval(keepDBAlive, 5 * 60 * 1000);
+function keepDBAlive() {
+    db.query("SELECT 1", (err, results) => {
+        if (err) {
+            console.error("Database ping failed:", err.message);
+        } else {
+            console.log("Database connection active:", results);
+        }
+    });
+}
+
+setInterval(keepDBAlive, 5 * 60 * 1000);
 
 module.exports = db;
