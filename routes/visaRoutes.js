@@ -46,7 +46,7 @@ router.get('/destinations', (req, res) => {
     );
 });
 
-//new
+//new route for available destinations
 router.get('/available-destinations', (req, res) => {
     const { search } = req.query;
     
