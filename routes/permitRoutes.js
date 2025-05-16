@@ -21,10 +21,65 @@ router.post('/add_permit', authenticateAdmin, (req, res) => {
             console.error("Database error:", err);
             return res.status(500).json({ message: "Something went wrong!" });
         }
-        res.json({ success: "Visa destination added successfully!" });
+        res.json({ success: "Permit destination added successfully!" });
     });
 });
 
+//new route for available destinations
+router.get('/available-destinations', (req, res) => {
+    const { search } = req.query;
+    
+    // Base query
+    let query = `
+        SELECT id, destination, visa_excerpt, visa_description, visa_price, 
+               visa_agent_price, process_time, process_type, available_country 
+        FROM permit_destinations
+        WHERE 1=1
+    `;
+    
+    const params = [];
+    
+    // Add search term filter if provided
+    if (search) {
+        query += ` AND (destination LIKE ? OR visa_description LIKE ?)`;
+        params.push(`%${search}%`, `%${search}%`);
+    }
+    
+    // Add sorting by relevance if searching
+    if (search) {
+        query += `
+            ORDER BY 
+                CASE 
+                    WHEN destination = ? THEN 1 
+                    WHEN destination LIKE ? THEN 2 
+                    ELSE 3 
+                END
+        `;
+        params.push(search, `${search}%`);
+    }
+    
+    db.query(query, params, (err, results) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ 
+                message: "Database error", 
+                error: err 
+            });
+        }
+
+        if (results.length === 0) {
+            return res.json({ 
+                message: "No matching permit destinations found", 
+                data: [] 
+            });
+        }
+
+        res.json({ 
+            message: "Permit destinations fetched successfully", 
+            data: results 
+        });
+    });
+});
 //Get visa destinations
 router.get('/destinations', (req, res) => {
 
