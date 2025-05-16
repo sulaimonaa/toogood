@@ -15,6 +15,7 @@ import { MdTravelExplore } from "react-icons/md";
 import PopularDeals from '../Popular/PopularDeals';
 import Footer from '../Footer';
 import { FaPersonWalkingDashedLineArrowRight } from "react-icons/fa6";
+import Slider from '../Slider';
 
 const Home = () => {
   const [isLogin, setLogin] = useState(false);
@@ -54,7 +55,9 @@ const Home = () => {
   return (
     <>
     <Nav1 />
-    <div className='hero container-fluid'>
+    <Slider />
+    <div className='search-container' style={{position: 'absolute', zIndex: '1', top: '5rem', width: '100%'}}>
+    <div className='w-100 d-flex flex-column justify-content-center align-items-center gap-3' style={{height: '100vh'}}>
       <h2 className='fs-4 text-center text-white'>Your travel starts here!</h2>
       <div className='container relative p-0 px-md-2'>
         <div className='w-100 absolute top-0'>
@@ -114,6 +117,7 @@ const Home = () => {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
     <div className='edit-container'>

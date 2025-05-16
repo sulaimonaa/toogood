@@ -35,7 +35,7 @@
 }
 @media (max-width: 425px) {
     .edit-container {
-        margin-top: 15rem;
+        margin-top: 3rem;
     }
     .l1,.l2,.l3,.l4,.l5,.l6,.l7,.l8,.l9 {
         width: 33.333%;
@@ -48,12 +48,12 @@
 }
 @media (max-width: 375px) {
     .edit-container {
-        margin-top: 14rem;
+        margin-top: 2rem;
     }
 }
 @media (max-width: 320px) {
     .edit-container {
-        margin-top: 14rem;
+        margin-top: 1rem;
     }
     .l1,.l2,.l3,.l4,.l5,.l6,.l7,.l8,.l9 {
         width: 105px;
@@ -76,7 +76,7 @@
         font-size: 1rem;
     }
     .edit-container {
-        margin-top: 10rem;
+        margin-top: 3rem;
         padding-left: 0;
         padding-right: 0;
     }
@@ -84,12 +84,6 @@
 
 @media (min-width: 1024px) {
     .edit-container {
-        margin-top: 12rem;
-    }
-}
-
-@media (min-width: 1366px) {
-    .edit-container {
-        margin-top: 14rem;
+        margin-top: 3rem;
     }
 }
