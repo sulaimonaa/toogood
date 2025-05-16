@@ -60,7 +60,7 @@ const Home = () => {
         <div className='w-100 absolute top-0'>
           <div className='d-flex flex-column bg-light-subtle'>
           <div className='d-flex align-items-center justify-content-center gap-1'>
-            <Link to='/e-visa' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l4'>
+            <Link to='/evisa' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l4'>
               <div className='d-flex flex-column align-items-center gap-2'>
                 <GiPoliceOfficerHead />
                 E-visa</div>
@@ -68,9 +68,9 @@ const Home = () => {
                 <Link to='/track-visa' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l2'>
               <div className='d-flex flex-column align-items-center gap-2'>
                 <GiPassport />
-                Visa Check</div>
+                Visa Status</div>
                 </Link>
-                <Link to='/permit' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l3'>
+                <Link to='/epermit' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l3'>
               <div className='d-flex flex-column align-items-center gap-2'>
                 <FaCheckToSlot />
                 Permit</div>
@@ -83,7 +83,7 @@ const Home = () => {
                 <MdOutlineFlightTakeoff />
                 Flight</div>
                 </Link>
-                <Link to='/hotel' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l6'>
+                <Link to='https://toogoodtravels.com/hotels' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l6'>
               <div className='d-flex flex-column align-items-center gap-2'>
                 <FaHotel />
                 Hotel Booking</div>
@@ -96,10 +96,10 @@ const Home = () => {
             </div>
             
             <div className='d-flex align-items-center justify-content-center gap-1'>
-            <Link to='/embassy' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l7'>
+            <Link to='https://toogoodtravels.com/tours/search?txtSearch=&type=&checkin=10%2F05%2F2025&adults=1&module_type=&slug=&searching=&modType=' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l7'>
               <div className='d-flex flex-column align-items-center gap-2'>
                 <HiMiniBuildingOffice2 />
-                Embassy</div>
+                Packages</div>
                 </Link>
               <Link to='/insurance' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l8'>
               <div className='d-flex flex-column align-items-center gap-2'>
@@ -109,7 +109,7 @@ const Home = () => {
               <Link to='/travel-itinerary' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l9'>
               <div className='d-flex flex-column align-items-center gap-2'>
                 <MdTravelExplore />
-                Travel Itinerary</div>
+                Visa Support</div>
               </Link>
             </div>
           </div>

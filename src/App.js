@@ -4,7 +4,7 @@ import Home from './components/Home/Home'
 import Login from './components/Login'
 import Register from './components/Register'
 import ResetPassword from './components/ResetPassword'
-import Dashboard from './components/Dashboard'
+// import Dashboard from './components/Dashboard'
 import "bootstrap/dist/css/bootstrap.min.css";
 import UpdateAgentDetails from './components/Agent/UpdateAgentDetails'
 import AdminApproveAgents from './components/Admin/AdminApproveAgent'
@@ -52,6 +52,15 @@ import PermitDestinations from './components/Admin/PermitDestinations'
 import EditPermit from './components/Admin/EditPermit'
 import PermitAgent from './components/Permit/PermitAgent'
 import PermitAgentDB from './components/Permit/PermitAgentDB'
+import Evisa from './components/Visa/Evisa'
+import VisaResult from './components/Visa/Eresult'
+import Epermit from './components/Permit/Epermit'
+import PermitResult from './components/Permit/PermitResult'
+import PermitADB from './components/Permit/PermitADB'
+import PermitAR from './components/Permit/PermitAR'
+import VisaADB from './components/Visa/VisaADB'
+import VisaAR from './components/Visa/VisaAR'
+import Dashboard2 from './components/Dashboard2'
 
 const App = () => {
   return (
@@ -59,6 +68,10 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Home/>} />
         <Route path='/e-visa' element={<Visa />} />
+        <Route path='/evisa' element={<Evisa />} />
+        <Route path='/results' element={<VisaResult />} />
+        <Route path='/epermit' element={<Epermit />} />
+        <Route path='/permit-results' element={<PermitResult />} />
         <Route path='/login' element={<Login/>} />
         <Route path='/register' element={<Register />} />
         <Route path='/reset-password' element={<ResetPassword />} />
@@ -72,7 +85,7 @@ const App = () => {
         <Route path='/agent-status' element={<AllAgent />} />
         <Route path='/update-agent-status' element={<AdminApproveAgents />} />
         <Route path='/approved-agent' element={<ApprovedAgent />} />
-        <Route path='/dashboard' element={<Dashboard />} />
+        <Route path='/dashboard' element={<Dashboard2 />} />
         <Route path='/admin/visa-list' element={<VisaList />} />
         <Route path='/admin/visa-destinations' element={<VisaDestinations />} />
         <Route path='/admin/permit' element={<PermitDestinations />} />
@@ -105,6 +118,10 @@ const App = () => {
         <Route path='/e-sim' element={<Esim />} />
         <Route path='/permit' element={<PermitDashboard />} />
         <Route path='/permit-agent' element={<PermitAgentDB />} />
+        <Route path='/permit-agent-application' element={<PermitADB />} />
+        <Route path='/permit-agent-results' element={<PermitAR />} />
+        <Route path='/visa-agent-application' element={<VisaADB />} />
+        <Route path='/visa-agent-results' element={<VisaAR />} />
         <Route path='/embassy' element={<Embassy />} />
         <Route path='/insurance' element={<Insurance />} />
         <Route path='/travel-itinerary' element={<Itinerary />} />

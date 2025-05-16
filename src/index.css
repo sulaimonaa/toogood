@@ -42,3 +42,34 @@ body {
 .spacer {
   height: 50px;
 }
+
+.result-bg {
+  background: url('../src/assets/images/result.png') no-repeat bottom center;
+  background-size: cover;
+  background-attachment: scroll;
+}
+
+@media (min-width: 768px) {
+  .search-container {
+    top: 3rem !important;
+  }
+  
+  .vForm {
+    width: 75%;
+    max-width: 100% !important;
+  }
+  .form-select-origin {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    height: 3rem;
+  }
+  .form-control-destination {
+    border-radius: 0 !important;
+    height: 3rem;
+  }
+  .btn-primary-visa {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    height: 3rem;
+  }
+}
