@@ -31,8 +31,8 @@ router.get('/available-destinations', (req, res) => {
     
     // Base query
     let query = `
-        SELECT id, destination, visa_excerpt, visa_description, visa_price, 
-               visa_agent_price, process_time, process_type, available_country 
+        SELECT id, destination, visa_description, visa_price, 
+               visa_agent_price, available_country 
         FROM permit_destinations
         WHERE 1=1
     `;
