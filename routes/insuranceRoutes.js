@@ -37,7 +37,7 @@ router.post("/application", upload.fields([
     try {
         const { first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number, address, occupation, gender, marital_status, travel_type, purpose_travel, other_reason, next_of_kin, next_of_kin_address, relationship, coverage_begin, coverage_end, destination, more_ninety, medical_condition, more_medical_condition, heard_policy} = req.body;
 
-        if (!first_name || !last_name || !phone_number || !contact_email || !passport_number) {
+        if (!first_name || !last_name || !phone_number || !contact_email) {
             return res.status(400).json({ message: "Missing required fields" });
         }
 
