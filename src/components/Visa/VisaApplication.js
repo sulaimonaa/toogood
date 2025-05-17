@@ -103,7 +103,9 @@ const VisaApplication = () => {
         }
     };
     
-    
+    if (loading) {
+        return <Loading message='Submitting visa application...' />;
+    }
   return (
     <>
         {loading && <Loading message='Submitting visa application...'/>}

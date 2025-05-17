@@ -99,7 +99,9 @@ const PermitApplication = () => {
         }
     };
     
-    
+    if (loading) {
+        return <Loading message='Submitting permit application...' />;
+    }
   return (
     <>
         {loading && <Loading message='Submitting permit application...'/>}

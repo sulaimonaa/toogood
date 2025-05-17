@@ -107,6 +107,9 @@ const handleSubmit = async (e) => {
     setLoading(false);
   }
 };
+    if (loading) {
+        return <Loading message='Submitting insurance application...' />;
+    }
   return (
     <>
         {loading && <Loading message='Submitting insurance application...'/>}

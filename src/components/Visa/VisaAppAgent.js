@@ -107,6 +107,9 @@ const VisaAppAgent = () => {
         }
     };
     
+    if (loading) {
+        return <Loading message='Submitting visa application...' />;
+    }
     
   return (
     <>
