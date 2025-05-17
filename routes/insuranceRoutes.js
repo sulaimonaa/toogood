@@ -77,11 +77,11 @@ router.post("/application", upload.fields([
                                 <li><strong>Full Name:</strong> ${first_name} ${middle_name} ${last_name}</li>
                                 <li><strong>Phone Number:</strong> ${phone_number}</li>
                                 <li><strong>Email:</strong> ${contact_email}</li>
-                                <li><strong>Passport Number:</strong> ${passport_number}</li>
+                                // <li><strong>Passport Number:</strong> ${passport_number}</li>
                                 <li><strong>Destination:</strong> ${destination}</li>
                                 <li><strong>Travel Type:</strong> ${travel_type}</li>
                                 <li><strong>Coverage Period:</strong> ${coverage_begin} to ${coverage_end}</li>
-                                <li><strong>Passport Data Page:</strong> <a href="https://toogood-1.onrender.com/uploads/${upload_signature}"">Download/View</a></li>
+                                // <li><strong>Passport Data Page:</strong> <a href="https://toogood-1.onrender.com/uploads/${upload_signature}"">Download/View</a></li>
                             </ul>
                         </div>
 
