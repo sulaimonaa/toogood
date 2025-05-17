@@ -29,6 +29,12 @@
     font-size: 12px;
 }
 
+.service-list-container {
+    background: rgba(1, 89, 126, 0.5);
+}
+.service-list {
+    background: rgba(01, 89, 126, 0.7);
+}
 .edit-container {
     padding-left: .5rem;
     padding-right: .5rem;

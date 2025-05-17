@@ -143,11 +143,15 @@ const handleSubmit = async (e) => {
                     <input name='contact_email' value={formData.contact_email} type='email' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
                 </div>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
+                    <label>Applicant Address</label>
+                    <input name='address' value={formData.address} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
+                </div>
+                {/* <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>Date of Birth</label>
                     <input name='date_of_birth' value={formData.date_of_birth} type='date' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
-                </div>
+                </div> */}
             </div>
-            <div className='d-md-flex mb-3 bg-white rounded shadow'>
+            {/* <div className='d-md-flex mb-3 bg-white rounded shadow'>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>Applicant Address</label>
                     <input name='address' value={formData.address} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
@@ -167,8 +171,8 @@ const handleSubmit = async (e) => {
                       </div>
                     </div>
                 </div>
-            </div>
-            <div className='d-md-flex mb-3 bg-white rounded shadow'>
+            </div> */}
+            {/* <div className='d-md-flex mb-3 bg-white rounded shadow'>
             <div className='col-12 col-md-3 d-flex flex-column gap-1 py-4 px-2'>
                     <label>Marital Status</label>
                     <div className='d-flex gap-2 p-2'>
@@ -225,22 +229,36 @@ const handleSubmit = async (e) => {
                     <label>Next of Kin</label>
                     <input name='next_of_kin' value={formData.next_of_kin} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
                 </div>
-            </div>
+            </div> */}
             <div className='d-md-flex mb-4 bg-white rounded shadow'>
+                <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
+                    <label>Occupation</label>
+                    <input name='occupation' value={formData.occupation} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
+                </div>
+                <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
+                    <label>Next of Kin</label>
+                    <input name='next_of_kin' value={formData.next_of_kin} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
+                </div>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>Next of Kin Address</label>
                     <input name='next_of_kin_address' value={formData.next_of_kin_address} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
                 </div>
-                <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
+                
+                {/* <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>Relationship with Next of Kin</label>
                     <input name='relationship' value={formData.relationship} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
-                </div>
+                </div> */}
+                
+                {/* <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
+                    <label>Destination</label>
+                    <input name='destination' value={formData.destination} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
+                </div> */}
+            </div>
+            <div className='d-md-flex mb-4 bg-white rounded shadow'>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>Destination</label>
                     <input name='destination' value={formData.destination} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
                 </div>
-            </div>
-            <div className='d-md-flex mb-4 bg-white rounded shadow'>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>Coverage Begins</label>
                     <input name='coverage_begin' value={formData.coverage_begin} type='date' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
@@ -249,7 +267,20 @@ const handleSubmit = async (e) => {
                     <label>Coverage Ends</label>
                     <input name='coverage_end' value={formData.coverage_end} type='date' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
                 </div>
-                <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
+                {/* <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
+                    <label>Do you intend to stay in any one country for more than 90 days?</label>
+                    <div className='d-flex gap-2 p-2'>
+                      <div className='d-flex justify-content-center align-items-center gap-2'><label>Yes: </label>
+                      <input name='more_ninety' type='radio' value='Yes' onChange={handleChange} required/>
+                      </div>
+                      <div className='d-flex justify-content-center align-items-center gap-2'><label>No: </label>
+                      <input name='more_ninety' type='radio' value='No' onChange={handleChange} required/>
+                      </div>
+                    </div>
+                </div> */}
+            </div>
+            <div className='d-md-flex mb-4 bg-white rounded shadow'>
+            <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>Do you intend to stay in any one country for more than 90 days?</label>
                     <div className='d-flex gap-2 p-2'>
                       <div className='d-flex justify-content-center align-items-center gap-2'><label>Yes: </label>
@@ -260,8 +291,6 @@ const handleSubmit = async (e) => {
                       </div>
                     </div>
                 </div>
-            </div>
-            <div className='d-md-flex mb-4 bg-white rounded shadow'>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>Do you have a pre-existing medical condition(s)?</label>
                     <div className='d-flex gap-2 p-2'>
@@ -277,17 +306,17 @@ const handleSubmit = async (e) => {
                     <label>If Yes, please state:</label>
                     <input name='more_medical_condition' value={formData.more_medical_condition} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0'/>
                 </div>
-                <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
+                {/* <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>How did you hear about this Travel Insurance Policy?</label>
                     <input name='heard_policy' value={formData.heard_policy} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0'/>
-                </div>
+                </div> */}
             </div>
-            <div className='d-md-flex mb-4 bg-white rounded shadow'>
+            {/* <div className='d-md-flex mb-4 bg-white rounded shadow'>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>Upload Passport Data Page</label>
                     <input name='upload_signature' type='file' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
                 </div>
-            </div>
+            </div> */}
             <div className="text-start mt-3">
                     <button 
                         type="submit" 

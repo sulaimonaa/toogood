@@ -61,19 +61,19 @@ const Home = () => {
       <h2 className='fs-4 text-center text-white'>Your travel starts here!</h2>
       <div className='container relative p-0 px-md-2'>
         <div className='w-100 absolute top-0'>
-          <div className='d-flex flex-column bg-light-subtle'>
+          <div className='d-flex flex-column service-list-container'>
           <div className='d-flex align-items-center justify-content-center gap-1'>
-            <Link to='/evisa' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l4'>
+            <Link to='/evisa' className='service-list p-2 p-md-3 mb-1 d-flex justify-content-center align-items-center shadow text-white fw-bold text-decoration-none l4'>
               <div className='d-flex flex-column align-items-center gap-2'>
                 <GiPoliceOfficerHead />
                 E-visa</div>
                 </Link>
-                <Link to='/track-visa' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l2'>
+                <Link to='/track-visa' className='service-list p-2 p-md-3 mb-1 d-flex justify-content-center align-items-center shadow text-white fw-bold text-decoration-none l2'>
               <div className='d-flex flex-column align-items-center gap-2'>
                 <GiPassport />
                 Visa Status</div>
                 </Link>
-                <Link to='/epermit' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l3'>
+                <Link to='/epermit' className='service-list p-2 p-md-3 mb-1 d-flex justify-content-center align-items-center shadow text-white fw-bold text-decoration-none l3'>
               <div className='d-flex flex-column align-items-center gap-2'>
                 <FaCheckToSlot />
                 Permit</div>
@@ -81,17 +81,17 @@ const Home = () => {
             </div>
             
             <div className='d-flex align-items-center justify-content-center gap-1'>
-            <Link to='/flight' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l1'>
+            <Link to='/flight' className='service-list p-2 p-md-3 mb-1 d-flex justify-content-center align-items-center shadow text-white fw-bold text-decoration-none l1'>
               <div className='d-flex flex-column align-items-center gap-2'>
                 <MdOutlineFlightTakeoff />
                 Flight</div>
                 </Link>
-                <Link to='https://toogoodtravels.com/hotels' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l6'>
+                <Link to='https://toogoodtravels.com/hotels' className='service-list p-2 p-md-3 mb-1 d-flex justify-content-center align-items-center shadow text-white fw-bold text-decoration-none l6'>
               <div className='d-flex flex-column align-items-center gap-2'>
                 <FaHotel />
                 Hotel Booking</div>
                 </Link>
-                <Link to='/e-sim' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l5'>
+                <Link to='/e-sim' className='service-list p-2 p-md-3 mb-1 d-flex justify-content-center align-items-center shadow text-white fw-bold text-decoration-none l5'>
               <div className='d-flex flex-column align-items-center gap-2'>
                 <BsFillSimFill />
                 E-sim</div>
@@ -99,17 +99,17 @@ const Home = () => {
             </div>
             
             <div className='d-flex align-items-center justify-content-center gap-1'>
-            <Link to='https://toogoodtravels.com/tours/search?txtSearch=&type=&checkin=10%2F05%2F2025&adults=1&module_type=&slug=&searching=&modType=' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l7'>
+            <Link to='https://toogoodtravels.com/tours/search?txtSearch=&type=&checkin=10%2F05%2F2025&adults=1&module_type=&slug=&searching=&modType=' className='service-list p-2 p-md-3 mb-1 d-flex justify-content-center align-items-center shadow text-white fw-bold text-decoration-none l7'>
               <div className='d-flex flex-column align-items-center gap-2'>
                 <HiMiniBuildingOffice2 />
                 Packages</div>
                 </Link>
-              <Link to='/insurance' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l8'>
+              <Link to='/insurance' className='service-list p-2 p-md-3 mb-1 d-flex justify-content-center align-items-center shadow text-white fw-bold text-decoration-none l8'>
               <div className='d-flex flex-column align-items-center gap-2'>
                 <MdSecurity />
                 Insurance</div>
                 </Link>
-              <Link to='/travel-itinerary' className='p-2 p-md-3 bg-white mb-1 d-flex justify-content-center align-items-center shadow text-dark text-decoration-none l9'>
+              <Link to='/travel-itinerary' className='service-list p-2 p-md-3 mb-1 d-flex justify-content-center align-items-center shadow text-white fw-bold text-decoration-none l9'>
               <div className='d-flex flex-column align-items-center gap-2'>
                 <MdTravelExplore />
                 Visa Support</div>

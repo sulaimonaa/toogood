@@ -4,6 +4,7 @@ import Loading from '../Loading';
 import Slider from '../Slider';
 import Nav1 from '../Nav/Nav1';
 import Footer from '../Footer';
+import Circles from 'react-loading-icons/dist/esm/components/circles';
 
 const PermitADB = () => {
   // Full country list
@@ -41,7 +42,9 @@ const PermitADB = () => {
     originCountry: '',
     destination: ''
   });
-  const [filteredCountries, setFilteredCountries] = useState(allCountries);
+  const [availableDestinations, setAvailableDestinations] = useState([]);
+  const [filteredCountries, setFilteredDestinations] = useState([]);
+  const [isFetchingDestinations, setIsFetchingDestinations] = useState(true);
   const [showDropdown, setShowDropdown] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -51,18 +54,46 @@ const PermitADB = () => {
   const token = localStorage.getItem("token"); 
   const navigate = useNavigate();
 
-  // Filter countries based on search term
   useEffect(() => {
     if(!token) {
-        <div>You need to login as agent to access page</div>
-        setTimeout(navigate('../login'), 5000);
-    }
+      <div>You need to login as agent to access page</div>
+      setTimeout(navigate('../login'), 5000);
+  }
 
-    setFilteredCountries(
-      allCountries.filter(country =>
-        country.toLowerCase().includes(searchTerm.toLowerCase())
-    ));
-  }, [searchTerm]);
+    const fetchDestinations = async () => {
+      try {
+        const response = await fetch('https://toogood-1.onrender.com/permit/available-destinations');
+        if (!response.ok) {
+          throw new Error('Failed to fetch available destinations');
+        }
+        const { data } = await response.json();
+        
+        // Extract unique destination names from API response
+        const uniqueDestinations = [...new Set(data.map(item => item.destination))];
+        setAvailableDestinations(uniqueDestinations);
+        setFilteredDestinations(uniqueDestinations);
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching destinations:', err);
+      } finally {
+        setIsFetchingDestinations(false);
+      }
+    };
+
+    fetchDestinations();
+  }, [token, navigate]);
+
+  // Filter countries based on search term
+  useEffect(() => {
+    if (searchTerm) {
+      setFilteredDestinations(
+        availableDestinations.filter(destination =>
+          destination.toLowerCase().includes(searchTerm.toLowerCase())
+      ));
+    } else {
+      setFilteredDestinations(availableDestinations);
+    }
+  }, [searchTerm, availableDestinations]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -203,7 +234,7 @@ const PermitADB = () => {
                   setShowDropdown(true);
                 }}
                 onFocus={() => setShowDropdown(true)}
-                placeholder="Which country?"
+                placeholder="Check available permit"
                 className='form-control-destination'
                 style={{
                   width: '100%',
@@ -219,7 +250,7 @@ const PermitADB = () => {
                   top: '100%',
                   left: 0,
                   right: 0,
-                  maxHeight: '32rem',
+                  maxHeight: '16rem',
                   overflowY: 'auto',
                   border: '1px solid #ddd',
                   borderRadius: '0 0 6px 6px',
@@ -247,7 +278,7 @@ const PermitADB = () => {
                     ))
                   ) : (
                     <div style={{ padding: '12px', color: '#666' }}>
-                      No countries found
+                      <Circles fill="#00FF00"/> loading available permits...
                     </div>
                   )}
                 </div>
