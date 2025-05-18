@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import Nav1 from "./Nav/Nav1";
-import Slider from '../Slider';
+import Slider from './Slider';
 import Footer from "./Footer";
 import { Link, useNavigate } from "react-router-dom";
 
