@@ -287,7 +287,7 @@ router.post("/application", upload.fields([
                                 <li><strong>Email:</strong> ${contact_email}</li>
                                 <li><strong>Passport Number:</strong> ${passport_number}</li>
                                 <li><strong>Destination:</strong> ${visa_destination}</li>
-                                <li><strong>Travel Type:</strong> ${tracking_id}</li>
+                                <li><strong>Tracking ID:</strong> ${tracking_id}</li>
                                 <li><strong>Processing Fee:</strong> ${visa_fee}</li>
                                 <li><strong>Process Time:</strong> ${process_time}</li>
                                 <li><strong>Process Type:</strong> ${process_type}</li>
