@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import Nav1 from "./Nav/Nav1";
+import Slider from '../Slider';
 import Footer from "./Footer";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -19,7 +20,8 @@ const Dashboard2 = () => {
     return (
         <>
             <Nav1 />
-            <div div className = 'container-fluid result-bg' style={{position: 'absolute', zIndex: '1', top: '5rem', width: '100%'}} > 
+            <Slider />
+            <div div className = 'container-fluid d-flex align-items-center justify-content-center' style={{position: 'absolute', zIndex: '1', top: '5rem', width: '100%', height: '100vh'}} > 
                 <div className='container'>
                     <div className="max-w-6xl mx-auto p-6">
                         <div className="rounded-lg shadow-md p-6 mb-8 d-flex flex-column gap-3 align-items-center justify-content-center" style={{height: '16rem'}}>
@@ -30,7 +32,7 @@ const Dashboard2 = () => {
                                     Apply for Visa
                                 </div>
                                 </Link>
-                                <Link to='permit-agent-application' style={{textDecoration: 'none'}}>
+                                <Link to='/permit-agent-application' style={{textDecoration: 'none'}}>
                                 <div className="bg-light px-4 py-2 rounded d-flex align-items-center justify-content-center" style={{height: '12rem'}}>
                                     Apply for Permit
                                 </div>
