@@ -28,12 +28,12 @@ const Dashboard2 = () => {
                             <h1 className="text-3xl font-bold text-white mb-2 text-capitalize">Welcome to your dashboard</h1>
                             <div className="d-flex flex-wrap gap-4 align-items-start">
                                 <Link to='/visa-agent-application'>
-                                <div className="bg-light px-4 py-2 rounded" style={{height: '12rem'}}>
+                                <div className="bg-light px-4 py-2 rounded d-flex align-items-center justify-content-center" style={{height: '12rem', textDecoration: 'none'}}>
                                     Apply for Visa
                                 </div>
                                 </Link>
                                 <Link to='permit-agent-application'>
-                                <div className="bg-light px-4 py-2 rounded" style={{height: '12rem'}}>
+                                <div className="bg-light px-4 py-2 rounded d-flex align-items-center justify-content-center" style={{height: '12rem', textDecoration: 'none'}}>
                                     Apply for Permit
                                 </div>
                                 </Link>
@@ -42,6 +42,7 @@ const Dashboard2 = () => {
                     </div>
             </div>
             </div>
+            <div className="spacer"></div>
         <Footer />
         </>
     );

@@ -167,17 +167,17 @@ const VisaADB = () => {
     }
   };
 
-  if (isLoading) return <Loading message="Checking Permit Availability..."/>;
+  if (isLoading) return <Loading message="Checking Visa Availability..."/>;
   return (
     <>
     <Nav1 />
     <Slider />
       <div className='search-container' style={{position: 'absolute', zIndex: '1', top: '5rem', width: '100%'}}>
         <div className='w-100 d-flex flex-column justify-content-center align-items-center gap-3' style={{height: '100vh'}}>
-          <h3 className='text-center text-white fw-bold w-75 mb-0'>TooGood Travels -  Trusted Global Permit Assistant</h3>
-          <h6 className='text-center text-white fw-light mb-0 mb-md-5'>Simplify the way you get a Permit</h6>
+          <h3 className='text-center text-white fw-bold w-75 mb-0'>TooGood Travels -  Trusted Global Visa Assistant</h3>
+          <h6 className='text-center text-white fw-light mb-0 mb-md-5'>Simplify the way you get a Visa</h6>
           <div className='vForm' style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
-          <h4 style={{ textAlign: 'center', marginBottom: '24px', color: '#ffffff', fontWeight: 'bold' }}>Check Available E-Permit</h4>
+          <h4 style={{ textAlign: 'center', marginBottom: '24px', color: '#ffffff', fontWeight: 'bold' }}>Check Available E-Visa</h4>
           
           {error && (
             <div style={{
