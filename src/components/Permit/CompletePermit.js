@@ -32,7 +32,7 @@ const CompletePermit = () => {
             </button>
             </div>
             {transfer ? (<div className="d-flex flex-column gap-2 p-4 rounded shadow mt-4 mb-4">
-                <h6>You are about to complete for <span className="fw-bold" style={{fontStyle: 'italic'}}>{destination} Visa</span></h6>
+                <h6>You are about to complete application process for <span className="fw-bold" style={{fontStyle: 'italic'}}>{destination} Permit</span></h6>
                 <h6>Amount to pay: &#x20A6;{price}</h6>
                 <h5>Account Details:</h5>
                 <h5>Bank Name: FCMB</h5>
