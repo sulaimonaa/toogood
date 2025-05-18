@@ -314,12 +314,12 @@ const handleSubmit = async (e) => {
                     <input name='heard_policy' value={formData.heard_policy} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0'/>
                 </div> */}
             </div>
-            {/* <div className='d-md-flex mb-4 bg-white rounded shadow'>
+            <div className='d-md-flex mb-4 bg-white rounded shadow'>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>Upload Passport Data Page</label>
                     <input name='upload_signature' type='file' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
                 </div>
-            </div> */}
+            </div>
             <div className="text-start mt-3">
                     <button 
                         type="submit" 
