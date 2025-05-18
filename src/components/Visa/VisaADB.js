@@ -309,7 +309,7 @@ const VisaADB = () => {
               transition: 'background 0.3s'
             }}
           >
-            {isLoading ? 'Checking Availability...' : 'Search Permit'}
+            {isLoading ? 'Checking Availability...' : 'Search Visa'}
           </button>
           </div>
           </div>
