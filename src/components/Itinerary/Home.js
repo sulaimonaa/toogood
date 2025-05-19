@@ -37,6 +37,7 @@ const Home = () => {
     visa_interview_date: "",
     check_in_date: "",
     check_out_date: "",
+    visa_embassy: "",
     hotel_details: "",
     
     // Support docs
@@ -64,6 +65,7 @@ const Home = () => {
         visa_interview_date: "",
         check_in_date: "",
         check_out_date: "",
+        visa_embassy: "",
         hotel_details: ""
       }));
     }
@@ -92,60 +94,89 @@ const Home = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formDataObj = new FormData();
-
-    Object.keys(formData).forEach(key => {
+  
+    // Append all form data (including files)
+    for (const key in formData) {
       if (formData[key] !== null && formData[key] !== "") {
-        formDataObj.append(key, formData[key]);
+        // Special handling for file uploads
+        if (key === 'upload_signature' && formData[key] instanceof File) {
+          formDataObj.append(key, formData[key], formData[key].name);
+        } else {
+          formDataObj.append(key, formData[key]);
+        }
       }
-    });
-
+    }
+  
     setLoading(true);
-
+    setMessage("");
+  
     try {
-      const response = await fetch("https://toogood-1.onrender.com/visa/bookings", {
+      const response = await fetch("https://toogood-1.onrender.com/bookings/app", {
         method: "POST",
         body: formDataObj,
         headers: {
           "Accept": "application/json"
         }
       });
-
-      const data = await response.json();
-      if (response.ok) {
-        alert("Application submitted successfully!");
-        setFormData({
-          first_name: "",
-          middle_name: "",
-          last_name: "",
-          email: "",
-          phone_number: "",
-          date_of_birth: "",
-          coverage_begin: "",
-          coverage_end: "",
-          destination: "",
-          title: "",
-          traveler_first_name: "",
-          traveler_last_name: "",
-          trip_type: "",
-          flight_details: "",
-          hotel_title: "",
-          hotel_first_name: "",
-          hotel_last_name: "",
-          visa_interview_date: "",
-          check_in_date: "",
-          check_out_date: "",
-          hotel_details: "",
-          upload_signature: null
-        });
-        setFlightForm(false);
-        setHotelForm(false);
-        setSupportForm(false);
-        navigate(-1);
+  
+      // First check if response is JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        throw new Error(`Server returned: ${text.substring(0, 100)}...`);
       }
-      setMessage(data.message);
+  
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || "Request failed");
+      }
+
+      alert("Application submitted successfully!");
+      
+      // Reset form
+      setFormData({
+        first_name: "",
+        middle_name: "",
+        last_name: "",
+        email: "",
+        phone_number: "",
+        date_of_birth: "",
+        coverage_begin: "",
+        coverage_end: "",
+        destination: "",
+        title: "",
+        traveler_first_name: "",
+        traveler_last_name: "",
+        trip_type: "",
+        flight_details: "",
+        hotel_title: "",
+        hotel_first_name: "",
+        hotel_last_name: "",
+        visa_interview_date: "",
+        check_in_date: "",
+        check_out_date: "",
+        hotel_details: "",
+        visa_embassy: "",
+        upload_signature: null
+      });
+      
+      setFlightForm(false);
+      setHotelForm(false);
+      setSupportForm(false);
+      navigate(-1);
+      
     } catch (error) {
-      console.error("Application Error:", error);
-      alert("Failed to submit visa support application. Try again later");
+      console.error("Submission Error:", error);
+      let errorMessage = error.message;
+      
+      // Handle HTML error pages
+      if (error.message.includes('<!DOCTYPE')) {
+        errorMessage = "Server returned an error page. Please check the server status.";
+      }
+      
+      setMessage(errorMessage);
+      alert(`Error: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -156,7 +187,6 @@ const Home = () => {
   }
   return (
     <>
-        {loading && <Loading message='Submitting visa support application...'/>}
         <div className='container py-4'>
             <h2 className='mb-3'>Visa Support and Bookings</h2>
             <div className='w-75 mx-auto mb-3'>
@@ -191,8 +221,8 @@ Our flight reservations are with the sustainable PNR code, these flight bookings
                     <input name='email' value={formData.email} type='email' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
                 </div>
                 <div className='col-12 col-md-6 d-flex flex-column gap-1 py-4 px-2'>
-                    <label>Travel Date</label>
-                    <input name='phone_number' value={formData.phone_number} type='date' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
+                    <label>Phone Number</label>
+                    <input name='phone_number' value={formData.phone_number} type='text' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
                 </div>
             </div>
             <div className='d-md-flex mb-4 bg-white rounded shadow'>
@@ -294,7 +324,7 @@ Our flight reservations are with the sustainable PNR code, these flight bookings
               <div className='d-md-flex mb-3 bg-white rounded shadow'>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>Title</label>
-                    <select name='hotel_title' value={formData.title} onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' >
+                    <select name='hotel_title' value={formData.hotel_title} onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' >
                         <option value=''>Select Title</option>
                         <option value='Mr'>Mr</option>
                         <option value='Mrs'>Mrs</option>
