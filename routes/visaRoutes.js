@@ -346,7 +346,8 @@ router.post("/bookings", upload.fields([
         visa_interview_date,
         check_in_date,
         check_out_date,
-        hotel_details
+        hotel_details, 
+        visa_embassy
       } = req.body;
   
       // Validate required fields
@@ -387,6 +388,7 @@ router.post("/bookings", upload.fields([
           check_in_date,
           check_out_date,
           hotel_details,
+          visa_embassy,
           upload_signature
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
   
@@ -412,6 +414,7 @@ router.post("/bookings", upload.fields([
         check_in_date,
         check_out_date,
         hotel_details,
+        visa_embassy,
         upload_signature
       ];
   
