@@ -8,6 +8,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const visaRoutes = require('./routes/visaRoutes');
 const permitRoutes = require('./routes/permitRoutes');
 const insuranceRoutes = require('./routes/insuranceRoutes');
+const bookingRoutes = require('./routes/bookingRoutes');
 
 
 const app = express()
@@ -24,6 +25,7 @@ app.use('/admin', adminRoutes)
 app.use('/visa', visaRoutes)
 app.use('/permit', permitRoutes)
 app.use('/insurance', insuranceRoutes)
+app.use('/bookings', bookingRoutes)
 
 app.listen(port, () => {
     console.log("Server listening on port", port);
