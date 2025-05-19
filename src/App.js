@@ -124,7 +124,7 @@ const App = () => {
         <Route path='/visa-agent-results' element={<VisaAR />} />
         <Route path='/embassy' element={<Embassy />} />
         <Route path='/insurance' element={<Insurance />} />
-        <Route path='/travel-itinerary' element={<Itinerary />} />
+        <Route path='/visa-support' element={<Itinerary />} />
       </Routes>
     </Router>
   )

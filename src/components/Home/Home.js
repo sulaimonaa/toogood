@@ -109,7 +109,7 @@ const Home = () => {
                 <MdSecurity />
                 Insurance</div>
                 </Link>
-              <Link to='/travel-itinerary' className='service-list p-2 p-md-3 mb-1 d-flex justify-content-center align-items-center shadow text-white fw-bold text-decoration-none l9'>
+              <Link to='/visa-support' className='service-list p-2 p-md-3 mb-1 d-flex justify-content-center align-items-center shadow text-white fw-bold text-decoration-none l9'>
               <div className='d-flex flex-column align-items-center gap-2'>
                 <MdTravelExplore />
                 Visa Support</div>
