@@ -345,7 +345,7 @@ router.post("/bookings", upload.fields([
             visa_interview_date,
             check_in_date,
             check_out_date,
-            hotel_details,
+            hotel_details
         } = req.body;
 
         if (!first_name || !last_name || !phone_number || !email) {
@@ -378,7 +378,7 @@ router.post("/bookings", upload.fields([
                 visa_interview_date,
                 check_in_date,
                 check_out_date,
-                hotel_details,
+                hotel_details
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
         const values = [
@@ -415,7 +415,7 @@ router.post("/bookings", upload.fields([
             // Email content
             const mailOptions = {
                 from: '"Too Good Travels" <noreply@toogoodtravels.net>',
-                to: contact_email, 
+                to: email, 
                 cc:"toogoodtravelsnigeria@gmail.com",
                 subject: "Visa Support Booking Application Submitted Successfully",
                 html: `
