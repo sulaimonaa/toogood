@@ -378,7 +378,8 @@ router.post("/bookings", upload.fields([
                 visa_interview_date,
                 check_in_date,
                 check_out_date,
-                hotel_details
+                hotel_details,
+                upload_signature
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
         const values = [
