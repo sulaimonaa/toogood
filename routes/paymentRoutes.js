@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-import { Flutterwave } from 'flutterwave-react-v3';
+const Flutterwave = require('flutterwave-node-v3');
 const db = require('../db');
 
 const flw = new Flutterwave(
