@@ -8,6 +8,21 @@ const flw = new Flutterwave(
   process.env.FLW_SECRET_KEY
 );
 
+
+// routes/payments.js
+router.post('/verify', async (req, res) => {
+    const { transaction_id } = req.body;
+    
+    const verification = await flw.Transaction.verify({ id: transaction_id });
+    if (verification.data.status === 'successful') {
+      // Update booking payment status in your database
+      res.json({ status: 'success' });
+    } else {
+      res.status(400).json({ status: 'failed' });
+    }
+  });
+
+  
 // Initialize payment
 router.post('/initiate', async (req, res) => {
   try {
