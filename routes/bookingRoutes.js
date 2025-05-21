@@ -4,7 +4,8 @@ const db = require('../db');
 const authenticateAdmin = require('../middlewares/adminAuth');
 const nodemailer = require('nodemailer');
 const router = express.Router();
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuid4 } = require('uuid');
+const { a } = require('framer-motion/client');
 
 // Configure file upload storage
 const storage = multer.diskStorage({
@@ -66,7 +67,7 @@ router.post("/app", upload.fields([{ name: "upload_signature", maxCount: 1 }]), 
         const upload_signature = req.files?.["upload_signature"]?.[0]?.filename || null;
 
         // Generate unique transaction reference
-        const tx_ref = `vs-${uuidv4()}`;
+        const tx_ref = `vs-${uuid4()}`;
 
         // Insert into database
         const sql = `
@@ -91,7 +92,7 @@ router.post("/app", upload.fields([{ name: "upload_signature", maxCount: 1 }]), 
             otherFields.hotel_last_name || null, otherFields.visa_interview_date || null,
             otherFields.check_in_date || null, otherFields.check_out_date || null,
             otherFields.hotel_details || null, otherFields.visa_embassy || null,
-            upload_signature, tx_ref
+            upload_signature, tx_ref, amountToPay
         ];
 
         // Execute database query
