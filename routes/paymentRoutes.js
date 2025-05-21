@@ -10,19 +10,28 @@ const flw = new Flutterwave(
 
 
 // routes/payments.js
+// In your payment verification endpoint
 router.post('/verify', async (req, res) => {
+  try {
     const { transaction_id } = req.body;
-    
     const verification = await flw.Transaction.verify({ id: transaction_id });
+    
     if (verification.data.status === 'successful') {
-      // Update booking payment status in your database
-      res.json({ status: 'success' });
-    } else {
-      res.status(400).json({ status: 'failed' });
+      await db.query(
+        'UPDATE visa_bookings SET payment_status = ? WHERE id = ?',
+        ['Paid', verification.data.meta.booking_id]
+      );
+      return res.json({ status: 'success' });
     }
-  });
+    
+    res.status(400).json({ status: 'failed' });
+  } catch (error) {
+    console.error('Verification error:', error);
+    res.status(500).json({ error: 'Verification failed' });
+  }
+});
 
-  
+
 // Initialize payment
 router.post('/initiate', async (req, res) => {
   try {
