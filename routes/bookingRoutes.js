@@ -40,8 +40,7 @@ router.post("/app", upload.fields([{ name: "upload_signature", maxCount: 1 }]), 
     try {
         // Destructure required fields
         const { 
-            first_name, last_name, email, phone_number,
-            amountToPay, 
+            first_name, last_name, email, phone_number, amount_to_pay, 
             ...otherFields 
         } = req.body;
 
@@ -54,7 +53,7 @@ router.post("/app", upload.fields([{ name: "upload_signature", maxCount: 1 }]), 
         }
 
         // Validate payment amount
-        if (!amountToPay || isNaN(amountToPay) || amountToPay <= 0) {
+        if (!amount_to_pay || isNaN(amount_to_pay) || amount_to_pay <= 0) {
             return res.status(400).json({
                 success: false,
                 message: "Invalid payment amount"
@@ -75,7 +74,7 @@ router.post("/app", upload.fields([{ name: "upload_signature", maxCount: 1 }]), 
                 title, traveler_first_name, traveler_last_name, trip_type,
                 flight_details, hotel_title, hotel_first_name, hotel_last_name,
                 visa_interview_date, check_in_date, check_out_date,
-                hotel_details, visa_embassy, upload_signature, tx_ref, amountToPay
+                hotel_details, visa_embassy, upload_signature, tx_ref, amount_to_pay
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
@@ -90,7 +89,7 @@ router.post("/app", upload.fields([{ name: "upload_signature", maxCount: 1 }]), 
             otherFields.hotel_last_name || null, otherFields.visa_interview_date || null,
             otherFields.check_in_date || null, otherFields.check_out_date || null,
             otherFields.hotel_details || null, otherFields.visa_embassy || null,
-            upload_signature, tx_ref, amountToPay
+            upload_signature, tx_ref, amount_to_pay
         ];
 
         // Execute database query
@@ -129,7 +128,7 @@ router.post("/app", upload.fields([{ name: "upload_signature", maxCount: 1 }]), 
                     booking_id: bookingId,
                     payment_info: {
                         tx_ref: tx_ref,
-                        amount: parseFloat(amountToPay),
+                        amount: parseFloat(amount_to_pay),
                         currency: 'NGN',
                         customer_email: email,
                         customer_name: `${first_name} ${last_name}`,
@@ -148,7 +147,7 @@ router.post("/app", upload.fields([{ name: "upload_signature", maxCount: 1 }]), 
                     booking_id: bookingId,
                     payment_info: {
                         tx_ref: tx_ref,
-                        amount: parseFloat(amountToPay),
+                        amount: parseFloat(amount_to_pay),
                         currency: 'NGN',
                         customer_email: email,
                         customer_name: `${first_name} ${last_name}`,
