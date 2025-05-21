@@ -4,8 +4,6 @@ const db = require('../db');
 const authenticateAdmin = require('../middlewares/adminAuth');
 const nodemailer = require('nodemailer');
 const router = express.Router();
-const { v4: uuid4 } = require('uuid');
-const { a } = require('framer-motion/client');
 
 // Configure file upload storage
 const storage = multer.diskStorage({
@@ -67,7 +65,7 @@ router.post("/app", upload.fields([{ name: "upload_signature", maxCount: 1 }]), 
         const upload_signature = req.files?.["upload_signature"]?.[0]?.filename || null;
 
         // Generate unique transaction reference
-        const tx_ref = `vs-${uuid4()}`;
+        const tx_ref = `vs-${Math.floor(Math.random() * 1000000000)}`;
 
         // Insert into database
         const sql = `
@@ -77,7 +75,7 @@ router.post("/app", upload.fields([{ name: "upload_signature", maxCount: 1 }]), 
                 title, traveler_first_name, traveler_last_name, trip_type,
                 flight_details, hotel_title, hotel_first_name, hotel_last_name,
                 visa_interview_date, check_in_date, check_out_date,
-                hotel_details, visa_embassy, upload_signature, tx_ref
+                hotel_details, visa_embassy, upload_signature, tx_ref, amountToPay
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
@@ -135,6 +133,7 @@ router.post("/app", upload.fields([{ name: "upload_signature", maxCount: 1 }]), 
                         currency: 'NGN',
                         customer_email: email,
                         customer_name: `${first_name} ${last_name}`,
+                        customer_phone: phone_number,
                         meta: {
                             booking_id: bookingId
                         }
