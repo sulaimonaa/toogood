@@ -76,7 +76,7 @@ router.post("/app", upload.fields([{ name: "upload_signature", maxCount: 1 }]), 
                 flight_details, hotel_title, hotel_first_name, hotel_last_name,
                 visa_interview_date, check_in_date, check_out_date,
                 hotel_details, visa_embassy, upload_signature, tx_ref, amountToPay
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
         const values = [
