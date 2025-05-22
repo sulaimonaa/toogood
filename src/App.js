@@ -61,6 +61,7 @@ import PermitAR from './components/Permit/PermitAR'
 import VisaADB from './components/Visa/VisaADB'
 import VisaAR from './components/Visa/VisaAR'
 import Dashboard2 from './components/Dashboard2'
+import SuccessfulPayments from './components/SuccessfulPayments'
 
 const App = () => {
   return (
@@ -125,6 +126,7 @@ const App = () => {
         <Route path='/embassy' element={<Embassy />} />
         <Route path='/insurance' element={<Insurance />} />
         <Route path='/visa-support' element={<Itinerary />} />
+        <Route path='/successful-payment' element={<SuccessfulPayments />} />
       </Routes>
     </Router>
   )
