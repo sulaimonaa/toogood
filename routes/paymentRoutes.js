@@ -17,7 +17,7 @@ router.post('/verify', async (req, res) => {
     const verification = await flw.Transaction.verify({ id: transaction_id });
     
     if (verification.data.status === 'successful') {
-      await db.query(
+      db.query(
         'UPDATE visa_bookings SET payment_status = ? WHERE id = ?',
         ['Paid', verification.data.meta.booking_id]
       );
@@ -28,60 +28,6 @@ router.post('/verify', async (req, res) => {
   } catch (error) {
     console.error('Verification error:', error);
     res.status(500).json({ error: 'Verification failed' });
-  }
-});
-
-
-// Initialize payment
-router.post('/initiate', async (req, res) => {
-  try {
-    const { email, amount, booking_id } = req.body;
-    
-    const payload = {
-      tx_ref: `visa-${Date.now()}`,
-      amount: amount,
-      currency: 'NGN',
-      redirect_url: 'https://toogoodtravels.net/payment-callback',
-      customer: {
-        email: email,
-      },
-      customizations: {
-        title: 'Visa Support Booking',
-        description: 'Payment for visa support services'
-      },
-      meta: {
-        booking_id: booking_id
-      }
-    };
-
-    const response = await flw.Payment.initialize(payload);
-    res.json(response);
-    
-  } catch (error) {
-    console.error('Payment error:', error);
-    res.status(500).json({ error: 'Payment initialization failed' });
-  }
-});
-
-// Payment callback
-router.get('/callback', async (req, res) => {
-  try {
-    const { transaction_id } = req.query;
-    
-    const response = await flw.Transaction.verify({ id: transaction_id });
-    if (response.data.status === 'successful') {
-      // Update booking payment status in database
-      await db.query(
-        'UPDATE visa_bookings SET payment_status = ? WHERE id = ?',
-        ['paid', response.data.meta.booking_id]
-      );
-      return res.redirect('/payment-success');
-    }
-    
-    res.redirect('/payment-failed');
-  } catch (error) {
-    console.error('Callback error:', error);
-    res.redirect('/payment-error');
   }
 });
 
