@@ -14,7 +14,6 @@ const Home = () => {
     const [bookingData, setBookingData] = useState(null);
     const [paymentInitialized, setPaymentInitialized] = useState(false);
     const [paymentProcessing, setPaymentProcessing] = useState(false);
-    const [payment, setPayment] = useState(false);
 
     const [formData, setFormData] = useState({
         // Basic info
@@ -55,7 +54,7 @@ const Home = () => {
       let amount = 0;
       if (flightForm) amount += 20000;
       if (hotelForm) amount += 25000;
-      if (supportForm) amount += 5000;
+      if (supportForm) amount += 250000;
       return amount;
     }, [flightForm, hotelForm, supportForm]);
 
@@ -204,6 +203,7 @@ const Home = () => {
             setHotelForm(false);
             setSupportForm(false);
             setPaymentInitialized(true);
+            console.log(data);
             
         } catch (error) {
             console.error("Submission Error:", error);
@@ -230,6 +230,7 @@ const Home = () => {
                     body: JSON.stringify({
                         transaction_id: transactionId,
                         booking_id: bookingData.booking_id,
+                        tx_ref: bookingData.payment_info.tx_ref,
                     }),
                 }
             );
@@ -274,8 +275,10 @@ const Home = () => {
                     navigate('/success', {
                         state: {
                             transactionId: response.transaction_id,
-                            bookingData: bookingData
-                        }
+                            bookingData: bookingData,
+                            fromPayment: true 
+                        },
+                        replace: true 
                     });
                 } else {
                     alert('Payment verification failed. Please contact support.');
@@ -293,11 +296,13 @@ const Home = () => {
       text: 'Make Payment Now',
   } : null;
 
+  const cancelPayment = () => {
+    setPaymentInitialized(false);
+    navigate(-1); 
+  };
+
     if (loading) {
         return <Loading message='Submitting visa support application...' />;
-    }
-    if (payment) {
-        return <Loading message='Redirecting to payment...' />;
     }
 
     return (
@@ -427,7 +432,9 @@ const Home = () => {
                     required="required"/>
             </div>
         </div>
-        <div className='d-md-flex gap-2 py-4 px-2 mb-4 bg-white rounded shadow'>
+        <div className='d-md-flex flex-column gap-2 py-4 px-2 mb-4 bg-white rounded shadow'>
+            <h5 className='text-start' style={{fontSize: '0.7rem', fontStyle: 'italic'}}>Select/Add Services to confirm the amount to pay: &#x20A6;{formData.amount_to_pay.toLocaleString()} </h5>
+            <div className='d-md-flex gap-2'>
             <div className='d-md-flex gap-2 mb-2'>
                 <button
                     type="button"
@@ -465,10 +472,11 @@ const Home = () => {
                     onClick={toggleSupportForm}>
                     {
                         supportForm
-                            ? "Remove Support Documents"
-                            : "Add Support Documents"
+                            ? "Remove Complete Documents"
+                            : "Add Complete Documents"
                     }
                 </button>
+            </div>
             </div>
         </div>
             {
@@ -652,7 +660,7 @@ const Home = () => {
         } {
             supportForm && (
                 <> < div className = 'text-align-right mb-2' style = {{color: 'GrayText'}} > Support Documents Charges : &#x20A6;
-                5,000</div> < div className = 'd-md-flex mb-4 bg-white rounded shadow' > <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
+                250,000</div> < div className = 'd-md-flex mb-4 bg-white rounded shadow' > <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>Upload Support Documents</label>
                     <input
                         name='upload_signature'
@@ -678,7 +686,7 @@ const Home = () => {
     {paymentInitialized && fwConfig && (
                 <div className="alert alert-success d-flex flex-column gap-2 justify-content-center align-items-center w-100" style={{height: '100vh', zIndex: '1', top: '0', left: '0', width: '100%', position: 'absolute'}}>
                     <p>Please complete your payment:</p>
-                    <div className="d-flex justify-content-center">
+                    <div className="d-flex flex-column align-items-center justify-content-center">
                     {paymentProcessing ? (
                             <Loading message="Verifying payment..." />
                         ) : (
@@ -687,10 +695,17 @@ const Home = () => {
                                 className="btn btn-primary w-100 py-3"
                             />
                         )}
+
+                        <button 
+                            onClick={cancelPayment}
+                            className="btn border-0 mt-3 bg-danger text-white"
+                        >
+                            Cancel Payment
+                        </button>
+                        
                     </div>
                 </div>
             )}
-    
     <div>
         <button onClick={() => navigate(-1)} className="btn btn-secondary">Go Back</button>
     </div>

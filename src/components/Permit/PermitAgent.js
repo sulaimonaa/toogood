@@ -82,10 +82,13 @@ const PermitAgent = () => {
                 // Redirect to payment page with necessary details
                 navigate(`/complete-permit`, {
                     state: {
+                        booking_id: `${id}`,
                         destination: visaById.destination,
-                        price: visaById.visa_agent_price,
+                        price: visaById.visa_price,
                         first_name: formData.first_name,
                         last_name: formData.last_name,
+                        phone_number: formData.phone_number,
+                        contact_email: formData.contact_email,
                     },
                 });
             } else {

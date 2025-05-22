@@ -35,6 +35,8 @@ const AdminDashboard = () => {
     };
     const [ showInsur, setShowInsur] = useState(false);
     const [ showBtn, setShowBtn ] = useState(true);
+    const [ showVS, setShowVS] = useState(false);
+    const [ showVSbtn, setShowVSbtn ] = useState(true);
     const showInsurance = () => {
         setShowInsur(true)
         setShowBtn(false)
@@ -42,6 +44,14 @@ const AdminDashboard = () => {
     const closeIns = () => {
         setShowInsur(false)
         setShowBtn(true)
+    }
+    const showVSB = () => {
+        setShowVS(true)
+        setShowVSbtn(false)
+    }
+    const closeVS = () => {
+        setShowVS(false)
+        setShowVSbtn(true)
     }
 
     return (
@@ -76,6 +86,20 @@ const AdminDashboard = () => {
                             <div className="bg-danger rounded-pill text-white p-2 w-50 mt-3 mb-3 text-center" onClick={closeIns} style={{cursor: 'pointer'}}>Close</div>
                         </div>
                     ) : ('')}
+                <div className="spacer"></div>
+                {
+                    showVSbtn ? (
+                        <div className="bg-secondary-subtle p-2 rounded-pill w-50 text-center" onClick={showVSB} style={{cursor: 'pointer'}}>Check VS Applications</div>
+                    ) : ('')
+                }
+                <div className="spacer"></div>
+                    {showVS ? (
+                        <div>
+                            <InsuranceDetails />
+                            <div className="bg-danger rounded-pill text-white p-2 w-50 mt-3 mb-3 text-center" onClick={closeVS} style={{cursor: 'pointer'}}>Close</div>
+                        </div>
+                    ) : ('')}
+                <div className="spacer"></div>
                 <Accounting />
                 </div>
             </div>

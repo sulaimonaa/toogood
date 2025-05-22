@@ -94,6 +94,9 @@ const VisaAppAgent = () => {
                         price: visaById.visa_agent_price,
                         first_name: formData.first_name,
                         last_name: formData.last_name,
+                        booking_id: `${id}`,
+                        phone_number: formData.phone_number,
+                        contact_email: formData.contact_email,
                     },
                 });
             } else {
