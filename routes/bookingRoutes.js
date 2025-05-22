@@ -174,7 +174,7 @@ router.post("/app", upload.fields([{ name: "upload_signature", maxCount: 1 }]), 
  * @desc Get all visa bookings (admin only)
  */
 router.get('/all', authenticateAdmin, (req, res) => {
-    const sql = "SELECT * FROM visa_bookings DESC";
+    const sql = "SELECT * FROM visa_bookings ORDER BY id DESC";
     db.query(sql, (err, results) => {
         if (err) {
             console.error("Database error:", err);
