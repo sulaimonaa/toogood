@@ -132,6 +132,24 @@ router.put('/payment-update/:visa_id', authenticateAdmin, (req, res) => {
     });
 });
 
+router.put('/visa-payment-update/:visa_id', authenticateAdmin, (req, res) => {
+    const { visa_id } = req.params;
+    const { status } = req.body; // 'Paid'
+
+    if (!['Paid'].includes(status)) {
+        return res.status(400).json({ message: "Invalid status value" });
+    }
+
+    const sql = "UPDATE visa_bookings SET payment_status = ? WHERE id = ?";
+    db.query(sql, [status, visa_id], (err, result) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ message: "Error updating agent status" });
+        }
+        res.json({ success: `Payment updated ${status} successfully` });
+    });
+});
+
 router.put('/visa-update/:visa_id', authenticateAdmin, (req, res) => {
     const { visa_id } = req.params;
     const { status } = req.body; // 'Approved' 'Denied'
