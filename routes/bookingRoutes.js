@@ -103,7 +103,7 @@ router.post("/app", upload.fields([{ name: "upload_signature", maxCount: 1 }]), 
                 });
             }
 
-            const bookingId = result.insertId;
+            const bookingId = result.id;
 
             try {
                 // Send confirmation email
