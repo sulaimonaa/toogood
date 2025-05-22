@@ -13,13 +13,13 @@ const flw = new Flutterwave(
 // In your payment verification endpoint
 router.post('/verify', async (req, res) => {
   try {
-    const { transaction_id } = req.body;
+    const { transaction_id, tx_ref } = req.body;
     const verification = await flw.Transaction.verify({ id: transaction_id });
     
     if (verification.data.status === 'successful') {
       db.query(
         'UPDATE visa_bookings SET payment_status = ? WHERE tx_ref = ?',
-        ['Paid', verification.data.payment_info.tx_ref],
+        ['Paid', tx_ref],
       );
       return res.json({ status: 'success' });
     }
