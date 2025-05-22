@@ -299,6 +299,26 @@ router.post("/application", upload.fields([
     }
 });
 
+router.post('/payment-verification', async (req, res) => {
+    try {
+      const { transaction_id, booking_id } = req.body;
+      const verification = await flw.Transaction.verify({ id: transaction_id });
+      
+      if (verification.data.status === 'successful') {
+        db.query(
+          'UPDATE permit_applications SET payment_status = ? WHERE id = ?',
+          ['Paid', booking_id],
+        );
+        return res.json({ status: 'success' });
+      }
+      
+      res.status(400).json({ status: 'failed' });
+    } catch (error) {
+      console.error('Verification error:', error);
+      res.status(500).json({ error: 'Verification failed' });
+    }
+  });
+
 router.get('/pending', authenticateAdmin, (req, res) => {
     const sql = "SELECT * FROM permit_applications WHERE visa_status = 'Pending'";
     db.query(sql, (err, results) => {
