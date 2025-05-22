@@ -18,8 +18,8 @@ router.post('/verify', async (req, res) => {
     
     if (verification.data.status === 'successful') {
       db.query(
-        'UPDATE visa_bookings SET payment_status = ? WHERE id = ?',
-        ['Paid', verification.data.meta.booking_id]
+        'UPDATE visa_bookings SET payment_status = ? WHERE tx_ref = ?',
+        ['Paid', verification.data.payment_info.tx_ref],
       );
       return res.json({ status: 'success' });
     }
