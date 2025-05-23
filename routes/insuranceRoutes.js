@@ -15,11 +15,15 @@ const storage = multer.diskStorage({
         cb(null, "uploads/");
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + "-" + file.originalname);
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + '-' + file.originalname);
     }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+});
 
 const transporter = nodemailer.createTransport({
     host: "mail.toogoodtravels.net",
