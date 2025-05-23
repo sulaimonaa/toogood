@@ -150,6 +150,29 @@ router.put('/visa-payment-update/:visa_id', authenticateAdmin, (req, res) => {
     });
 });
 
+router.get('/total-paid-vs-fees', (req, res) => {
+    const sql = "SELECT SUM(amount_to_pay) AS total_paid_fees FROM visa_bookings WHERE payment_status = 'Paid'";
+    
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ message: "Error fetching total visa fees" });
+        }
+        res.json({ total_paid_fees: result[0].total_paid_fees });
+    });
+});
+router.get('/total-not-paid-vs-fees', (req, res) => {
+    const sql = "SELECT SUM(amount_to_pay) AS total_paid_fees FROM visa_bookings WHERE payment_status = 'Pending'";
+    
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ message: "Error fetching total visa fees" });
+        }
+        res.json({ total_paid_fees: result[0].total_paid_fees });
+    });
+});
+
 router.put('/visa-update/:visa_id', authenticateAdmin, (req, res) => {
     const { visa_id } = req.params;
     const { status } = req.body; // 'Approved' 'Denied'
