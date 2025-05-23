@@ -47,11 +47,11 @@ router.post("/application", upload.fields([
 
         const sql = `
             INSERT INTO insurance_applications (
-                first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number, address, occupation, gender, marital_status, travel_type, purpose_travel, other_reason, next_of_kin, next_of_kin_address, relationship, coverage_begin, coverage_end, destination, more_ninety, medical_condition, more_medical_condition, heard_policy, upload_signature, amount_to_pay
+                first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number, address, occupation, gender, marital_status, travel_type, purpose_travel, other_reason, next_of_kin, next_of_kin_address, relationship, coverage_begin, coverage_end, destination, more_ninety, medical_condition, more_medical_condition, heard_policy, amount_to_pay, upload_signature
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
         const values = [
-            first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number, address, occupation, gender, marital_status, travel_type, purpose_travel, other_reason, next_of_kin, next_of_kin_address, relationship, coverage_begin, coverage_end, destination, more_ninety, medical_condition, more_medical_condition, heard_policy, upload_signature, amount_to_pay
+            first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number, address, occupation, gender, marital_status, travel_type, purpose_travel, other_reason, next_of_kin, next_of_kin_address, relationship, coverage_begin, coverage_end, destination, more_ninety, medical_condition, more_medical_condition, heard_policy, amount_to_pay, upload_signature
         ];
 
         db.query(sql, values, (err, result) => {
