@@ -35,7 +35,7 @@ router.post("/application", upload.fields([
     { name: "upload_signature", maxCount: 1 }
 ]), async (req, res) => {
     try {
-        const { first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number, address, occupation, gender, marital_status, travel_type, purpose_travel, other_reason, next_of_kin, next_of_kin_address, relationship, coverage_begin, coverage_end, destination, more_ninety, medical_condition, more_medical_condition, heard_policy} = req.body;
+        const { first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number, address, occupation, gender, marital_status, travel_type, purpose_travel, other_reason, next_of_kin, next_of_kin_address, relationship, coverage_begin, coverage_end, destination, more_ninety, medical_condition, more_medical_condition, heard_policy, amount_to_pay} = req.body;
 
         if (!first_name || !last_name || !phone_number || !contact_email) {
             return res.status(400).json({ message: "Missing required fields" });
@@ -47,11 +47,11 @@ router.post("/application", upload.fields([
 
         const sql = `
             INSERT INTO insurance_applications (
-                first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number, address, occupation, gender, marital_status, travel_type, purpose_travel, other_reason, next_of_kin, next_of_kin_address, relationship, coverage_begin, coverage_end, destination, more_ninety, medical_condition, more_medical_condition, heard_policy, upload_signature
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+                first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number, address, occupation, gender, marital_status, travel_type, purpose_travel, other_reason, next_of_kin, next_of_kin_address, relationship, coverage_begin, coverage_end, destination, more_ninety, medical_condition, more_medical_condition, heard_policy, upload_signature, amount_to_pay
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
         const values = [
-            first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number, address, occupation, gender, marital_status, travel_type, purpose_travel, other_reason, next_of_kin, next_of_kin_address, relationship, coverage_begin, coverage_end, destination, more_ninety, medical_condition, more_medical_condition, heard_policy, upload_signature
+            first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number, address, occupation, gender, marital_status, travel_type, purpose_travel, other_reason, next_of_kin, next_of_kin_address, relationship, coverage_begin, coverage_end, destination, more_ninety, medical_condition, more_medical_condition, heard_policy, upload_signature, amount_to_pay
         ];
 
         db.query(sql, values, (err, result) => {
@@ -107,6 +107,26 @@ router.post("/application", upload.fields([
         res.status(500).json({ message: "Server error" });
     }
 });
+
+router.post('/payment-verification', async (req, res) => {
+    try {
+      const { transaction_id, booking_id } = req.body;
+      const verification = await flw.Transaction.verify({ id: transaction_id });
+      
+      if (verification.data.status === 'successful') {
+        db.query(
+          'UPDATE insurance_applications SET payment_status = ? WHERE id = ?',
+          ['Paid', booking_id],
+        );
+        return res.json({ status: 'success' });
+      }
+      
+      res.status(400).json({ status: 'failed' });
+    } catch (error) {
+      console.error('Verification error:', error);
+      res.status(500).json({ error: 'Verification failed' });
+    }
+  });
 
 router.get('/all', authenticateAdmin, (req, res) => {
     const sql = "SELECT * FROM insurance_applications ORDER BY created_at DESC";

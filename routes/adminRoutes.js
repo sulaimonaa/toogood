@@ -150,6 +150,24 @@ router.put('/visa-payment-update/:visa_id', authenticateAdmin, (req, res) => {
     });
 });
 
+router.put('/insurance-payment-update/:visa_id', authenticateAdmin, (req, res) => {
+    const { visa_id } = req.params;
+    const { payment_status } = req.body; // 'Paid'
+
+    if (!['Paid'].includes(payment_status)) {
+        return res.status(400).json({ message: "Invalid status value" });
+    }
+
+    const sql = "UPDATE insurance_applications SET payment_status = ? WHERE id = ?";
+    db.query(sql, [payment_status, visa_id], (err, result) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ message: "Error updating agent status" });
+        }
+        res.json({ success: `Payment updated ${payment_status} successfully` });
+    });
+});
+
 router.get('/total-paid-vs-fees', (req, res) => {
     const sql = "SELECT SUM(amount_to_pay) AS total_paid_fees FROM visa_bookings WHERE payment_status = 'Paid'";
     
@@ -168,6 +186,29 @@ router.get('/total-not-paid-vs-fees', (req, res) => {
         if (err) {
             console.error("Database error:", err);
             return res.status(500).json({ message: "Error fetching total visa fees" });
+        }
+        res.json({ total_paid_fees: result[0].total_paid_fees });
+    });
+});
+
+router.get('/total-paid-ins-fees', (req, res) => {
+    const sql = "SELECT SUM(amount_to_pay) AS total_paid_fees FROM insurance_applications WHERE payment_status = 'Paid'";
+    
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ message: "Error fetching total insurance fees" });
+        }
+        res.json({ total_paid_fees: result[0].total_paid_fees });
+    });
+});
+router.get('/total-not-paid-ins-fees', (req, res) => {
+    const sql = "SELECT SUM(amount_to_pay) AS total_paid_fees FROM insurance_applications WHERE payment_status = 'Pending'";
+    
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ message: "Error fetching total insurance fees" });
         }
         res.json({ total_paid_fees: result[0].total_paid_fees });
     });
