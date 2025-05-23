@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Loading from '../Loading';
+import BookingPng from '../../assets/images/vb.png';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -31,8 +32,33 @@ const Home = () => {
     more_medical_condition: "",
     heard_policy: "",
     upload_signature: null,
+    amount_to_pay: 0,
 });
 const [ loading, setLoading ] = useState(false);
+const [ sevenDays, setSevenDays ] = useState(false);
+const [ fifteenDays, setFifteenDays ] = useState(false);
+const [ thirtyDays, setThirtyDays ] = useState(false);
+const [ ninetyDays, setNinetyDays ] = useState(false);
+const [ oneYear, setOneYear ] = useState(false);
+
+const calculateAmount = useCallback(() => {
+    let amount = 0;
+    if (sevenDays) amount += 15350;
+    if (fifteenDays) amount += 15350;
+    if (thirtyDays) amount += 43000;
+    if (ninetyDays) amount += 51000;
+    if (oneYear) amount += 95000;
+    return amount;
+  }, [sevenDays, fifteenDays, thirtyDays, ninetyDays, oneYear]); 
+
+  // Calculate amount whenever service selections change
+  useEffect(() => {
+      const newAmount = calculateAmount();
+      setFormData(prev => ({
+          ...prev,
+          amount_to_pay: newAmount
+      }));
+  }, [calculateAmount, sevenDays, fifteenDays, thirtyDays, ninetyDays, oneYear]);
 
 const handleChange = (e) => {
   const { name, type, value, checked, files } = e.target;
@@ -47,7 +73,29 @@ const handleChange = (e) => {
 
 const handleSubmit = async (e) => {
   e.preventDefault();
+
+  const currentAmount = calculateAmount();
+        const updatedFormData = {
+            ...formData,
+            amount_to_pay: currentAmount
+        };
   const formDataObj = new FormData();
+
+  // Append all form data (including files)
+  for (const key in updatedFormData) {
+    if (updatedFormData[key] !== null && updatedFormData[key] !== "") {
+        if (key === 'upload_signature' && updatedFormData[key] instanceof File) {
+            formDataObj.append(key, updatedFormData[key], updatedFormData[key].name);
+        } else {
+            formDataObj.append(key, updatedFormData[key]);
+        }
+    }
+}
+
+if (!updatedFormData.email || !updatedFormData.phone_number) {
+    alert('Please complete your contact information first');
+    return;
+}
 
   // Append text fields
   Object.keys(formData).forEach(key => {
@@ -94,8 +142,24 @@ const handleSubmit = async (e) => {
           medical_condition: "",
           more_medical_condition: "",
           heard_policy: "",
-          upload_signature: ""
+          upload_signature: "",
+          amount_to_pay: 0,
         });
+        if (response.ok) {
+            // Redirect to payment page with necessary details
+            navigate(`/complete-insurance`, {
+                state: {
+                    booking_id: data.id,
+                    first_name: formData.first_name,
+                    last_name: formData.last_name,
+                    phone_number: formData.phone_number,
+                    contact_email: formData.contact_email,
+                    amount_to_pay: formData.amount_to_pay,
+                },
+            });
+        } else {
+            alert(`Error: ${data.message}`);
+        }
         navigate(-1);
       }
       setMessage(data.message);
@@ -107,6 +171,7 @@ const handleSubmit = async (e) => {
     setLoading(false);
   }
 };
+
     if (loading) {
         return <Loading message='Submitting insurance application...' />;
     }
@@ -114,14 +179,50 @@ const handleSubmit = async (e) => {
     <>
         {loading && <Loading message='Submitting insurance application...'/>}
         <div className='container py-4'>
+            <div className='d-md-flex justify-content-center align-items-center'>
+            <img src={BookingPng} alt="Booking" className='w-100' />
+            </div>
+            <div>
             <h2 className='mb-3'>Travel Insurance Application</h2>
             <h6 style={{fontStyle: 'italic', fontWeight: 'bolder'}}>Please read the declaration below before filling the form:</h6>
             <p>
             a) I/We desire to effect insurance in the terms of the usual policy of health insurance and declare that the above statements and particulars are true. I/We further declare that this proposal shall be the basis of the contract between me/us and the company and that I/We will not expect any additional payment from the company for claims exceeding the maximum amount of liability.<br/><br/>
             b) I further declare that all insured person(s) is in good state of health and fit to travel
             </p>
+            </div>
             {message && <p className="text-center text-red-500">{message}</p>}
             <form style={{fontSize: '0.8rem'}} onSubmit={handleSubmit}>
+            <div className='d-md-flex mb-3 bg-white rounded shadow'>
+                <div className='col-12 col-md-12 d-flex flex-column gap-1 py-4 px-2'>
+                    <h6>Select insurance coverage you would like to apply for and the system will auto-generate your charges</h6>
+                    <div className='bg-primary-subtle p-2 rounded d-flex gap-2 justify-content-center align-items-center' style={{width: '220px'}}>
+                        <span className='fw-bold'>Amount: </span> <span className='fw-bold'>&#x20A6;{Number(formData.amount_to_pay).toLocaleString()}</span>
+                    </div>
+                    <div className='d-md-flex gap-2 p-2'>
+                        <div className='d-md-flex mb-3 justify-content-center align-items-center gap-2'>
+                        <input type='radio' name='insurance_coverage' onChange={(e) => { setSevenDays(true); setFifteenDays(false); setThirtyDays(false); setNinetyDays(false); setOneYear(false); }} />
+                        <label>7 Days: &#x20A6;15,350</label>
+                        </div>
+                        <div className='d-md-flex mb-3 justify-content-center align-items-center gap-2'>
+                        <input type='radio' name='insurance_coverage' onChange={(e) => { setSevenDays(false); setFifteenDays(true); setThirtyDays(false); setNinetyDays(false); setOneYear(false); }} />
+                        <label>15 Days: &#x20A6;15,350</label>
+                        </div>
+                        <div className='d-md-flex mb-3 justify-content-center align-items-center gap-2'>
+                        <input type='radio' name='insurance_coverage' onChange={(e) => { setSevenDays(false); setFifteenDays(false); setThirtyDays(true); setNinetyDays(false); setOneYear(false); }} />
+                        <label>30 Days: &#x20A6;43,000</label>
+                        </div>
+                        <div className='d-md-flex mb-3 justify-content-center align-items-center gap-2'>
+                        <input type='radio' name='insurance_coverage' onChange={(e) => { setSevenDays(false); setFifteenDays(false); setThirtyDays(false); setNinetyDays(true); setOneYear(false); }} />
+                        <label>90 Days: &#x20A6;51,000</label>
+                        </div>
+                        <div className='d-md-flex mb-3 justify-content-center align-items-center gap-2'>
+                        <input type='radio' name='insurance_coverage' onChange={(e) => { setSevenDays(false); setFifteenDays(false); setThirtyDays(false); setNinetyDays(false); setOneYear(true); }} />
+                        <label>1 Year: &#x20A6;95,000</label>
+                        </div>
+                    </div>
+                    <span className='text-danger' style={{fontSize: '0.8rem'}}>*For coverage more than 35K and years more than 60 years. Please chat our support for price</span>
+                </div>
+            </div>
             <div className='d-md-flex mb-3 bg-white rounded shadow'>
                 <div className='col-12 col-md-4 d-flex flex-column gap-1 py-4 px-2'>
                     <label>First Name</label>
@@ -320,6 +421,7 @@ const handleSubmit = async (e) => {
                     <input name='upload_signature' type='file' onChange={handleChange} className='p-2 rounded bg-secondary-subtle border-0' required/>
                 </div>
             </div>
+            <input name='amount_to_pay' type='hidden' value={formData.amount_to_pay} onChange={handleChange} />
             <div className="text-start mt-3">
                     <button 
                         type="submit" 

@@ -7,6 +7,10 @@ const Accounting = () => {
     const [totalNotPaid, setTotalNotPaid] = useState(0);
     const [totalPaidPermit, setTotalPaidPermit] = useState(0);
     const [totalNotPaidPermit, setTotalNotPaidPermit] = useState(0);
+    const [totalPaidVSFees, setTotalPaidVSFees] = useState(0);
+    const [totalNotPaidVSFees, setTotalNotPaidVSFees] = useState(0);
+    const [totalPaidIFees, setTotalPaidIFees] = useState(0);
+    const [totalNotPaidIFees, setTotalNotPaidIFees] = useState(0);
     const [ allPayment, setAllPayment ] = useState(0);
 
     useEffect(() => {
@@ -41,11 +45,39 @@ const Accounting = () => {
             .catch(error => {
                 console.error("Error fetching total visa fees:", error);
             });
+            axios.get('https://toogood-1.onrender.com/admin/total-paid-vs-fees') 
+            .then(response => {
+                setTotalPaidVSFees(response.data.total_paid_fees || 0);
+            })
+            .catch(error => {
+                console.error("Error fetching total visa fees:", error);
+            });
+            axios.get('https://toogood-1.onrender.com/admin/total-not-paid-vs-fees') 
+            .then(response => {
+                setTotalNotPaidVSFees(response.data.total_paid_fees || 0);
+            })
+            .catch(error => {
+                console.error("Error fetching total visa fees:", error);
+            });
+            axios.get('https://toogood-1.onrender.com/admin/total-paid-ins-fees') 
+            .then(response => {
+                setTotalPaidIFees(response.data.total_paid_fees || 0);
+            })
+            .catch(error => {
+                console.error("Error fetching total visa fees:", error);
+            });
+            axios.get('https://toogood-1.onrender.com/admin/total-not-paid-ins-fees') 
+            .then(response => {
+                setTotalNotPaidIFees(response.data.total_paid_fees || 0);
+            })
+            .catch(error => {
+                console.error("Error fetching total visa fees:", error);
+            });
     }, []);
 
     useEffect(() => {
-        setAllPayment(totalPaidFees + totalPaidPermit);
-    }, [totalPaidFees, totalPaidPermit]); 
+        setAllPayment(totalPaidFees + totalPaidPermit + totalPaidVSFees + totalPaidIFees);
+    }, [totalPaidFees, totalPaidPermit, totalPaidVSFees, totalPaidIFees]); 
   return (
     
     <>
@@ -88,6 +120,34 @@ const Accounting = () => {
                 <Link to='../not-paid-permit' className='bg-secondary-subtle rounded-pill shadow text-decoration-none'>
                 <div style={{background: '#fff', fontSize: '0.8rem', width: '200px', color: 'GrayText'}} className='shadow rounded-pill p-2 text-center'>Check list</div>
                 </Link>
+            </div>
+        </div>
+    </div>
+    <div className='d-md-flex col-12 mb-4'>
+        <div className='col-12 col-md-6 p-4 rounded'>
+            <div className='p-4 d-flex flex-column bg-white shadow justify-content-center gap-2 align-items-center'>
+                <div className='fw-bold text-xl text-center text-secondary'>Paid Visa Support</div>
+                <div className='text-dark fw-bold'>&#x20A6;{Number(totalPaidVSFees).toLocaleString()}</div>
+            </div>
+        </div>
+        <div className='col-12 col-md-6 p-4 rounded'>
+            <div className='p-4 d-flex flex-column bg-white shadow justify-content-center gap-2 align-items-center'>
+                <div className='fw-bold text-xl text-center text-secondary'>Pending Visa Support Payment</div>
+                <div className='text-dark fw-bold'>&#x20A6;{Number(totalNotPaidVSFees).toLocaleString()}</div>
+            </div>
+        </div>
+    </div>
+    <div className='d-md-flex col-12 mb-4'>
+        <div className='col-12 col-md-6 p-4 rounded'>
+            <div className='p-4 d-flex flex-column bg-white shadow justify-content-center gap-2 align-items-center'>
+                <div className='fw-bold text-xl text-center text-secondary'>Paid Insurance</div>
+                <div className='text-dark fw-bold'>&#x20A6;{Number(totalPaidIFees).toLocaleString()}</div>
+            </div>
+        </div>
+        <div className='col-12 col-md-6 p-4 rounded'>
+            <div className='p-4 d-flex flex-column bg-white shadow justify-content-center gap-2 align-items-center'>
+                <div className='fw-bold text-xl text-center text-secondary'>Pending Insurance Payment</div>
+                <div className='text-dark fw-bold'>&#x20A6;{Number(totalNotPaidIFees).toLocaleString()}</div>
             </div>
         </div>
     </div>

@@ -6,6 +6,7 @@ import VisaDetails from "./VisaDetails";
 import Accounting from "./Accounting";
 import PermitDetails from "./PermitDetails";
 import InsuranceDetails from "./InsuranceDetails";
+import VisaSupportDetails from "./VisaSupportDetails";
 
 const AdminDashboard = () => {
     const [isLogin, setLogin] = useState(true);
@@ -86,7 +87,7 @@ const AdminDashboard = () => {
                             <div className="bg-danger rounded-pill text-white p-2 w-50 mt-3 mb-3 text-center" onClick={closeIns} style={{cursor: 'pointer'}}>Close</div>
                         </div>
                     ) : ('')}
-                <div className="spacer"></div>
+                <div className="h-[10px]"></div>
                 {
                     showVSbtn ? (
                         <div className="bg-secondary-subtle p-2 rounded-pill w-50 text-center" onClick={showVSB} style={{cursor: 'pointer'}}>Check VS Applications</div>
@@ -95,7 +96,7 @@ const AdminDashboard = () => {
                 <div className="spacer"></div>
                     {showVS ? (
                         <div>
-                            <InsuranceDetails />
+                            <VisaSupportDetails />
                             <div className="bg-danger rounded-pill text-white p-2 w-50 mt-3 mb-3 text-center" onClick={closeVS} style={{cursor: 'pointer'}}>Close</div>
                         </div>
                     ) : ('')}
