@@ -184,10 +184,7 @@ router.get('/all', authenticateAdmin, (req, res) => {
                 error: err.message
             });
         }
-        res.json({
-            success: true,
-            data: results
-        });
+        res.json(results);
     });
 });
 
