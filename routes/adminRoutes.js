@@ -187,7 +187,7 @@ router.get('/total-not-paid-vs-fees', (req, res) => {
             console.error("Database error:", err);
             return res.status(500).json({ message: "Error fetching total visa fees" });
         }
-        res.json({ total_paid_fees: result[0].total_paid_fees });
+        res.json({ total_pnot_aid_fees: result[0].total_not_paid_fees });
     });
 });
 
@@ -210,7 +210,7 @@ router.get('/total-not-paid-ins-fees', (req, res) => {
             console.error("Database error:", err);
             return res.status(500).json({ message: "Error fetching total insurance fees" });
         }
-        res.json({ total_paid_fees: result[0].total_paid_fees });
+        res.json({ total_not_paid_fees: result[0].total_not_paid_fees });
     });
 });
 
