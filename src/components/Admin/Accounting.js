@@ -76,7 +76,11 @@ const Accounting = () => {
     }, []);
 
     useEffect(() => {
-        const cleanNumber = (value) => Number((value || '0').toString().replace(/,/g, ''));
+        const cleanNumber = (value) => {
+            if (!value) return 0;
+            if (typeof value === 'number') return value;
+            return Number(value.toString().replace(/,/g, '').trim()) || 0;
+        };
     
         setAllPayment(
             cleanNumber(totalPaidFees) +
@@ -85,6 +89,7 @@ const Accounting = () => {
             cleanNumber(totalPaidIFees)
         );
     }, [totalPaidFees, totalPaidPermit, totalPaidVSFees, totalPaidIFees]);
+    
   return (
     
     <>
