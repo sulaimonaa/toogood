@@ -58,7 +58,7 @@ const InsuranceDetails = () => {
                                 <td className='p-2 border-secondary-subtle border text-center'>{visa.phone_number}</td>
                                 <td className='p-2 border-secondary-subtle border text-center'>{visa.upload_signature}</td>
                                 <td className='p-2 border-secondary-subtle border text-center'>{visa.payment_status}</td>
-                                <td>
+                                <td className='p-2 border-secondary-subtle border text-center'>
                                 {visa.payment_status === 'Pending' && (
                                             <button 
                                                 className='border-0 bg-primary rounded-pill text-white px-2 ms-3' 
