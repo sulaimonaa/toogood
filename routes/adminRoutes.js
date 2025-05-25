@@ -180,7 +180,7 @@ router.get('/total-paid-vs-fees', (req, res) => {
     });
 });
 router.get('/total-not-paid-vs-fees', (req, res) => {
-    const sql = "SELECT SUM(amount_to_pay) AS total_paid_fees FROM visa_bookings WHERE payment_status = 'Pending'";
+    const sql = "SELECT SUM(amount_to_pay) AS total_not_paid_fees FROM visa_bookings WHERE payment_status = 'Pending'";
     
     db.query(sql, (err, result) => {
         if (err) {
@@ -192,7 +192,7 @@ router.get('/total-not-paid-vs-fees', (req, res) => {
 });
 
 router.get('/total-paid-ins-fees', (req, res) => {
-    const sql = "SELECT SUM(amount_to_pay) AS total_paid_fees FROM insurance_applications WHERE payment_status = 'Paid'";
+    const sql = "SELECT SUM(amount_to_pay) AS total_paid_fees FROM insurance_applications WHERE payment_status = 'Paid' OR payment_status = ''";
     
     db.query(sql, (err, result) => {
         if (err) {
@@ -203,7 +203,7 @@ router.get('/total-paid-ins-fees', (req, res) => {
     });
 });
 router.get('/total-not-paid-ins-fees', (req, res) => {
-    const sql = "SELECT SUM(amount_to_pay) AS total_paid_fees FROM insurance_applications WHERE payment_status = 'Pending'";
+    const sql = "SELECT SUM(amount_to_pay) AS total_not-paid_fees FROM insurance_applications WHERE payment_status = 'Pending'";
     
     db.query(sql, (err, result) => {
         if (err) {
