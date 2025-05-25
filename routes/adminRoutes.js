@@ -192,7 +192,7 @@ router.get('/total-not-paid-vs-fees', (req, res) => {
 });
 
 router.get('/total-paid-ins-fees', (req, res) => {
-    const sql = "SELECT SUM(amount_to_pay) AS total_paid_fees FROM insurance_applications WHERE payment_status IN ('Paid', '')";
+    const sql = "SELECT SUM(amount_to_pay) AS total_paid_fees FROM insurance_applications WHERE payment_status = ''";
     
     db.query(sql, (err, result) => {
         if (err) {
