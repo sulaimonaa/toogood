@@ -54,7 +54,7 @@ const Accounting = () => {
             });
             axios.get('https://toogood-1.onrender.com/admin/total-not-paid-vs-fees') 
             .then(response => {
-                setTotalNotPaidVSFees(response.data.total_paid_fees || 0);
+                setTotalNotPaidVSFees(response.data.total_not_paid_fees || 0);
             })
             .catch(error => {
                 console.error("Error fetching total visa fees:", error);
@@ -68,7 +68,7 @@ const Accounting = () => {
             });
             axios.get('https://toogood-1.onrender.com/admin/total-not-paid-ins-fees') 
             .then(response => {
-                setTotalNotPaidIFees(response.data.total_paid_fees || 0);
+                setTotalNotPaidIFees(response.data.total_not_paid_fees || 0);
             })
             .catch(error => {
                 console.error("Error fetching total visa fees:", error);
