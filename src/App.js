@@ -62,6 +62,7 @@ import VisaADB from './components/Visa/VisaADB'
 import VisaAR from './components/Visa/VisaAR'
 import Dashboard2 from './components/Dashboard2'
 import SuccessfulPayments from './components/SuccessfulPayments'
+import CompleteInsurance from './components/Insurance/CompleteInsurance'
 
 const App = () => {
   return (
@@ -127,6 +128,7 @@ const App = () => {
         <Route path='/insurance' element={<Insurance />} />
         <Route path='/visa-support' element={<Itinerary />} />
         <Route path='/successful-payment' element={<SuccessfulPayments />} />
+        <Route path='/complete-insurance' element={ <CompleteInsurance />} />
       </Routes>
     </Router>
   )

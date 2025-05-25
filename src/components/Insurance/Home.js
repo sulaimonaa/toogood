@@ -44,7 +44,7 @@ const [ oneYear, setOneYear ] = useState(false);
 const calculateAmount = useCallback(() => {
     let amount = 0;
     if (sevenDays) amount += 15350;
-    if (fifteenDays) amount += 15350;
+    if (fifteenDays) amount += 25350;
     if (thirtyDays) amount += 43000;
     if (ninetyDays) amount += 51000;
     if (oneYear) amount += 95000;
@@ -92,15 +92,15 @@ const handleSubmit = async (e) => {
     }
 }
 
-if (!updatedFormData.email || !updatedFormData.phone_number) {
+if (!updatedFormData.contact_email || !updatedFormData.phone_number) {
     alert('Please complete your contact information first');
     return;
 }
 
   // Append text fields
-  Object.keys(formData).forEach(key => {
-      formDataObj.append(key, formData[key]);
-  });
+//   Object.keys(formData).forEach(key => {
+//       formDataObj.append(key, formData[key]);
+//   });
 
   setLoading(true);
 
@@ -116,7 +116,6 @@ if (!updatedFormData.email || !updatedFormData.phone_number) {
 
       const data = await response.json();
       if (response.ok) {
-        alert("Application submitted successfully!");
         setFormData({  
           first_name: "",
           middle_name: "",
@@ -142,7 +141,7 @@ if (!updatedFormData.email || !updatedFormData.phone_number) {
           medical_condition: "",
           more_medical_condition: "",
           heard_policy: "",
-          upload_signature: "",
+          upload_signature: null,
           amount_to_pay: 0,
         });
         if (response.ok) {
@@ -160,7 +159,6 @@ if (!updatedFormData.email || !updatedFormData.phone_number) {
         } else {
             alert(`Error: ${data.message}`);
         }
-        navigate(-1);
       }
       setMessage(data.message);
       console.log(data);
@@ -179,7 +177,8 @@ if (!updatedFormData.email || !updatedFormData.phone_number) {
     <>
         {loading && <Loading message='Submitting insurance application...'/>}
         <div className='container py-4'>
-            <div className='d-md-flex justify-content-center align-items-center'>
+            <div className='d-md-flex justify-content-center align-items-center gap-2'>
+            <div>
             <img src={BookingPng} alt="Booking" className='w-100' />
             </div>
             <div>
@@ -189,6 +188,7 @@ if (!updatedFormData.email || !updatedFormData.phone_number) {
             a) I/We desire to effect insurance in the terms of the usual policy of health insurance and declare that the above statements and particulars are true. I/We further declare that this proposal shall be the basis of the contract between me/us and the company and that I/We will not expect any additional payment from the company for claims exceeding the maximum amount of liability.<br/><br/>
             b) I further declare that all insured person(s) is in good state of health and fit to travel
             </p>
+            </div>
             </div>
             {message && <p className="text-center text-red-500">{message}</p>}
             <form style={{fontSize: '0.8rem'}} onSubmit={handleSubmit}>
@@ -205,7 +205,7 @@ if (!updatedFormData.email || !updatedFormData.phone_number) {
                         </div>
                         <div className='d-md-flex mb-3 justify-content-center align-items-center gap-2'>
                         <input type='radio' name='insurance_coverage' onChange={(e) => { setSevenDays(false); setFifteenDays(true); setThirtyDays(false); setNinetyDays(false); setOneYear(false); }} />
-                        <label>15 Days: &#x20A6;15,350</label>
+                        <label>15 Days: &#x20A6;25,350</label>
                         </div>
                         <div className='d-md-flex mb-3 justify-content-center align-items-center gap-2'>
                         <input type='radio' name='insurance_coverage' onChange={(e) => { setSevenDays(false); setFifteenDays(false); setThirtyDays(true); setNinetyDays(false); setOneYear(false); }} />
