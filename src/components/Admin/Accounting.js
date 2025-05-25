@@ -76,11 +76,15 @@ const Accounting = () => {
     }, []);
 
     useEffect(() => {
-        setAllPayment((Number(totalPaidFees) || 0) +
-        (Number(totalPaidPermit) || 0) +
-        (Number(totalPaidVSFees) || 0) +
-        (Number(totalPaidIFees) || 0));
-    }, [totalPaidFees, totalPaidPermit, totalPaidVSFees, totalPaidIFees]); 
+        const cleanNumber = (value) => Number((value || '0').toString().replace(/,/g, ''));
+    
+        setAllPayment(
+            cleanNumber(totalPaidFees) +
+            cleanNumber(totalPaidPermit) +
+            cleanNumber(totalPaidVSFees) +
+            cleanNumber(totalPaidIFees)
+        );
+    }, [totalPaidFees, totalPaidPermit, totalPaidVSFees, totalPaidIFees]);
   return (
     
     <>
