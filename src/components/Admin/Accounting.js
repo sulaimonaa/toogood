@@ -76,7 +76,10 @@ const Accounting = () => {
     }, []);
 
     useEffect(() => {
-        setAllPayment(totalPaidFees + totalPaidPermit + totalPaidVSFees + totalPaidIFees);
+        setAllPayment((Number(totalPaidFees) || 0) +
+        (Number(totalPaidPermit) || 0) +
+        (Number(totalPaidVSFees) || 0) +
+        (Number(totalPaidIFees) || 0));
     }, [totalPaidFees, totalPaidPermit, totalPaidVSFees, totalPaidIFees]); 
   return (
     
