@@ -113,6 +113,34 @@ router.delete('/delete-agent/:agent_id', authenticateAdmin, (req, res) => {
     });
 });
 
+// Delete visa application
+router.delete('/delete-application/:visa_id', authenticateAdmin, (req, res) => {
+    const { visa_id } = req.params;
+
+    const sql = "DELETE FROM visa_applications WHERE id = ?";
+    db.query(sql, [visa_id], (err, result) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ message: "Error deleting agent" });
+        }
+        res.json({ success: "Visa application deleted successfully" });
+    });
+});
+
+// Delete permit application
+router.delete('/delete-permit/:visa_id', authenticateAdmin, (req, res) => {
+    const { visa_id } = req.params;
+
+    const sql = "DELETE FROM permit_applications WHERE id = ?";
+    db.query(sql, [visa_id], (err, result) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ message: "Error deleting agent" });
+        }
+        res.json({ success: "Permit application deleted successfully" });
+    });
+});
+
 // Update payment status
 router.put('/payment-update/:visa_id', authenticateAdmin, (req, res) => {
     const { visa_id } = req.params;
