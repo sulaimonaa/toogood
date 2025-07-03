@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import { FaEye, FaTrash } from 'react-icons/fa'
 
 const PermitDetails = () => {
     const [allVisa, setAllVisa] = useState([]);
@@ -47,7 +48,7 @@ const PermitDetails = () => {
         })
         .catch(error => console.error("Error deleting permit application:", error));
     };
-    
+
   return (
     <>
         <div className='container d-md-flex gap-2'>
@@ -74,10 +75,10 @@ const PermitDetails = () => {
                                 <td className='p-2 border-secondary-subtle border text-center'>{visa.visa_status}</td>
                                 <td className='p-2 border-secondary-subtle border text-center'>
                                     <Link to={`../visa-status/${visa.id}`} className='border-0 p-2 bg-primary text-white text-decoration-none rounded-pill'>
-                                        <i className="bi bi-eye"></i>
+                                        <FaEye className='text-white' />
                                     </Link>
                                     <button onClick={() => handleDelete(visa.id)} style={{ background: 'red', color: "#fff", fontSize: '0.8rem' }} className="border-0 py-1 px-2 rounded mx-1">
-                                        <i className="bi bi-trash text-white"></i>
+                                        <FaTrash className='text-white' />
                                     </button>
                                 </td>
                             </tr>

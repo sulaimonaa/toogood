@@ -2,6 +2,7 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import { FaEye, FaTrash } from 'react-icons/fa'
 
 const VisaList = () => {
     const [allVisa, setAllVisa] = useState([]);
@@ -52,11 +53,11 @@ const VisaList = () => {
                                 <td className='p-2 border-secondary-subtle border text-center'>{visa.payment_status}</td>
                                 <td className='p-2 border-secondary-subtle border text-center'>{visa.visa_status}</td>
                                 <td className='p-2 border-secondary-subtle border text-center'>
-                                    <Link to={`../visa-status/${visa.id}`} className='border-0 p-2 bg-primary text-white text-decoration-none rounded-pill'>
-                                        <i className="bi bi-eye"></i>
+                                <Link to={`../visa-status/${visa.id}`} className='border-0 p-2 bg-primary text-white text-decoration-none rounded-pill'>
+                                        <FaEye className='text-white' />
                                     </Link>
                                     <button onClick={() => handleDelete(visa.id)} style={{ background: 'red', color: "#fff", fontSize: '0.8rem' }} className="border-0 py-1 px-2 rounded mx-1">
-                                        <i className="bi bi-trash text-white"></i>
+                                        <FaTrash className='text-white' />
                                     </button>
                                 </td>
                             </tr>
