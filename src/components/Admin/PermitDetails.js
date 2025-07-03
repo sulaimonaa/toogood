@@ -35,6 +35,19 @@ const PermitDetails = () => {
         .then(response => setDeniedVisa(response.data))
         .catch(error => console.error("Error fetching denied visa:", error));
     }, [token]);
+
+    const handleDelete = (visaId) => {
+        if (!window.confirm("Are you sure you want to delete this permit application?")) return;
+
+        axios.delete(`https://toogood-1.onrender.com/admin/delete-permit/${visaId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+        .then(() => {
+            setAllVisa(allVisa.filter(visa => visa.id !== visaId));
+        })
+        .catch(error => console.error("Error deleting permit application:", error));
+    };
+    
   return (
     <>
         <div className='container d-md-flex gap-2'>
@@ -60,9 +73,12 @@ const PermitDetails = () => {
                                 <td className='p-2 border-secondary-subtle border text-center'>{visa.payment_status}</td>
                                 <td className='p-2 border-secondary-subtle border text-center'>{visa.visa_status}</td>
                                 <td className='p-2 border-secondary-subtle border text-center'>
-                                    <Link to={`../permit-status/${visa.id}`} className='border-0 p-2 bg-primary text-white text-decoration-none rounded-pill'>
-                                        Check
+                                    <Link to={`../visa-status/${visa.id}`} className='border-0 p-2 bg-primary text-white text-decoration-none rounded-pill'>
+                                        <i className="bi bi-eye"></i>
                                     </Link>
+                                    <button onClick={() => handleDelete(visa.id)} style={{ background: 'red', color: "#fff", fontSize: '0.8rem' }} className="border-0 py-1 px-2 rounded mx-1">
+                                        <i className="bi bi-trash text-white"></i>
+                                    </button>
                                 </td>
                             </tr>
                         ))
