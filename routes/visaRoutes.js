@@ -436,4 +436,34 @@ router.post('/track-visa', (req, res) => {
     });
 });
 
+router.put('/upload/:id', upload.fields([{ name: "visa_file", maxCount: 1 }]), authenticateAdmin, (req, res) => {
+    const { id } = req.params;
+    
+    // Get the uploaded file - Multer puts files in req.files, not req.body
+    const permitFile = req.files?.visa_file?.[0];
+    
+    if (!permitFile) {
+        return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    // Assuming you want to store the file path or filename in the database
+    const filePath = permitFile.path; // or permitFile.filename depending on your storage
+
+    const sql = `UPDATE visa_applications SET visa_file = ? WHERE id = ?`;
+    const values = [filePath, id];
+    
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ message: "Error updating permit application" });
+        }
+        
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Visa application not found" });
+        }
+        
+        res.json({ message: "Visa file uploaded successfully", data: result });
+    });
+});
+
 module.exports = router;
