@@ -51,6 +51,42 @@ const PermitStatus = () => {
         .catch(error => console.error("Error updating status:", error));
     };
 
+const [permitFile, setPermitFile] = useState(null);
+
+const handleChange = (e) => {
+    const file = e.target.files[0];
+    setPermitFile(file);
+}
+
+const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!permitFile) {
+        alert("Please select a file to upload.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('permit_file', permitFile);
+    
+    axios.put(`https://toogood-1.onrender.com/permit/upload/${status.id}`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`
+        }
+    })
+    .then(response => {
+        console.log("Permit file uploaded successfully:", response.data);
+        setStatus(prevStatus => ({
+            ...prevStatus,
+            permit_file: response.data.data 
+        }));
+        alert("File uploaded successfully!");
+    })
+    .catch(error => {
+        console.error("Error uploading permit file:", error);
+        alert("Error uploading file. Please try again.");
+    });
+}
     return (
         <>
             <div className='container-fluid'>
@@ -96,7 +132,7 @@ const PermitStatus = () => {
                                     {status?.passport_number} 
                                 </div>
                             </div>
-                            {['data_page', 'passport_photograph', 'utility_bill', 'supporting_document', 'other_document'].map((key) => (
+                            {['data_page', 'passport_photograph', 'utility_bill', 'supporting_document', 'other_document', 'permit_file'].map((key) => (
                             status?.[key] && (
                                 <div key={key} className='d-flex gap-0 align-items-center'>
                                     <div className='bg-dark text-white p-2 w-25'>{key.replace('_', ' ').toUpperCase()}</div>
@@ -127,6 +163,10 @@ const PermitStatus = () => {
                                 </div>
                                 <div className='bg-secondary-subtle p-2 w-75'>
                                 {(status?.visa_status === 'Pending') ? (<div className='d-flex gap-2'><button className='border-0 bg-success rounded-pill text-white px-2 ms-3' onClick={() => visaStatus(status?.id, "Approved")}>Change to Approved</button><button className='border-0 bg-danger rounded-pill text-white px-2 ms-3' onClick={() => visaStatus(status?.id, "Denied")}>Change to Denied</button></div>) : ('')}
+                                {(status?.visa_status === 'Approved') ? (<form onSubmit={handleSubmit}>
+                                                                                <input type='file' name='permit_file' id='permitFileInput' onChange={handleChange} />
+                                                                                <button className='border-0 bg-secondary rounded-pill text-black px-2'>Upload Permit</button>
+                                                                            </form>) : ('')}
                                 </div>
                             </div>
                         </div>
