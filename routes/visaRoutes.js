@@ -285,19 +285,26 @@ router.post("/application", upload.fields([
                         <p style="color: #555;">Thank you for submitting your visa application.</p>
 
                         <div style="background-color: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ddd;">
-                            <h3 style="color: #333;">Application Details:</h3>
-                            <ul style="padding-left: 20px;">
-                                <li><strong>Full Name:</strong> ${first_name} ${middle_name} ${last_name}</li>
-                                <li><strong>Phone Number:</strong> ${phone_number}</li>
-                                <li><strong>Email:</strong> ${contact_email}</li>
-                                <li><strong>Passport Number:</strong> ${passport_number}</li>
-                                <li><strong>Destination:</strong> ${visa_destination}</li>
-                                <li><strong>Tracking ID:</strong> ${tracking_id}</li>
-                                <li><strong>Processing Fee:</strong> ${visa_fee}</li>
-                                <li><strong>Process Time:</strong> ${process_time}</li>
-                                <li><strong>Process Type:</strong> ${process_type}</li>
-                                <li><strong>Passport Data Page:</strong> <a href="https://toogood-1.onrender.com/uploads/${data_page}"">Download/View</a></li>
-                            </ul>
+                            <h3 style="color: #333;margin-bottom: 10px;">Application Details:</h3>
+                            <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                                <div>
+                                    <img src="https://toogood-1.onrender.com/uploads/${passport_photograph}" alt="Your passport photograph" style="width: 80px; height: 100px; margin-bottom: 10px;">
+                                </div>
+                                <div>
+                                    <ul style="padding: 20px; border-radius: 10px; border: 1px solid #ccc;">
+                                        <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Full Name:</strong> ${first_name} ${middle_name} ${last_name}</li>
+                                        <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Phone Number:</strong> ${phone_number}</li>
+                                        <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Email:</strong> ${contact_email}</li>
+                                        <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Passport Number:</strong> ${passport_number}</li>
+                                        <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Destination:</strong> ${visa_destination}</li>
+                                        <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Tracking ID:</strong> ${tracking_id}</li>
+                                        <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Processing Fee:</strong> ${visa_fee}</li>
+                                        <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Process Time:</strong> ${process_time}</li>
+                                        <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Process Type:</strong> ${process_type}</li>
+                                        <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Passport Data Page:</strong> <a href="https://toogood-1.onrender.com/uploads/${data_page}">Download/View</a></li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
 
                         <p style="color: #555; margin-top: 20px;">We will review your application and get back to you soon.</p>
