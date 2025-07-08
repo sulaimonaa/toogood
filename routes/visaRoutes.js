@@ -278,8 +278,11 @@ router.post("/application", upload.fields([
                 from: '"Too Good Travels" <noreply@toogoodtravels.net>',
                 to: contact_email, 
                 cc:"toogoodtravelsnigeria@gmail.com",
-                subject: "Visa Application Submitted Successfully",
+                subject: "Your Visa Application Was Successful",
                 html: `
+                    <div style="display:none;">
+                        ${Math.random().toString(36).substring(2)} 
+                    </div>
                     <div style="padding: 20px; font-family: Arial, sans-serif; background-color: #f8f8f8; border-radius: 5px;">
                         <h2 style="color: #333;">Dear ${first_name} ${last_name},</h2>
                         <p style="color: #555;">Thank you for submitting your visa application.</p>
