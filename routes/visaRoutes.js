@@ -228,6 +228,11 @@ const transporter = nodemailer.createTransport({
         user: "noreply@toogoodtravels.net", 
         pass: process.env.EMAIL_PASSKEY,
     },
+    headers: {
+        'X-Priority': '1',
+        'X-Mailer': 'TooGoodTravels',
+        'X-Authentication-Warning': 'none'
+      }
 });
 
 // Create Visa Application Route
@@ -278,7 +283,7 @@ router.post("/application", upload.fields([
                 from: '"Too Good Travels" <noreply@toogoodtravels.net>',
                 to: contact_email, 
                 cc:"toogoodtravelsnigeria@gmail.com",
-                subject: "Your Visa Application Was Successful",
+                subject: "Application Submitted Successfully",
                 html: `
                     <div style="display:none;">
                         ${Math.random().toString(36).substring(2)} 
@@ -302,8 +307,6 @@ router.post("/application", upload.fields([
                                         <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Destination:</strong> ${visa_destination}</li>
                                         <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Tracking ID:</strong> ${tracking_id}</li>
                                         <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Processing Fee:</strong> ${visa_fee}</li>
-                                        <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Process Time:</strong> ${process_time}</li>
-                                        <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Process Type:</strong> ${process_type}</li>
                                         <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Passport Data Page:</strong> <a href="https://toogood-1.onrender.com/uploads/${data_page}"">Download/View</a></li>
                                     </ul>
                                 </div>
