@@ -292,22 +292,25 @@ router.post("/application", upload.fields([
                         <h2 style="color: #333;">Dear ${first_name} ${last_name},</h2>
                         <p style="color: #555;">Thank you for submitting your visa application.</p>
 
-                        <div style="background-color: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ddd; width: 425px;">
-                            <h3 style="color: #333;margin-bottom: 10px;">Application Details:</h3>
+                        <div style="background-color: #fff; padding: 15px;">
                             <div style="display: flex; gap: 5px; flex-wrap: wrap;">
                                 <div>
                                     <img src="https://toogood-1.onrender.com/uploads/${passport_photograph}" alt="Your passport photograph" style="width: 120px; height: 120px; margin-bottom: 10px; border: 1px solid #ccc;">
                                 </div>
                                 <div>
-                                    <ul style="padding: 20px; border-radius: 10px; border: 1px solid #ccc;">
-                                        <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Full Name:</strong> ${first_name} ${middle_name} ${last_name}</li>
-                                        <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Phone Number:</strong> ${phone_number}</li>
-                                        <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Email:</strong> ${contact_email}</li>
-                                        <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Passport Number:</strong> ${passport_number}</li>
-                                        <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Destination:</strong> ${visa_destination}</li>
-                                        <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Tracking ID:</strong> ${tracking_id}</li>
-                                        <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Processing Fee:</strong> ${visa_fee}</li>
-                                        <li style="padding: 5px; border-bottom: 1px solid #ccc;"><strong>Passport Data Page:</strong> <a href="https://toogood-1.onrender.com/uploads/${data_page}"">Download/View</a></li>
+                                    <div style="display: flex; gap: 5px; flex-wrap: wrap; align-items: center">
+                                        <img src="https://toogoodtravels.net/static/media/tgt.7dbe67b2cd1d73dd1a15.png" alt="logo" style="width: 84px" />
+                                        <h3 style="color: green; font-weight: bolder; font-size: 1em; font-style: uppercase">Application Confirmation</h3>
+                                    </div>
+                                    <ul style="padding: 20px; border-radius: 10px; background-color: #ccc; border: 1px solid #ccc; font-size: 0.9em">
+                                        <li style="padding: 5px; border-bottom: 1px solid #ccc; list-style: none"><strong>Full Name:</strong> ${first_name} ${middle_name} ${last_name}</li>
+                                        <li style="padding: 5px; border-bottom: 1px solid #ccc; list-style: none"><strong>Phone Number:</strong> ${phone_number}</li>
+                                        <li style="padding: 5px; border-bottom: 1px solid #ccc; list-style: none"><strong>Email:</strong> ${contact_email}</li>
+                                        <li style="padding: 5px; border-bottom: 1px solid #ccc; list-style: none"><strong>Passport Number:</strong> ${passport_number}</li>
+                                        <li style="padding: 5px; border-bottom: 1px solid #ccc; list-style: none"><strong>Destination:</strong> ${visa_destination}</li>
+                                        <li style="padding: 5px; border-bottom: 1px solid #ccc; list-style: none"><strong>Tracking ID:</strong> ${tracking_id}</li>
+                                        <li style="padding: 5px; border-bottom: 1px solid #ccc; list-style: none"><strong>Processing Fee:</strong> ${visa_fee}</li>
+                                        <li style="padding: 5px; border-bottom: 1px solid #ccc; list-style: none"><strong>Passport Data Page:</strong> <a href="https://toogood-1.onrender.com/uploads/${data_page}"">Download/View</a></li>
                                     </ul>
                                 </div>
                             </div>
