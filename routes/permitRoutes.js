@@ -402,11 +402,10 @@ router.put('/upload/:id', upload.fields([{ name: "permit_file", maxCount: 1 }]),
         return res.status(400).json({ message: "No file uploaded" });
     }
 
-    // Assuming you want to store the file path or filename in the database
-    const filePath = permitFile.path; // or permitFile.filename depending on your storage
+    const fileUrl = `/uploads/${permitFile.filename}`; 
 
     const sql = `UPDATE permit_applications SET permit_file = ? WHERE id = ?`;
-    const values = [filePath, id];
+    const values = [fileUrl, id];
     
     db.query(sql, values, (err, result) => {
         if (err) {
