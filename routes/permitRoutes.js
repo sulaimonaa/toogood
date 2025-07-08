@@ -266,11 +266,11 @@ router.post("/application", upload.fields([
                         <h2 style="color: #333;">Dear ${first_name} ${last_name},</h2>
                         <p style="color: #555;">Thank you for submitting your permit application.</p>
 
-                        <div style="background-color: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ddd;">
+                        <div style="background-color: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ddd; width: 425px;">
                             <h3 style="color: #333;margin-bottom: 10px;">Application Details:</h3>
                             <div style="display: flex; gap: 5px; flex-wrap: wrap;">
                                 <div>
-                                    <img src="https://toogood-1.onrender.com/uploads/${passport_photograph}" alt="Your passport photograph" style="width: 80px; height: 100px; margin-bottom: 10px;">
+                                    <img src="https://toogood-1.onrender.com/uploads/${passport_photograph}" alt="Your passport photograph" style="width: 120px; height: 120px; margin-bottom: 10px; border: 1px solid #ccc">
                                 </div>
                                 <div>
                                     <ul style="padding: 20px; border-radius: 10px; border: 1px solid #ccc;">
