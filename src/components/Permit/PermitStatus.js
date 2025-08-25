@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { px } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -67,7 +68,7 @@ const handleSubmit = (e) => {
 
     const formData = new FormData();
     formData.append('permit_file', permitFile);
-    
+
     axios.put(`https://toogood-1.onrender.com/permit/upload/${status.id}`, formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
@@ -80,6 +81,7 @@ const handleSubmit = (e) => {
             ...prevStatus,
             permit_file: response.data.data 
         }));
+        
         alert("File uploaded successfully!");
     })
     .catch(error => {
@@ -151,22 +153,24 @@ const handleSubmit = (e) => {
                                 </div>
                             </div>
                             <div className='d-flex gap-0 align-items-center'>
-                                <div className='bg-dark text-white p-2 w-25'>Visa Fee</div>
+                                <div className='bg-dark text-white p-2 w-25'>Permit Fee</div>
                                 <div className='bg-secondary-subtle p-2 w-75'>
                                 &#x20A6;{Number(status?.visa_fee).toLocaleString()}
                                 </div>
                             </div>
                             <div className='d-flex gap-0 align-items-center'>
-                                <div className='bg-dark text-white p-2 w-25'>Visa Status</div>
-                                <div className='bg-secondary-subtle p-2 w-75'>
-                                    {status?.visa_status} 
-                                </div>
-                                <div className='bg-secondary-subtle p-2 w-75'>
-                                {(status?.visa_status === 'Pending') ? (<div className='d-flex gap-2'><button className='border-0 bg-success rounded-pill text-white px-2 ms-3' onClick={() => visaStatus(status?.id, "Approved")}>Change to Approved</button><button className='border-0 bg-danger rounded-pill text-white px-2 ms-3' onClick={() => visaStatus(status?.id, "Denied")}>Change to Denied</button></div>) : ('')}
-                                {(status?.visa_status === 'Approved') ? (<form onSubmit={handleSubmit}>
-                                                                                <input type='file' name='permit_file' id='permitFileInput' onChange={handleChange} />
-                                                                                <button className='border-0 bg-secondary rounded-pill text-black px-2'>Upload Permit</button>
-                                                                            </form>) : ('')}
+                                <div className='bg-dark text-white p-2 w-25'>Permit Status</div>
+                                <div className='d-flex flex-column flex-md-row gap-2 align-items-md-start align-items-center w-75 bg-secondary-subtle'>
+                                    <div className='bg-secondary-subtle p-2'>
+                                        {status?.visa_status} 
+                                    </div>
+                                    <div className='bg-secondary-subtle p-2'>
+                                    {(status?.visa_status === 'Pending') ? (<div className='d-flex gap-2'><button className='border-0 bg-success rounded-pill text-white px-2 ms-3' onClick={() => visaStatus(status?.id, "Approved")}>Change to Approved</button><button className='border-0 bg-danger rounded-pill text-white px-2 ms-3' onClick={() => visaStatus(status?.id, "Denied")}>Change to Denied</button></div>) : ('')}
+                                    {(status?.visa_status === 'Approved') ? (<form onSubmit={handleSubmit}>
+                                                                                    <input type='file' name='permit_file' id='permitFileInput' style={{width: '102px', fontSize: '0.8em'}} class='py-0' onChange={handleChange} />
+                                                                                    <button className='border-0 bg-secondary rounded-pill text-white p-2' style={{fontSize: '0.8em'}}>Upload Permit</button>
+                                                                                </form>) : ('')}
+                                    </div>
                                 </div>
                             </div>
                         </div>

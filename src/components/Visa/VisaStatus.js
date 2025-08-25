@@ -51,6 +51,43 @@ const VisaStatus = () => {
         .catch(error => console.error("Error updating status:", error));
     };
 
+const [permitFile, setPermitFile] = useState(null);
+
+const handleChange = (e) => {
+    const file = e.target.files[0];
+    setPermitFile(file);
+}
+
+const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!permitFile) {
+        alert("Please select a file to upload.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('visa_file', permitFile);
+
+    axios.put(`https://toogood-1.onrender.com/visa/upload/${status.id}`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`
+        }
+    })
+    .then(response => {
+        console.log("Visa file uploaded successfully:", response.data);
+        setStatus(prevStatus => ({
+            ...prevStatus,
+            visa_file: response.data.fileUrl
+        }));
+        alert("File uploaded successfully!");
+    })
+    .catch(error => {
+        console.error("Error uploading visa file:", error);
+        alert("Error uploading file. Please try again.");
+    });
+}
+
     return (
         <>
             <div className='container-fluid'>
@@ -128,11 +165,17 @@ const VisaStatus = () => {
                             </div>
                             <div className='d-flex gap-0 align-items-center'>
                                 <div className='bg-dark text-white p-2 w-25'>Visa Status</div>
-                                <div className='bg-secondary-subtle p-2 w-75'>
-                                    {status?.visa_status} 
-                                </div>
-                                <div className='bg-secondary-subtle p-2 w-75'>
-                                {(status?.visa_status === 'Pending') ? (<div className='d-flex gap-2'><button className='border-0 bg-success rounded-pill text-white px-2 ms-3' onClick={() => visaStatus(status?.id, "Approved")}>Change to Approved</button><button className='border-0 bg-danger rounded-pill text-white px-2 ms-3' onClick={() => visaStatus(status?.id, "Denied")}>Change to Denied</button></div>) : ('')}
+                                <div className='d-flex flex-column flex-md-row gap-2 align-items-md-start align-items-center w-75 bg-secondary-subtle'>
+                                    <div className='bg-secondary-subtle p-2'>
+                                        {status?.visa_status} 
+                                    </div>
+                                    <div className='bg-secondary-subtle p-2'>
+                                    {(status?.visa_status === 'Pending') ? (<div className='d-flex gap-2'><button className='border-0 bg-success rounded-pill text-white px-2 ms-3' onClick={() => visaStatus(status?.id, "Approved")}>Change to Approved</button><button className='border-0 bg-danger rounded-pill text-white px-2 ms-3' onClick={() => visaStatus(status?.id, "Denied")}>Change to Denied</button></div>) : ('')}
+                                    {(status?.visa_status === 'Approved') ? (<form onSubmit={handleSubmit}>
+                                                                                    <input type='file' name='visa_file' id='permitFileInput' style={{width: '100px', fontSize: '0.8em'}} class='py-0' onChange={handleChange} />
+                                                                                    <button className='border-0 bg-secondary rounded-pill text-white p-2' style={{fontSize: '0.8em'}}>Upload Visa</button>
+                                                                                </form>) : ('')}
+                                    </div>
                                 </div>
                             </div>
                         </div>

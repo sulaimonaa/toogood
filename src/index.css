@@ -14,6 +14,12 @@ body {
   background: linear-gradient(120deg, darkblue, purple);
 }
 
+.appointment-banner {
+  background: url('../src/assets/images/result.png') no-repeat top center;
+  background-size: cover;
+  background-attachment: scroll;
+}
+
 .self-section {
   margin-top: -20px;
   min-height: 625px;

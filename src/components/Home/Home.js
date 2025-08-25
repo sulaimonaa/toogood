@@ -91,10 +91,10 @@ const Home = () => {
                 <FaHotel />
                 Hotel Booking</div>
                 </Link>
-                <Link to='/e-sim' className='service-list p-2 p-md-3 mb-1 d-flex justify-content-center align-items-center shadow text-white fw-bold text-decoration-none l5'>
+                <Link to='/appointment' className='service-list p-2 p-md-3 mb-1 d-flex justify-content-center align-items-center shadow text-white fw-bold text-decoration-none l5'>
               <div className='d-flex flex-column align-items-center gap-2'>
                 <BsFillSimFill />
-                E-sim</div>
+                Appointment</div>
                 </Link>
             </div>
             

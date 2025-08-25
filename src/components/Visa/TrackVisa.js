@@ -88,7 +88,7 @@ const TrackVisa = () => {
                             <div className='bg-dark text-white p-2 w-25'>Payment Status</div>
                             <div className='bg-secondary-subtle p-2 w-75'>{status?.payment_status}</div>
                         </div>
-                            <div className='d-flex gap-0 align-items-center'>
+                        <div className='d-flex gap-0 align-items-center'>
                             <div className='bg-dark text-white p-2 w-25'>Visa Fee</div>
                             <div className='bg-secondary-subtle p-2 w-75'>{status?.visa_fee}</div>
                         </div>
@@ -108,6 +108,23 @@ const TrackVisa = () => {
                                 </div>
                             )
                         ))}
+                        <div className='d-flex gap-0 align-items-center'>
+                            <div className='bg-dark text-white p-2 w-25'>Download Visa Document</div>
+                            <div className='bg-secondary-subtle p-2 w-75'>
+                                {status?.visa_file ? (
+                                    <a 
+                                        href={`https://toogood-1.onrender.com${status.visa_file}`} 
+                                        target='_blank' 
+                                        rel="noopener noreferrer" 
+                                        className='text-decoration-none'
+                                    >
+                                        View/Download
+                                    </a>
+                                    ) : (
+                                    <span className="text-muted">Not yet approved</span>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 ) : (
                     <p>No status available, please enter a valid tracking ID</p>

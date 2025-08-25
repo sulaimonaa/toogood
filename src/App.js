@@ -29,7 +29,6 @@ import PaidVisa from './components/Visa/PaidVisa'
 import NotPaidVisa from './components/Visa/NotPaidVisa'
 import Flight from './components/Flight/Flight'
 import Hotel from './components/Hotel/Hotel'
-import Esim from './components/Esim/Home'
 import Embassy from './components/Embassy/Home'
 import Insurance from './components/Insurance/Home'
 import Itinerary from './components/Itinerary/Home'
@@ -63,6 +62,8 @@ import VisaAR from './components/Visa/VisaAR'
 import Dashboard2 from './components/Dashboard2'
 import SuccessfulPayments from './components/SuccessfulPayments'
 import CompleteInsurance from './components/Insurance/CompleteInsurance'
+import Appointment from './components/Appointment/Home'
+import AppPayment from './components/Appointment/AppPayment'
 
 const App = () => {
   return (
@@ -117,7 +118,8 @@ const App = () => {
         <Route path='/not-paid-permit' element={<NotPaidPermit />} />
         <Route path='/flight' element={<Flight />} />
         <Route path='/hotel' element={<Hotel />} />
-        <Route path='/e-sim' element={<Esim />} />
+        <Route path='/appointment' element={<Appointment />} />
+        <Route path='apt-payment' element={<AppPayment />} />
         <Route path='/permit' element={<PermitDashboard />} />
         <Route path='/permit-agent' element={<PermitAgentDB />} />
         <Route path='/permit-agent-application' element={<PermitADB />} />
