@@ -433,13 +433,13 @@ router.post('/payment-verification', async (req, res) => {
 
   router.post('/app-payment-verification', async (req, res) => {
     try {
-      const { transaction_id, booking_id } = req.body;
+      const { transaction_id, tnx_id } = req.body;
       const verification = await flw.Transaction.verify({ id: transaction_id });
       
       if (verification.data.status === 'successful') {
         db.query(
           'UPDATE schedule_appointment SET payment_status = ? WHERE id = ?',
-          ['Paid', booking_id],
+          ['Paid', tnx_id],
         );
         return res.json({ status: 'success' });
       }
