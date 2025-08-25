@@ -341,6 +341,78 @@ router.post("/application", upload.fields([
     }
 });
 
+router.post("/appointment", async (req, res) => {
+    try {
+        const { first_name, middle_name, last_name, phone_number, email_address, how_to_contact, reason, payment_status } = req.body;
+
+        if (!first_name || !last_name || !phone_number || !email_address) {
+            return res.status(400).json({ message: "Missing required fields" });
+        }
+
+        const sql = `
+            INSERT INTO schedule_appointment (
+                first_name, middle_name, last_name, phone_number, email_address, how_to_contact, reason, payment_status
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, 'Not Paid')`;
+
+        const values = [
+            first_name, middle_name, last_name, phone_number, email_address, how_to_contact, reason, payment_status
+        ];
+
+        db.query(sql, values, (err, result) => {
+            if (err) {
+                console.error("Database error:", err);
+                return res.status(500).json({ message: "Database error" });
+            }
+
+            // Email content
+            const mailOptions = {
+                from: '"Too Good Travels" <noreply@toogoodtravels.net>',
+                to: contact_email, 
+                cc:"toogoodtravelsnigeria@gmail.com",
+                subject: "Appointment Schedule",
+                html: `
+                    <div style="display:none;">
+                        ${Math.random().toString(36).substring(2)} 
+                    </div>
+                    <div style="padding: 20px; font-family: Arial, sans-serif; background-color: #f8f8f8; border-radius: 5px;">
+                        <h2 style="color: #333;">Dear ${last_name},</h2>
+                        <p style="color: #555;">Thank you for scheduling an appointment with us!</p>
+
+                        <div style="background-color: #fff; padding: 15px;">
+                            <div style="border-left: 5px solid #ff4000; display: flex; flex-direction: column; gap: 5px">
+                                <div>Name: ${last_name} ${first_name}</div> 
+                                <div>Email: ${email_address}</div>
+                                <div>Phone: ${phone_number}</div>
+                                <div>Where to host schedule: ${how_to_contact} </div>
+                                <div>Reason for Appointment: ${reason}</div>
+                            </div>
+                        </div>
+
+                        <p style="color: #555; margin-top: 20px;">We will review your appointment and get back to you soon.</p>
+                        <p style="color: #333; margin-bottom: 0"><strong>Best regards,</strong></p>
+                        <p style="color: #333;"><strong>Too Good Travels</strong></p>
+                    </div>
+                `,
+            };
+
+            // Send email inside the callback function
+            transporter.sendMail(mailOptions, (emailError, info) => {
+                if (emailError) {
+                    console.error("Email sending error:", emailError);
+                } else {
+                    console.log("Email sent successfully:", info.response);
+                }
+            });
+
+            res.json({ success: "Appointment submitted successfully", tracking_id });
+        });
+
+    } catch (error) {
+        console.error("Server error:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
 router.post('/payment-verification', async (req, res) => {
     try {
       const { transaction_id, booking_id } = req.body;
@@ -360,7 +432,27 @@ router.post('/payment-verification', async (req, res) => {
       res.status(500).json({ error: 'Verification failed' });
     }
   });
-  
+
+  router.post('/app-payment-verification', async (req, res) => {
+    try {
+      const { transaction_id, booking_id } = req.body;
+      const verification = await flw.Transaction.verify({ id: transaction_id });
+      
+      if (verification.data.status === 'successful') {
+        db.query(
+          'UPDATE schedule_appointment SET payment_status = ? WHERE id = ?',
+          ['Paid', booking_id],
+        );
+        return res.json({ status: 'success' });
+      }
+      
+      res.status(400).json({ status: 'failed' });
+    } catch (error) {
+      console.error('Verification error:', error);
+      res.status(500).json({ error: 'Verification failed' });
+    }
+  });
+
 router.get('/pending', authenticateAdmin, (req, res) => {
     const sql = "SELECT * FROM visa_applications WHERE visa_status = 'Pending'";
     db.query(sql, (err, results) => {
