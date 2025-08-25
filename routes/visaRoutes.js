@@ -343,7 +343,7 @@ router.post("/application", upload.fields([
 
 router.post("/appointment", async (req, res) => {
     try {
-        const { first_name, last_name, phone_number, email_address, how_to_contact, appointment_date, reason, payment_status } = req.body;
+        const { first_name, last_name, phone_number, email_address, how_to_contact, appointment_date, reason, amount_to_pay } = req.body;
 
         if (!first_name || !last_name || !phone_number || !email_address) {
             return res.status(400).json({ message: "Missing required fields" });
@@ -351,11 +351,12 @@ router.post("/appointment", async (req, res) => {
 
         const sql = `
             INSERT INTO schedule_appointment (
-                first_name, middle_name, last_name, phone_number, email_address, how_to_contact, appointment_date, reason, payment_status
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Not Paid')`;
+                first_name, last_name, phone_number, email_address, how_to_contact, appointment_date, reason, amount_to_pay, payment_status
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, 'Not Paid')`;
 
         const values = [
-            first_name, last_name, phone_number, email_address, how_to_contact, appointment_date, reason, payment_status
+            first_name, last_name, phone_number, email_address,
+            how_to_contact, appointment_date, reason, amount_to_pay
         ];
 
         db.query(sql, values, (err, result) => {
@@ -367,28 +368,23 @@ router.post("/appointment", async (req, res) => {
             // Email content
             const mailOptions = {
                 from: '"Too Good Travels" <noreply@toogoodtravels.net>',
-                to: contact_email, 
-                cc:"toogoodtravelsnigeria@gmail.com",
+                to: email_address,  // ✅ fixed
+                cc: "toogoodtravelsnigeria@gmail.com",
                 subject: "Appointment Schedule",
                 html: `
-                    <div style="display:none;">
-                        ${Math.random().toString(36).substring(2)} 
-                    </div>
                     <div style="padding: 20px; font-family: Arial, sans-serif; background-color: #f8f8f8; border-radius: 5px;">
                         <h2 style="color: #333;">Dear ${last_name},</h2>
                         <p style="color: #555;">Thank you for scheduling an appointment with us!</p>
-
                         <div style="background-color: #fff; padding: 15px;">
                             <div style="border-left: 5px solid #ff4000; display: flex; flex-direction: column; gap: 5px">
                                 <div>Name: ${last_name} ${first_name}</div> 
                                 <div>Email: ${email_address}</div>
                                 <div>Phone: ${phone_number}</div>
-                                <div>Where to host schedule: ${how_to_contact} </div>
+                                <div>Where to host schedule: ${how_to_contact}</div>
                                 <div>Reason for appointment: ${reason}</div>
                                 <div>Appointment date: ${appointment_date}</div>
                             </div>
                         </div>
-
                         <p style="color: #555; margin-top: 20px;">We will review your appointment and get back to you soon.</p>
                         <p style="color: #333; margin-bottom: 0"><strong>Best regards,</strong></p>
                         <p style="color: #333;"><strong>Too Good Travels</strong></p>
@@ -396,7 +392,6 @@ router.post("/appointment", async (req, res) => {
                 `,
             };
 
-            // Send email inside the callback function
             transporter.sendMail(mailOptions, (emailError, info) => {
                 if (emailError) {
                     console.error("Email sending error:", emailError);
@@ -405,7 +400,8 @@ router.post("/appointment", async (req, res) => {
                 }
             });
 
-            res.json({ success: "Appointment submitted successfully", tracking_id });
+            // ✅ use insertId as tracking_id
+            res.json({ success: "Appointment submitted successfully"});
         });
 
     } catch (error) {
@@ -413,6 +409,7 @@ router.post("/appointment", async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 });
+
 
 router.post('/payment-verification', async (req, res) => {
     try {
