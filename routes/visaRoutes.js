@@ -352,11 +352,10 @@ router.post("/appointment", async (req, res) => {
         const sql = `
             INSERT INTO schedule_appointment (
                 first_name, last_name, phone_number, email_address, how_to_contact, appointment_date, reason, amount_to_pay, payment_status
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, 'Not Paid')`;
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Not Paid')`;
 
         const values = [
-            first_name, last_name, phone_number, email_address,
-            how_to_contact, appointment_date, reason, amount_to_pay
+            first_name, last_name, phone_number, email_address, how_to_contact, appointment_date, reason, amount_to_pay
         ];
 
         db.query(sql, values, (err, result) => {
