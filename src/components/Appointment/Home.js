@@ -1,8 +1,9 @@
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
+import Loading from "../Loading";
 
 export default function Appointment() {
-
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
@@ -32,7 +33,7 @@ export default function Appointment() {
 
     const subAppointment = async (e) => {
   e.preventDefault();
-
+  setLoading(true);
   try {
     const response = await fetch("https://toogood-1.onrender.com/visa/appointment", {
       method: "POST",
@@ -72,9 +73,13 @@ export default function Appointment() {
     }
   } catch (error) {
     console.error("Submission error:", error);
+  } finally {
+    setLoading(false);
   }
 };
-
+    if (loading) {
+      return <Loading message='Making appointment schedule...'/>;
+    }
     return (
         <> < div className = "container-fluid appointment-banner p-0" > <div
             className='container vh-100 vw-100 d-flex justify-content-center align-items-center'>
@@ -90,7 +95,7 @@ export default function Appointment() {
                         <h4 className="text-dark fw-bold text-capitalize">Enter customer details</h4>
                         <div className="d-md-flex gap-3 mb-3">
                             <input
-                                className="form-control p-3 rounded shadow mb-3"
+                                className="form-control p-3 rounded shadow mb-3 h-[50px]"
                                 type="text"
                                 name="first_name"
                                 placeholder="First Name"
@@ -98,7 +103,7 @@ export default function Appointment() {
                                 onChange={handleChange}
                                 value={formData.first_name}/>
                             <input
-                                className="form-control p-3 rounded shadow mb-3"
+                                className="form-control p-3 rounded shadow mb-3 h-[50px]"
                                 type="text"
                                 name="last_name"
                                 placeholder="Last Name"
@@ -108,7 +113,7 @@ export default function Appointment() {
                         </div>
                         <div className="d-md-flex gap-3 mb-3">
                             <input
-                                className="form-control p-3 rounded shadow mb-3"
+                                className="form-control p-3 rounded shadow mb-3 h-[50px]"
                                 type="email"
                                 name="email_address"
                                 placeholder="Email Address"
@@ -116,7 +121,7 @@ export default function Appointment() {
                                 onChange={handleChange}
                                 value={formData.email_address}/>
                             <input
-                                className="form-control p-3 rounded shadow mb-3"
+                                className="form-control p-3 rounded shadow mb-3 h-[50px]"
                                 type="text"
                                 name="phone_number"
                                 placeholder="Phone Number"
@@ -127,7 +132,7 @@ export default function Appointment() {
                         <h4 className="text-dark fw-bold text-capitalize">Choose Your method of appointment</h4>
                         <div className="d-md-flex gap-3 mb-3">
                             <select
-                                className="form-control p-3 rounded shadow mb-3"
+                                className="form-control p-3 rounded shadow mb-3 h-[50px]"
                                 value={formData.how_to_contact}
                                 name="how_to_contact"
                                 onChange={handleChange}>
@@ -136,7 +141,7 @@ export default function Appointment() {
                                 <option value="Zoom">Zoom</option>
                             </select>
                             <select
-                                className="form-control p-3 rounded shadow mb-3"
+                                className="form-control p-3 rounded shadow mb-3 h-[50px]"
                                 value={formData.reason}
                                 name="reason"
                                 onChange={handleChange}>
@@ -146,7 +151,7 @@ export default function Appointment() {
                                 <option value="Others">Others</option>
                             </select>
                             <input
-                                className="form-control p-3 rounded shadow"
+                                className="form-control p-3 rounded shadow h-[50px]"
                                 type="date"
                                 name="appointment_date"
                                 required="required"
