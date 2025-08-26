@@ -21,7 +21,7 @@ const AppPayment = () => {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         transaction_id: transactionId,
-                        booking_id: tnx_id,
+                        tnx_id: tnx_id,
                     }),
                 }
             );

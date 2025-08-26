@@ -11,7 +11,7 @@ export default function Appointment() {
         how_to_contact: '',
         appointment_date: '',
         reason: '',
-        payment_status: '50000'
+        amount_to_pay: '50000'
     })
 
     const navigate = useNavigate();
@@ -31,51 +31,50 @@ export default function Appointment() {
     };
 
     const subAppointment = async (e) => {
-        e.preventDefault();
+  e.preventDefault();
 
-        try {
-            const response = await fetch(
-                "https://toogood-1.onrender.com/visa/appointment",
-                {
-                    method: "POST",
-                    body: formData,
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                }
-            );
+  try {
+    const response = await fetch("https://toogood-1.onrender.com/visa/appointment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", // Tell backend it's JSON
+        "Accept": "application/json"
+      },
+      body: JSON.stringify(formData) // Send JSON
+    });
 
-            const data = await response.json();
+    const data = await response.json();
 
-            if (response.ok) {
-                setFormData({
-                    first_name: '',
-                    last_name: '',
-                    email_address: '',
-                    phone_number: '',
-                    how_to_contact: '',
-                    appointment_date: '',
-                    reason: '',
-                    payment_status: '50000'
-                })
-            }
+    if (response.ok) {
+      setFormData({
+        first_name: '',
+        last_name: '',
+        email_address: '',
+        phone_number: '',
+        how_to_contact: '',
+        appointment_date: '',
+        reason: '',
+        amount_to_pay: '50000'
+      });
 
-            if (response.ok) {
-                navigate(`/apt-payment`, {
-                    state: {
-                        tnx_id: data.id,
-                        last_name: formData.last_name,
-                        first_name: formData.first_name,
-                        phone_number: formData.phone_number,
-                        contact_email: formData.email_address,
-                        amount_to_pay: formData.payment_status
-                    }
-                });
-            } else {
-                alert(`Error: ${data.message}`);
-            }
-        } catch (error) {}
+      navigate(`/apt-payment`, {
+        state: {
+          tnx_id: data.id,
+          last_name: formData.last_name,
+          first_name: formData.first_name,
+          phone_number: formData.phone_number,
+          email_address: formData.email_address,
+          amount_to_pay: formData.amount_to_pay
+        }
+      });
+    } else {
+      alert(`Error: ${data.message}`);
     }
+  } catch (error) {
+    console.error("Submission error:", error);
+  }
+};
+
     return (
         <> < div className = "container-fluid appointment-banner p-0" > <div
             className='container vh-100 vw-100 d-flex justify-content-center align-items-center'>
@@ -154,7 +153,7 @@ export default function Appointment() {
                                 onChange={handleChange}
                                 value={formData.appointment_date}/>
                         </div>
-                        <input type="hidden" value={formData.payment_status} name="payment_status"/>
+                        <input type="hidden" value={formData.amount_to_pay} name="amount_to_pay"/>
                         <button type="submit" className="border-0 p-3 bg-primary text-white rounded">Schedule Now</button>
                     </div>
                 </form>
