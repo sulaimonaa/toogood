@@ -343,7 +343,7 @@ router.post("/application", upload.fields([
 
 router.post("/appointment", async (req, res) => {
     try {
-        const { first_name, last_name, phone_number, email_address, how_to_contact, appointment_date, reason, amount_to_pay } = req.body;
+        const { first_name, last_name, phone_number, email_address, how_to_contact, appointment_date, appointment_time, reason, amount_to_pay } = req.body;
 
         if (!first_name || !last_name || !phone_number || !email_address) {
             return res.status(400).json({ message: "Missing required fields" });
@@ -351,11 +351,11 @@ router.post("/appointment", async (req, res) => {
 
         const sql = `
             INSERT INTO schedule_appointment (
-                first_name, last_name, phone_number, email_address, how_to_contact, appointment_date, reason, amount_to_pay, payment_status
+                first_name, last_name, phone_number, email_address, how_to_contact, appointment_date, appointment_time, reason, amount_to_pay, payment_status
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Not Paid')`;
 
         const values = [
-            first_name, last_name, phone_number, email_address, how_to_contact, appointment_date, reason, amount_to_pay
+            first_name, last_name, phone_number, email_address, how_to_contact, appointment_date, appointment_time, reason, amount_to_pay
         ];
 
         db.query(sql, values, (err, result) => {
@@ -382,6 +382,7 @@ router.post("/appointment", async (req, res) => {
                                 <div>Where to host schedule: ${how_to_contact}</div>
                                 <div>Reason for appointment: ${reason}</div>
                                 <div>Appointment date: ${appointment_date}</div>
+                                <div>Appointment time: ${appointment_time}</div>
                             </div>
                         </div>
                         <p style="color: #555; margin-top: 20px;">We will review your appointment and get back to you soon.</p>
