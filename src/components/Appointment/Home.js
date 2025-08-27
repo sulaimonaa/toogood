@@ -11,6 +11,7 @@ export default function Appointment() {
         phone_number: '',
         how_to_contact: '',
         appointment_date: '',
+        appointment_time: '',
         reason: '',
         amount_to_pay: '50000'
     })
@@ -54,6 +55,7 @@ export default function Appointment() {
         phone_number: '',
         how_to_contact: '',
         appointment_date: '',
+        appointment_time: '',
         reason: '',
         amount_to_pay: '50000'
       });
@@ -150,13 +152,24 @@ export default function Appointment() {
                                 <option value="Permit">Permit</option>
                                 <option value="Others">Others</option>
                             </select>
-                            <input
-                                className="form-control p-3 rounded shadow h-[50px]"
-                                type="date"
-                                name="appointment_date"
-                                required="required"
-                                onChange={handleChange}
-                                value={formData.appointment_date}/>
+                        </div>
+                        <div className="d-md-flex gap-3 mb-3">
+                          <input
+                            className="form-control p-3 rounded shadow h-[50px]"
+                            type="date"
+                            name="appointment_date"
+                            required
+                            onChange={handleChange}
+                            value={formData.appointment_date}
+                          />
+                          <input
+                            className="form-control p-3 rounded shadow h-[50px]"
+                            type="time"
+                            name="appointment_time"
+                            required
+                            onChange={handleChange}
+                            value={formData.appointment_time}
+                          />
                         </div>
                         <input type="hidden" value={formData.amount_to_pay} name="amount_to_pay"/>
                         <button type="submit" className="border-0 p-3 bg-primary text-white rounded">Schedule Now</button>
