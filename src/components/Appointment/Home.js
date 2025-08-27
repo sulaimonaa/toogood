@@ -95,9 +95,9 @@ export default function Appointment() {
                 <form onSubmit={subAppointment}>
                     <div className="d-flex flex-column gap-2">
                         <h4 className="text-dark fw-bold text-capitalize">Enter customer details</h4>
-                        <div className="d-md-flex gap-3 mb-3">
+                        <div className="d-md-flex gap-3 mb-2">
                             <input
-                                className="form-control p-3 rounded shadow mb-3 h-[50px]"
+                                className="form-control p-3 rounded shadow mb-3 h-[40px]"
                                 type="text"
                                 name="first_name"
                                 placeholder="First Name"
@@ -105,7 +105,7 @@ export default function Appointment() {
                                 onChange={handleChange}
                                 value={formData.first_name}/>
                             <input
-                                className="form-control p-3 rounded shadow mb-3 h-[50px]"
+                                className="form-control p-3 rounded shadow mb-3 h-[40px]"
                                 type="text"
                                 name="last_name"
                                 placeholder="Last Name"
@@ -113,9 +113,9 @@ export default function Appointment() {
                                 onChange={handleChange}
                                 value={formData.last_name}/>
                         </div>
-                        <div className="d-md-flex gap-3 mb-3">
+                        <div className="d-md-flex gap-3 mb-2">
                             <input
-                                className="form-control p-3 rounded shadow mb-3 h-[50px]"
+                                className="form-control p-3 rounded shadow mb-3 h-[40px]"
                                 type="email"
                                 name="email_address"
                                 placeholder="Email Address"
@@ -123,7 +123,7 @@ export default function Appointment() {
                                 onChange={handleChange}
                                 value={formData.email_address}/>
                             <input
-                                className="form-control p-3 rounded shadow mb-3 h-[50px]"
+                                className="form-control p-3 rounded shadow mb-3 h-[40px]"
                                 type="text"
                                 name="phone_number"
                                 placeholder="Phone Number"
@@ -132,9 +132,9 @@ export default function Appointment() {
                                 value={formData.phone_number}/>
                         </div>
                         <h4 className="text-dark fw-bold text-capitalize">Choose Your method of appointment</h4>
-                        <div className="d-md-flex gap-3 mb-3">
+                        <div className="d-md-flex gap-3 mb-2">
                             <select
-                                className="form-control p-3 rounded shadow mb-3 h-[50px]"
+                                className="form-control p-3 rounded shadow mb-3 h-[40px]"
                                 value={formData.how_to_contact}
                                 name="how_to_contact"
                                 onChange={handleChange}>
@@ -143,7 +143,7 @@ export default function Appointment() {
                                 <option value="Zoom">Zoom</option>
                             </select>
                             <select
-                                className="form-control p-3 rounded shadow mb-3 h-[50px]"
+                                className="form-control p-3 rounded shadow mb-3 h-[40px]"
                                 value={formData.reason}
                                 name="reason"
                                 onChange={handleChange}>
@@ -153,9 +153,9 @@ export default function Appointment() {
                                 <option value="Others">Others</option>
                             </select>
                         </div>
-                        <div className="d-md-flex gap-3 mb-3">
+                        <div className="d-md-flex gap-3 mb-2">
                           <input
-                            className="form-control p-3 rounded shadow h-[50px]"
+                            className="form-control p-3 rounded shadow h-[40px]"
                             type="date"
                             name="appointment_date"
                             required
@@ -163,7 +163,7 @@ export default function Appointment() {
                             value={formData.appointment_date}
                           />
                           <input
-                            className="form-control p-3 rounded shadow h-[50px]"
+                            className="form-control p-3 rounded shadow h-[40px]"
                             type="time"
                             name="appointment_time"
                             required
