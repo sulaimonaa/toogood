@@ -10,7 +10,7 @@ const AppPayment = () => {
     const [paymentInitialized, setPaymentInitialized] = useState(true);
     const [paymentProcessing, setPaymentProcessing] = useState(false);
 
-    const { tnx_id, phone_number, amount_to_pay, first_name, last_name, contact_email } = location.state || {};
+    const { tnx_id, phone_number, amount_to_pay, first_name, last_name, email_address } = location.state || {};
 
     const verifyPayment = async (transactionId) => {
         try {
@@ -44,7 +44,7 @@ const AppPayment = () => {
         currency: 'NGN',
         payment_options: 'card,mobilemoney,ussd',
         customer: {
-            email: contact_email,
+            email: email_address,
             name: first_name + ' ' + last_name,
             phone_number: phone_number,
         },
