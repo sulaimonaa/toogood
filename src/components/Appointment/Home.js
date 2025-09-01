@@ -1,9 +1,108 @@
-import React, {useState} from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {useNavigate} from "react-router-dom";
 import Loading from "../Loading";
 
+
+const useRecaptcha = (siteKey, version = 'v3') => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState(null);
+  const scriptRef = useRef(null);
+
+  const loadRecaptcha = useCallback(() => {
+    // Check if already loaded
+    if (window.grecaptcha) {
+      setIsLoaded(true);
+      return;
+    }
+
+    // Check if script already exists in DOM
+    if (document.querySelector('script[src*="google.com/recaptcha"]')) {
+      setIsLoaded(true);
+      return;
+    }
+
+    // Create and load script
+    scriptRef.current = document.createElement('script');
+    const src = version === 'v3' 
+      ? `https://www.google.com/recaptcha/api.js?render=${siteKey}`
+      : 'https://www.google.com/recaptcha/api.js';
+
+    scriptRef.current.src = src;
+    scriptRef.current.async = true;
+    scriptRef.current.defer = true;
+
+    const handleLoad = () => {
+      setIsLoaded(true);
+      setError(null);
+    };
+
+    const handleError = () => {
+      setError('Failed to load reCAPTCHA');
+      setIsLoaded(false);
+    };
+
+    scriptRef.current.addEventListener('load', handleLoad);
+    scriptRef.current.addEventListener('error', handleError);
+
+    document.body.appendChild(scriptRef.current);
+
+    // Return cleanup function
+    return () => {
+      if (scriptRef.current) {
+        scriptRef.current.removeEventListener('load', handleLoad);
+        scriptRef.current.removeEventListener('error', handleError);
+        
+        if (scriptRef.current.parentNode) {
+          scriptRef.current.parentNode.removeChild(scriptRef.current);
+        }
+      }
+    };
+  }, [siteKey, version]);
+
+  useEffect(() => {
+    const cleanup = loadRecaptcha();
+    return cleanup;
+  }, [loadRecaptcha]);
+
+  const executeRecaptcha = useCallback(async (action = 'submit') => {
+    if (!isLoaded || !window.grecaptcha) {
+      throw new Error('reCAPTCHA not loaded');
+    }
+
+    try {
+      if (version === 'v3') {
+        return await window.grecaptcha.execute(siteKey, { action });
+      } else {
+        // For v2, you might handle it differently
+        return await new Promise((resolve) => {
+          window.grecaptcha.ready(() => {
+            window.grecaptcha.execute(siteKey, { action }).then(resolve);
+          });
+        });
+      }
+    } catch (err) {
+      setError('Failed to execute reCAPTCHA');
+      throw err;
+    }
+  }, [isLoaded, siteKey, version]);
+
+  const resetRecaptcha = useCallback(() => {
+    if (window.grecaptcha && window.grecaptcha.reset) {
+      window.grecaptcha.reset();
+    }
+  }, []);
+
+  return {
+    isLoaded,
+    error,
+    executeRecaptcha,
+    resetRecaptcha
+  };
+};
+
 export default function Appointment() {
     const [loading, setLoading] = useState(false);
+    const { isLoaded, error, executeRecaptcha, resetRecaptcha } = useRecaptcha('6Lc__bkrAAAAANXv3oBEBIsjH6NJeW5KGiALifM_', 'v3');
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
@@ -36,6 +135,12 @@ export default function Appointment() {
   e.preventDefault();
   setLoading(true);
   try {
+    const token = await executeRecaptcha('submit');
+    if (!token) {
+      alert('reCAPTCHA verification failed. Please try again.');
+      setLoading(false);
+      return; 
+    }
     const response = await fetch("https://toogood-1.onrender.com/visa/appointment", {
       method: "POST",
       headers: {
@@ -172,7 +277,9 @@ export default function Appointment() {
                           />
                         </div>
                         <input type="hidden" value={formData.amount_to_pay} name="amount_to_pay"/>
-                        <button type="submit" className="border-0 p-3 bg-primary text-white rounded">Schedule Now</button>
+                        <button type="submit" disabled={!isLoaded || error} className="border-0 p-3 bg-primary text-white rounded">
+                          {error ? 'CAPTCHA Error' : isLoaded ? 'Schedule Now' : 'Loading...'}
+                        </button>
                     </div>
                 </form>
             </div>
