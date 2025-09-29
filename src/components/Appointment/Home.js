@@ -112,7 +112,7 @@ export default function Appointment() {
     appointment_date: '',
     appointment_time: '',
     reason: '',
-    amount_to_pay: '50000'
+    amount_to_pay: '10000'
   })
 
   const navigate = useNavigate();
