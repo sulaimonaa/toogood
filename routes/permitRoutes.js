@@ -188,6 +188,9 @@ router.put('/update', authenticateAdmin, async (req, res) => {
     }
 });
 
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 // Configure file upload storage
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -205,17 +208,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-const transporter = nodemailer.createTransport({
-    host: "smtp.hostinger.com",
-    port: 465,
-    secure: true,
-    auth: {
-        user: "dev@donadextechnology.com",
-        pass: process.env.EMAIL_PASSKEY,
-    },
-});
-
-// Create Visa Application Route
+// Create Permit Application Route
 router.post("/application", upload.fields([
     { name: "data_page", maxCount: 1 },
     { name: "passport_photograph", maxCount: 1 },
@@ -249,63 +242,191 @@ router.post("/application", upload.fields([
             data_page, passport_photograph, utility_bill, supporting_document, other_document, visa_destination, visa_fee
         ];
 
-        db.query(sql, values, (err, result) => {
+        db.query(sql, values, async (err, result) => {
             if (err) {
                 console.error("Database error:", err);
                 return res.status(500).json({ message: "Database error" });
             }
 
-            // Email content
-            const mailOptions = {
-                from: '"Too Good Travels" <noreply@toogoodtravels.net>',
-                to: contact_email,
-                cc: "toogoodtravelsnigeria@gmail.com",
-                subject: "Permit Application Submitted Successfully",
-                html: `
-                    <div style="padding: 20px; font-family: Arial, sans-serif; background-color: #f8f8f8; border-radius: 5px;">
-                        <h2 style="color: #333;">Dear ${first_name} ${last_name},</h2>
-                        <p style="color: #555;">Thank you for submitting your permit application.</p>
+            try {
+                // Send email using Resend
+                const { data, error } = await resend.emails.send({
+                    from: 'Too Good Travels <noreply@toogoodtravels.net>',
+                    to: contact_email,
+                    cc: "toogoodtravelsnigeria@gmail.com",
+                    subject: "Permit Application Submitted Successfully",
+                    html: `
+                        <!DOCTYPE html>
+<html lang="en" style="margin:0; padding:0;">
 
-                        <div style="background-color: #fff; padding: 15px;">
-                            <div style="display: flex; gap: 5px; flex-wrap: wrap;">
-                                <div>
-                                    <img src="https://toogood-1.onrender.com/uploads/${passport_photograph}" alt="Your passport photograph" style="width: 120px; height: 120px; margin-bottom: 10px; border: 1px solid #ccc">
-                                </div>
-                                <div>
-                                    <div style="display: flex; gap: 5px; flex-wrap: wrap; align-items: center">
-                                        <img src="https://toogoodtravels.net/static/media/tgt.7dbe67b2cd1d73dd1a15.png" alt="logo" style="width: 84px" />
-                                        <h3 style="color: green; font-weight: bolder; font-size: 1.2em; font-style: uppercase">Application Confirmation</h3>
-                                    </div>
-                                    <ul style="padding: 20px; border: 1px solid #ccc; background-color: #ccc; font-size: 1em">
-                                        <li style="padding: 5px; border-bottom: 1px solid #ddd; list-style: none"><strong>Full Name:</strong> ${first_name} ${middle_name} ${last_name}</li>
-                                        <li style="padding: 5px; border-bottom: 1px solid #ddd; list-style: none"><strong>Phone Number:</strong> ${phone_number}</li>
-                                        <li style="padding: 5px; border-bottom: 1px solid #ddd; list-style: none"><strong>Email:</strong> ${contact_email}</li>
-                                        <li style="padding: 5px; border-bottom: 1px solid #ddd; list-style: none"><strong>Passport Number:</strong> ${passport_number}</li>
-                                        <li style="padding: 5px; border-bottom: 1px solid #ddd; list-style: none"><strong>Destination:</strong> ${visa_destination}</li>
-                                        <li style="padding: 5px; border-bottom: 1px solid #ddd; list-style: none"><strong>Processing Fee:</strong> ${visa_fee}</li>
-                                        <li style="padding: 5px; border-bottom: 1px solid #ddd; list-style: none"><strong>Passport Data Page:</strong> <a href="https://toogood-1.onrender.com/uploads/${data_page}"">Download/View</a></li>
-                                    </ul>
-                                </div>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        @media screen and (max-width: 640px) {
+            .mTable {
+                max-width: 100% !important;
+                width: 100% !important;
+                margin: 0 auto !important;
+            }
+
+            .step-table {
+                width: 100% !important;
+                display: block !important;
+                margin-bottom: 20px !important;
+                padding: 0 !important;
+            }
+        }
+
+        @media screen and (max-width: 425px) {
+            .sm {
+                padding: 10px !important;
+            }
+
+        }
+    </style>
+</head>
+
+<body style="margin:0; padding:0; background:#f5f6fa; font-family:Arial, sans-serif; color:#333;">
+    <table width="100%" cellpadding="0" cellspacing="0" class="sm" style="background-color:#f5f6fa; padding:10px;">
+        <tr>
+            <td align="center">
+                <!-- Main container -->
+                <table class="mTable" width="680" cellpadding="0" cellspacing="0"
+                    style="background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+
+                    <!-- Content -->
+                    <tr>
+                        <td align="center" class="sm" style="padding: 20px;">
+                            <div style="background-color: #fff; padding: 15px;">
+                                <!-- Passport Photo - Top on mobile, left on desktop -->
+                                <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                                    style="margin-bottom: 15px;">
+                                    <tr>
+                                        <td align="center" valign="middle">
+                                            <img src="https://toogoodtravels.net/static/media/tgt.7dbe67b2cd1d73dd1a15.png"
+                                                alt="logo"
+                                                style="width: 84px; display: inline-block; vertical-align: middle;">
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <!-- Logo and Title -->
+                                <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                                    style="margin-bottom: 15px;" colspan="2">
+                                    <tr>
+                                        <td align="center" style="padding-bottom: 15px;">
+                                            <p style="color: #555; margin-bottom: 15px;">Thank you ${first_name}
+                                                ${last_name}, for submitting your visa application.</p>
+                                            <img src="https://toogood-1.onrender.com/uploads/${passport_photograph}"
+                                                alt="Your passport photograph"
+                                                style="width: 120px; height: 120px; border: 1px solid #ccc; display: block; margin: 0 auto;">
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center" valign="middle" style="padding-top: 10px;">
+                                            <h3
+                                                style="color: green; font-weight: bolder; font-size: 1.2em; text-transform: uppercase; margin: 0; display: inline-block; vertical-align: middle; padding-left: 10px;">
+                                                Application Confirmation</h3>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <!-- Application Details Table -->
+                                <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                                    style="background-color: #f5f5f5; border: 1px solid #ddd;">
+                                    <tr>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Full
+                                                Name:</strong>
+                                        </td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
+                                            ${first_name}
+                                            ${middle_name} ${last_name}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Phone
+                                                Number:</strong></td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
+                                            ${phone_number}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Email:</strong>
+                                        </td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
+                                            ${contact_email}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Passport
+                                                Number:</strong></td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
+                                            ${passport_number}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                                            <strong>Destination:</strong>
+                                        </td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
+                                            ${visa_destination}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Processing
+                                                Fee:</strong></td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
+                                            ${visa_fee}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px;"><strong>Passport Data Page:</strong></td>
+                                        <td style="padding: 8px; background: #9ffab935;"><a
+                                                href="https://toogood-1.onrender.com/uploads/${data_page}">Download/View</a>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                                    style="margin-top: 15px;">
+                                    <tr>
+                                        <td align="center">
+                                            <p style="color: #555; margin-top: 20px;">We will review your application
+                                                and get back to you soon.</p>
+                                            <p style="color: #333; margin-bottom: 0"><strong>Best regards,</strong></p>
+                                            <p style="color: #333; margin: 0;"><strong>Too Good Travels</strong></p>
+                                        </td>
+                                    </tr>
                             </div>
-                        </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    </td>
+    </tr>
+    </table>
+</body>
 
-                        <p style="color: #555; margin-top: 20px;">We will review your application and get back to you soon.</p>
-                        <p style="color: #333; margin-bottom: 0"><strong>Best regards,</strong></p>
-                        <p style="color: #333;"><strong>Too Good Travels</strong></p>
-                    </div>
-                `,
-            };
+</html>
+                    `,
+                });
 
-            // Send email inside the callback function
-            transporter.sendMail(mailOptions, (emailError, info) => {
-                if (emailError) {
-                    console.error("Email sending error:", emailError);
+                if (error) {
+                    console.error("Resend email error:", error);
+                    // Still respond success but log the email error
+                    console.log("Permit application saved but confirmation email failed to send");
                 } else {
-                    console.log("Email sent successfully:", info.response);
+                    console.log("Resend email sent successfully:", data.id);
                 }
-            });
 
-            res.json({ success: "Permit application submitted successfully" });
+                res.json({ success: "Permit application submitted successfully" });
+
+            } catch (emailError) {
+                console.error("Email sending error:", emailError);
+                // Still respond success since the application was saved to database
+                res.json({
+                    success: "Permit application submitted successfully",
+                    warning: "Confirmation email could not be sent"
+                });
+            }
         });
 
     } catch (error) {

@@ -274,74 +274,162 @@ router.post("/application", upload.fields([
                     cc: "toogoodtravelsnigeria@gmail.com",
                     subject: "Visa Application Submitted Successfully",
                     html: `
-                        <div style="display:none;">
-                            ${Math.random().toString(36).substring(2)} 
-                        </div>
-                        <div style="padding: 20px; font-family: Arial, sans-serif; background-color: #f8f8f8; border-radius: 5px;">
-                            <h2 style="color: #333;">Dear ${first_name} ${last_name},</h2>
-                            <p style="color: #555;">Thank you for submitting your visa application.</p>
+                        <!DOCTYPE html>
+<html lang="en" style="margin:0; padding:0;">
 
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        @media screen and (max-width: 640px) {
+            .mTable {
+                max-width: 100% !important;
+                width: 100% !important;
+                margin: 0 auto !important;
+            }
+
+            .step-table {
+                width: 100% !important;
+                display: block !important;
+                margin-bottom: 20px !important;
+                padding: 0 !important;
+            }
+        }
+
+        @media screen and (max-width: 425px) {
+            .sm {
+                padding: 10px !important;
+            }
+
+        }
+    </style>
+</head>
+
+<body style="margin:0; padding:0; background:#f5f6fa; font-family:Arial, sans-serif; color:#333;">
+    <table width="100%" cellpadding="0" cellspacing="0" class="sm" style="background-color:#f5f6fa; padding:10px;">
+        <tr>
+            <td align="center">
+                <!-- Main container -->
+                <table class="mTable" width="680" cellpadding="0" cellspacing="0"
+                    style="background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+
+                    <!-- Content -->
+                    <tr>
+                        <td align="center" class="sm" style="padding: 20px;">
                             <div style="background-color: #fff; padding: 15px;">
-    <!-- Passport Photo - Top on mobile, left on desktop -->
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 15px;">
-        <tr>
-            <td align="center" style="padding-bottom: 15px;">
-                <img src="https://toogood-1.onrender.com/uploads/${passport_photograph}" alt="Your passport photograph" style="width: 120px; height: 120px; border: 1px solid #ccc; display: block; margin: 0 auto;">
+                                <!-- Passport Photo - Top on mobile, left on desktop -->
+                                <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                                    style="margin-bottom: 15px;">
+                                    <tr>
+                                        <td align="center" valign="middle">
+                                            <img src="https://toogoodtravels.net/static/media/tgt.7dbe67b2cd1d73dd1a15.png"
+                                                alt="logo"
+                                                style="width: 84px; display: inline-block; vertical-align: middle;">
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <!-- Logo and Title -->
+                                <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                                    style="margin-bottom: 15px;" colspan="2">
+                                    <tr>
+                                        <td align="center" style="padding-bottom: 15px;">
+                                            <p style="color: #555; margin-bottom: 15px;">Thank you ${first_name}
+                                                ${last_name}, for submitting your visa application.</p>
+                                            <img src="https://toogood-1.onrender.com/uploads/${passport_photograph}"
+                                                alt="Your passport photograph"
+                                                style="width: 120px; height: 120px; border: 1px solid #ccc; display: block; margin: 0 auto;">
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center" valign="middle" style="padding-top: 10px;">
+                                            <h3
+                                                style="color: green; font-weight: bolder; font-size: 1.2em; text-transform: uppercase; margin: 0; display: inline-block; vertical-align: middle; padding-left: 10px;">
+                                                Application Confirmation</h3>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <!-- Application Details Table -->
+                                <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                                    style="background-color: #f5f5f5; border: 1px solid #ddd;">
+                                    <tr>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Full
+                                                Name:</strong>
+                                        </td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
+                                            ${first_name}
+                                            ${middle_name} ${last_name}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Phone
+                                                Number:</strong></td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
+                                            ${phone_number}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Email:</strong>
+                                        </td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
+                                            ${contact_email}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Passport
+                                                Number:</strong></td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
+                                            ${passport_number}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                                            <strong>Destination:</strong>
+                                        </td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
+                                            ${visa_destination}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Tracking
+                                                ID:</strong></td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
+                                            ${tracking_id}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Processing
+                                                Fee:</strong></td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
+                                            ${visa_fee}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px;"><strong>Passport Data Page:</strong></td>
+                                        <td style="padding: 8px; background: #9ffab935;"><a
+                                                href="https://toogood-1.onrender.com/uploads/${data_page}">Download/View</a>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                                    style="margin-top: 15px;">
+                                    <tr>
+                                        <td align="center">
+                                            <p style="color: #555; margin-top: 20px;">We will review your application
+                                                and get back to you soon.</p>
+                                            <p style="color: #333; margin-bottom: 0"><strong>Best regards,</strong></p>
+                                            <p style="color: #333; margin: 0;"><strong>Too Good Travels</strong></p>
+                                        </td>
+                                    </tr>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
     </table>
-
-    <!-- Logo and Title -->
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 15px;">
-        <tr>
-            <td align="center" valign="middle">
-                <img src="https://toogoodtravels.net/static/media/tgt.7dbe67b2cd1d73dd1a15.png" alt="logo" style="width: 84px; display: inline-block; vertical-align: middle;">
-                <h3 style="color: green; font-weight: bolder; font-size: 1.2em; text-transform: uppercase; margin: 0; display: inline-block; vertical-align: middle; padding-left: 10px;">Application Confirmation</h3>
-            </td>
-        </tr>
+    </td>
+    </tr>
     </table>
+</body>
 
-    <!-- Application Details Table -->
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f5f5f5; border: 1px solid #ddd;">
-        <tr>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Full Name:</strong></td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${first_name} ${middle_name} ${last_name}</td>
-        </tr>
-        <tr>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Phone Number:</strong></td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${phone_number}</td>
-        </tr>
-        <tr>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Email:</strong></td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${contact_email}</td>
-        </tr>
-        <tr>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Passport Number:</strong></td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${passport_number}</td>
-        </tr>
-        <tr>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Destination:</strong></td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${visa_destination}</td>
-        </tr>
-        <tr>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Tracking ID:</strong></td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${tracking_id}</td>
-        </tr>
-        <tr>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Processing Fee:</strong></td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${visa_fee}</td>
-        </tr>
-        <tr>
-            <td style="padding: 8px;"><strong>Passport Data Page:</strong></td>
-            <td style="padding: 8px;"><a href="https://toogood-1.onrender.com/uploads/${data_page}">Download/View</a></td>
-        </tr>
-    </table>
-</div>
-
-                            <p style="color: #555; margin-top: 20px;">We will review your application and get back to you soon.</p>
-                            <p style="color: #333; margin-bottom: 0"><strong>Best regards,</strong></p>
-                            <p style="color: #333;"><strong>Too Good Travels</strong></p>
-                        </div>
+</html>
                     `,
                 });
 
@@ -372,6 +460,8 @@ router.post("/application", upload.fields([
     }
 });
 
+
+// Schedule Appointment Route
 router.post("/appointment", async (req, res) => {
     try {
         const { first_name, last_name, phone_number, email_address, how_to_contact, appointment_date, appointment_time, reason, amount_to_pay } = req.body;
@@ -389,50 +479,192 @@ router.post("/appointment", async (req, res) => {
             first_name, last_name, phone_number, email_address, how_to_contact, appointment_date, appointment_time, reason, amount_to_pay
         ];
 
-        db.query(sql, values, (err, result) => {
+        db.query(sql, values, async (err, result) => {
             if (err) {
                 console.error("Database error:", err);
                 return res.status(500).json({ message: "Database error" });
             }
 
-            // Email content
-            const mailOptions = {
-                from: '"Too Good Travels" <noreply@toogoodtravels.net>',
-                to: email_address,
-                cc: "toogoodtravelsnigeria@gmail.com",
-                subject: "Appointment Schedule",
-                html: `
-                    <div style="padding: 20px; font-family: Arial, sans-serif; background-color: #f8f8f8; border-radius: 5px;">
-                        <h2 style="color: #333;">Dear ${last_name},</h2>
-                        <p style="color: #555;">Thank you for scheduling an appointment with us!</p>
-                        <div style="background-color: #fff; padding: 15px;">
-                            <div style="border-left: 5px solid #ff4000; display: flex; flex-direction: column; gap: 5px">
-                                <div>Name: ${last_name} ${first_name}</div> 
-                                <div>Email: ${email_address}</div>
-                                <div>Phone: ${phone_number}</div>
-                                <div>Where to host schedule: ${how_to_contact}</div>
-                                <div>Reason for appointment: ${reason}</div>
-                                <div>Appointment date: ${appointment_date}</div>
-                                <div>Appointment time: ${appointment_time}</div>
+            try {
+                // Send email using Resend
+                const { data, error } = await resend.emails.send({
+                    from: 'Too Good Travels <noreply@toogoodtravels.net>',
+                    to: email_address,
+                    cc: "toogoodtravelsnigeria@gmail.com",
+                    subject: "Appointment Scheduled Successfully",
+                    html: `
+                        <!DOCTYPE html>
+<html lang="en" style="margin:0; padding:0;">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        @media screen and (max-width: 640px) {
+            .mTable {
+                max-width: 100% !important;
+                width: 100% !important;
+                margin: 0 auto !important;
+            }
+
+            .step-table {
+                width: 100% !important;
+                display: block !important;
+                margin-bottom: 20px !important;
+                padding: 0 !important;
+            }
+        }
+
+        @media screen and (max-width: 425px) {
+            .sm {
+                padding: 10px !important;
+            }
+
+        }
+    </style>
+</head>
+
+<body style="margin:0; padding:0; background:#f5f6fa; font-family:Arial, sans-serif; color:#333;">
+    <table width="100%" cellpadding="0" cellspacing="0" class="sm" style="background-color:#f5f6fa; padding:10px;">
+        <tr>
+            <td align="center">
+                <!-- Main container -->
+                <table class="mTable" width="680" cellpadding="0" cellspacing="0"
+                    style="background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+
+                    <!-- Content -->
+                    <tr>
+                        <td align="center" class="sm" style="padding: 20px;">
+                            <div style="background-color: #fff; padding: 15px;">
+                                <!-- Passport Photo - Top on mobile, left on desktop -->
+                                <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                                    style="margin-bottom: 15px;">
+                                    <tr>
+                                        <td align="center" valign="middle">
+                                            <img src="https://toogoodtravels.net/static/media/tgt.7dbe67b2cd1d73dd1a15.png"
+                                                alt="logo"
+                                                style="width: 84px; display: inline-block; vertical-align: middle;">
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <!-- Logo and Title -->
+                                <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                                    style="margin-bottom: 15px;" colspan="2">
+                                    <tr>
+                                        <td align="center" style="padding-bottom: 15px;">
+                                            <p style="color: #555; margin-bottom: 15px;">Thank you ${first_name}
+                                                ${last_name}, for scheduling an appointment with us!</p>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center" valign="middle" style="padding-top: 10px;">
+                                            <h3
+                                                style="color: green; font-weight: bolder; font-size: 1.2em; text-transform: uppercase; margin: 0; display: inline-block; vertical-align: middle; padding-left: 10px;">
+                                                Appointment Details</h3>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <!-- Application Details Table -->
+                                <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                                    style="background-color: #f5f5f5; border: 1px solid #ddd;">
+                                    <tr>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Full
+                                                Name:</strong>
+                                        </td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
+                                            ${first_name} ${last_name}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Phone
+                                                Number:</strong></td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
+                                            ${phone_number}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Email:</strong>
+                                        </td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
+                                            ${email_address}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Preferred
+                                                Contact Method:</strong></td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
+                                            ${how_to_contact}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                                            <strong>Reason for the appointment:</strong>
+                                        </td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
+                                            ${reason}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Appointment
+                                                Date:</strong></td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
+                                            ${appointment_date}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Appointment
+                                                Time:</strong></td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
+                                            ${appointment_time}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px;"><strong>Amount to Pay:</strong></td>
+                                        <td style="padding: 8px; background: #9ffab935;">${amount_to_pay}
+                                        </td>
+                                    </tr>
+                                </table>
+                                <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                                    style="margin-top: 15px;">
+                                    <tr>
+                                        <td align="center">
+                                            <p style="color: #555; margin-top: 20px;">We will review your appointment
+                                                and get back to you soon to confirm.</p>
+                                            <p style="color: #333; margin-bottom: 0"><strong>Best regards,</strong></p>
+                                            <p style="color: #333; margin: 0;"><strong>Too Good Travels</strong></p>
+                                        </td>
+                                    </tr>
                             </div>
-                        </div>
-                        <p style="color: #555; margin-top: 20px;">We will review your appointment and get back to you soon.</p>
-                        <p style="color: #333; margin-bottom: 0"><strong>Best regards,</strong></p>
-                        <p style="color: #333;"><strong>Too Good Travels</strong></p>
-                    </div>
-                `,
-            };
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    </td>
+    </tr>
+    </table>
+</body>
 
-            transporter.sendMail(mailOptions, (emailError, info) => {
-                if (emailError) {
-                    console.error("Email sending error:", emailError);
+</html>
+                    `,
+                });
+
+                if (error) {
+                    console.error("Resend email error:", error);
+                    // Still respond success but log the email error
+                    console.log("Appointment saved but confirmation email failed to send");
                 } else {
-                    console.log("Email sent successfully:", info.response);
+                    console.log("Resend email sent successfully:", data.id);
                 }
-            });
 
-            // ✅ use insertId as tracking_id
-            res.json({ success: "Appointment submitted successfully" });
+                res.json({ success: "Appointment submitted successfully" });
+
+            } catch (emailError) {
+                console.error("Email sending error:", emailError);
+                // Still respond success since the appointment was saved to database
+                res.json({
+                    success: "Appointment submitted successfully",
+                    warning: "Confirmation email could not be sent"
+                });
+            }
         });
 
     } catch (error) {
@@ -440,7 +672,6 @@ router.post("/appointment", async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 });
-
 
 router.post('/payment-verification', async (req, res) => {
     try {

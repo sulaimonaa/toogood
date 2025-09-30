@@ -5,6 +5,9 @@ const authenticateAdmin = require('../middlewares/adminAuth');
 const nodemailer = require('nodemailer');
 const router = express.Router();
 
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 // Configure file upload storage
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -19,17 +22,6 @@ const storage = multer.diskStorage({
 const upload = multer({
     storage: storage,
     limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
-});
-
-// Email transporter configuration
-const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || "smtp.hostinger.com",
-    port: parseInt(process.env.EMAIL_PORT) || 465,
-    secure: true,
-    auth: {
-        user: process.env.EMAIL_USER || "dev@donadextechnology.com",
-        pass: process.env.EMAIL_PASSKEY
-    }
 });
 
 /**
@@ -103,10 +95,10 @@ router.post("/app", upload.fields([{ name: "upload_signature", maxCount: 1 }]), 
                 });
             }
 
-            const bookingId = result.id;
+            const bookingId = result.insertId || result.id;
 
             try {
-                // Send confirmation email
+                // Send confirmation email using Resend
                 await sendConfirmationEmail({
                     first_name,
                     last_name,
@@ -188,48 +180,94 @@ router.get('/all', authenticateAdmin, (req, res) => {
     });
 });
 
-// Helper function to send confirmation email
+// Helper function to send confirmation email using Resend
 async function sendConfirmationEmail(data) {
-    const mailOptions = {
-        from: `"Too Good Travels" <${process.env.EMAIL_USER || "noreply@toogoodtravels.net"}>`,
-        to: data.email,
-        cc: "toogoodtravelsnigeria@gmail.com",
-        subject: "Visa Support Booking Application Submitted Successfully",
-        html: `
-            <div style="padding: 20px; font-family: Arial, sans-serif; background-color: #f8f8f8; border-radius: 5px;">
-                <h2 style="color: #333;">Dear ${data.first_name} ${data.last_name},</h2>
-                <p style="color: #555;">Thank you for submitting your visa support booking application.</p>
-                
-                <div style="background-color: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ddd;">
-                    <h3 style="color: #333;">Application Details:</h3>
-                    <ul style="padding-left: 20px;">
-                        <li><strong>Full Name:</strong> ${data.first_name} ${data.last_name}</li>
-                        <li><strong>Phone Number:</strong> ${data.phone_number}</li>
-                        <li><strong>Email:</strong> ${data.email}</li>
-                        <li><strong>Destination:</strong> ${data.destination}</li>
-                        ${data.trip_type ? `<li><strong>Travel Type:</strong> ${data.trip_type}</li>` : ''}
-                        <li><strong>Travel Period:</strong> ${data.coverage_begin} to ${data.coverage_end}</li>
-                        ${data.flight_details ? `<li><strong>Flight Details:</strong> ${data.flight_details}</li>` : ''}
-                        ${data.hotel_details ? `<li><strong>Hotel Details:</strong> ${data.hotel_details}</li>` : ''}
-                        ${data.upload_signature ?
-                `<li><strong>Passport Data Page:</strong> 
-                            <a href="${process.env.BASE_URL || 'https://toogood-1.onrender.com'}/uploads/${data.upload_signature}">
-                                Download/View
-                            </a></li>` : ''}
-                    </ul>
+    try {
+        const { data: emailData, error } = await resend.emails.send({
+            from: 'Too Good Travels <noreply@toogoodtravels.net>',
+            to: data.email,
+            cc: "toogoodtravelsnigeria@gmail.com",
+            subject: "Visa Support Booking Application Submitted Successfully",
+            html: `
+                <div style="padding: 20px; font-family: Arial, sans-serif; background-color: #f8f8f8; border-radius: 5px;">
+                    <h2 style="color: #333;">Dear ${data.first_name} ${data.last_name},</h2>
+                    <p style="color: #555;">Thank you for submitting your visa support booking application.</p>
+                    
+                    <div style="background-color: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ddd;">
+                        <h3 style="color: #333; margin-top: 0;">Application Details:</h3>
+                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f9f9f9; border-radius: 3px;">
+                            <tr>
+                                <td style="padding: 10px; border-bottom: 1px solid #eee; width: 30%;"><strong>Full Name:</strong></td>
+                                <td style="padding: 10px; border-bottom: 1px solid #eee;">${data.first_name} ${data.last_name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Phone Number:</strong></td>
+                                <td style="padding: 10px; border-bottom: 1px solid #eee;">${data.phone_number}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Email:</strong></td>
+                                <td style="padding: 10px; border-bottom: 1px solid #eee;">${data.email}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Destination:</strong></td>
+                                <td style="padding: 10px; border-bottom: 1px solid #eee;">${data.destination}</td>
+                            </tr>
+                            ${data.trip_type ? `
+                            <tr>
+                                <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Travel Type:</strong></td>
+                                <td style="padding: 10px; border-bottom: 1px solid #eee;">${data.trip_type}</td>
+                            </tr>
+                            ` : ''}
+                            <tr>
+                                <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Travel Period:</strong></td>
+                                <td style="padding: 10px; border-bottom: 1px solid #eee;">${data.coverage_begin} to ${data.coverage_end}</td>
+                            </tr>
+                            ${data.flight_details ? `
+                            <tr>
+                                <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Flight Details:</strong></td>
+                                <td style="padding: 10px; border-bottom: 1px solid #eee;">${data.flight_details}</td>
+                            </tr>
+                            ` : ''}
+                            ${data.hotel_details ? `
+                            <tr>
+                                <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Hotel Details:</strong></td>
+                                <td style="padding: 10px; border-bottom: 1px solid #eee;">${data.hotel_details}</td>
+                            </tr>
+                            ` : ''}
+                            ${data.upload_signature ? `
+                            <tr>
+                                <td style="padding: 10px;"><strong>Passport Data Page:</strong></td>
+                                <td style="padding: 10px;">
+                                    <a href="${process.env.BASE_URL || 'https://toogood-1.onrender.com'}/uploads/${data.upload_signature}" style="color: #007bff; text-decoration: none;">
+                                        Download/View
+                                    </a>
+                                </td>
+                            </tr>
+                            ` : ''}
+                        </table>
+                    </div>
+
+                    <p style="color: #555; margin-top: 20px;">
+                        We will review your application and get back to you soon.
+                    </p>
+                    <p style="color: #333; margin-bottom: 0;"><strong>Best regards,</strong></p>
+                    <p style="color: #333;"><strong>Too Good Travels</strong></p>
                 </div>
+            `
+        });
 
-                <p style="color: #555; margin-top: 20px;">
-                    We will review your application and get back to you soon.
-                </p>
-                <p style="color: #333; margin-bottom: 0"><strong>Best regards,</strong></p>
-                <p style="color: #333;"><strong>Too Good Travels</strong></p>
-            </div>
-        `
-    };
+        if (error) {
+            console.error("Resend email error:", error);
+            throw error;
+        }
 
-    await transporter.sendMail(mailOptions);
+        console.log("Resend email sent successfully:", emailData?.id);
+        return emailData;
+
+    } catch (error) {
+        console.error("Email sending error:", error);
+        throw error;
+    }
 }
-
 module.exports = router;
 

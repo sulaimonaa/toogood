@@ -10,6 +10,9 @@ const router = express.Router();
 
 
 // Configure file upload storage
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "uploads/");
@@ -25,16 +28,6 @@ const upload = multer({
     limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
 });
 
-const transporter = nodemailer.createTransport({
-    host: "smtp.hostinger.com",
-    port: 465,
-    secure: true,
-    auth: {
-        user: "dev@donadextechnology.com",
-        pass: process.env.EMAIL_PASSKEY,
-    },
-});
-
 router.post("/application", upload.fields([
     { name: "upload_signature", maxCount: 1 }
 ]), async (req, res) => {
@@ -44,7 +37,6 @@ router.post("/application", upload.fields([
         if (!first_name || !last_name || !phone_number || !contact_email) {
             return res.status(400).json({ message: "Missing required fields" });
         }
-
 
         // Store file paths
         const upload_signature = req.files["upload_signature"] ? req.files["upload_signature"][0].filename : null;
@@ -58,52 +50,79 @@ router.post("/application", upload.fields([
             first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number, address, occupation, gender, marital_status, travel_type, purpose_travel, other_reason, next_of_kin, next_of_kin_address, relationship, coverage_begin, coverage_end, destination, more_ninety, medical_condition, more_medical_condition, heard_policy, amount_to_pay, upload_signature
         ];
 
-        db.query(sql, values, (err, result) => {
+        db.query(sql, values, async (err, result) => {
             if (err) {
                 console.error("Database error:", err);
                 return res.status(500).json({ message: "Database error" });
             }
 
-            // Email content
-            const mailOptions = {
-                from: '"Too Good Travels" <noreply@toogoodtravels.net>',
-                to: contact_email,
-                cc: "toogoodtravelsnigeria@gmail.com",
-                subject: "Insurance Application Submitted Successfully",
-                html: `
-                    <div style="padding: 20px; font-family: Arial, sans-serif; background-color: #f8f8f8; border-radius: 5px;">
-                        <h2 style="color: #333;">Dear ${first_name} ${last_name},</h2>
-                        <p style="color: #555;">Thank you for submitting your insurance application.</p>
+            try {
+                // Send email using Resend
+                const { data, error } = await resend.emails.send({
+                    from: 'Too Good Travels <noreply@toogoodtravels.net>',
+                    to: contact_email,
+                    cc: "toogoodtravelsnigeria@gmail.com",
+                    subject: "Insurance Application Submitted Successfully",
+                    html: `
+                        <div style="padding: 20px; font-family: Arial, sans-serif; background-color: #f8f8f8; border-radius: 5px;">
+                            <h2 style="color: #333;">Dear ${first_name} ${last_name},</h2>
+                            <p style="color: #555;">Thank you for submitting your insurance application.</p>
 
-                        <div style="background-color: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ddd;">
-                            <h3 style="color: #333;">Application Details:</h3>
-                            <ul style="padding-left: 20px;">
-                                <li><strong>Full Name:</strong> ${first_name} ${middle_name} ${last_name}</li>
-                                <li><strong>Phone Number:</strong> ${phone_number}</li>
-                                <li><strong>Email:</strong> ${contact_email}</li>
-                                <li><strong>Destination:</strong> ${destination}</li>
-                                <li><strong>Coverage Period:</strong> ${coverage_begin} to ${coverage_end}</li>
-                                <li><strong>Passport Data Page:</strong> <a href="https://toogood-1.onrender.com/uploads/${upload_signature}"">Download/View</a></li>
-                            </ul>
+                            <div style="background-color: #fff; padding: 15px; border-radius: 5px; border: 1px solid #ddd;">
+                                <h3 style="color: #333; margin-top: 0;">Application Details:</h3>
+                                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f9f9f9; border-radius: 3px;">
+                                    <tr>
+                                        <td style="padding: 10px; border-bottom: 1px solid #eee; width: 30%;"><strong>Full Name:</strong></td>
+                                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${first_name} ${middle_name} ${last_name}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Phone Number:</strong></td>
+                                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${phone_number}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Email:</strong></td>
+                                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${contact_email}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Destination:</strong></td>
+                                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${destination}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Coverage Period:</strong></td>
+                                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${coverage_begin} to ${coverage_end}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 10px;"><strong>Passport Data Page:</strong></td>
+                                        <td style="padding: 10px;"><a href="https://toogood-1.onrender.com/uploads/${upload_signature}" style="color: #007bff; text-decoration: none;">Download/View</a></td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <p style="color: #555; margin-top: 20px;">We will review your application and get back to you soon.</p>
+                            <p style="color: #333; margin-bottom: 0;"><strong>Best regards,</strong></p>
+                            <p style="color: #333;"><strong>Too Good Travels</strong></p>
                         </div>
+                    `,
+                });
 
-                        <p style="color: #555; margin-top: 20px;">We will review your application and get back to you soon.</p>
-                        <p style="color: #333; margin-bottom: 0"><strong>Best regards,</strong></p>
-                        <p style="color: #333;"><strong>Too Good Travels</strong></p>
-                    </div>
-                `,
-            };
-
-            // Send email inside the callback function
-            transporter.sendMail(mailOptions, (emailError, info) => {
-                if (emailError) {
-                    console.error("Email sending error:", emailError);
+                if (error) {
+                    console.error("Resend email error:", error);
+                    // Still respond success but log the email error
+                    console.log("Insurance application saved but confirmation email failed to send");
                 } else {
-                    console.log("Email sent successfully:", info.response);
+                    console.log("Resend email sent successfully:", data.id);
                 }
-            });
 
-            res.json({ success: "Insurance application submitted successfully" });
+                res.json({ success: "Insurance application submitted successfully" });
+
+            } catch (emailError) {
+                console.error("Email sending error:", emailError);
+                // Still respond success since the application was saved to database
+                res.json({
+                    success: "Insurance application submitted successfully",
+                    warning: "Confirmation email could not be sent"
+                });
+            }
         });
 
     } catch (error) {
