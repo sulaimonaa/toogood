@@ -26,11 +26,11 @@ const upload = multer({
 });
 
 const transporter = nodemailer.createTransport({
-    host: "mail.toogoodtravels.net",
-    port: 465, 
+    host: "smtppro.zoho.com",
+    port: 465,
     secure: true,
     auth: {
-        user: "noreply@toogoodtravels.net", 
+        user: "noreply@toogoodtravels.net",
         pass: process.env.EMAIL_PASSKEY,
     },
 });
@@ -39,7 +39,7 @@ router.post("/application", upload.fields([
     { name: "upload_signature", maxCount: 1 }
 ]), async (req, res) => {
     try {
-        const { first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number, address, occupation, gender, marital_status, travel_type, purpose_travel, other_reason, next_of_kin, next_of_kin_address, relationship, coverage_begin, coverage_end, destination, more_ninety, medical_condition, more_medical_condition, heard_policy, amount_to_pay} = req.body;
+        const { first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number, address, occupation, gender, marital_status, travel_type, purpose_travel, other_reason, next_of_kin, next_of_kin_address, relationship, coverage_begin, coverage_end, destination, more_ninety, medical_condition, more_medical_condition, heard_policy, amount_to_pay } = req.body;
 
         if (!first_name || !last_name || !phone_number || !contact_email) {
             return res.status(400).json({ message: "Missing required fields" });
@@ -67,8 +67,8 @@ router.post("/application", upload.fields([
             // Email content
             const mailOptions = {
                 from: '"Too Good Travels" <noreply@toogoodtravels.net>',
-                to: contact_email, 
-                cc:"toogoodtravelsnigeria@gmail.com",
+                to: contact_email,
+                cc: "toogoodtravelsnigeria@gmail.com",
                 subject: "Insurance Application Submitted Successfully",
                 html: `
                     <div style="padding: 20px; font-family: Arial, sans-serif; background-color: #f8f8f8; border-radius: 5px;">
@@ -103,7 +103,7 @@ router.post("/application", upload.fields([
                 }
             });
 
-            res.json({ success: "Insurance application submitted successfully"});
+            res.json({ success: "Insurance application submitted successfully" });
         });
 
     } catch (error) {
@@ -114,23 +114,23 @@ router.post("/application", upload.fields([
 
 router.post('/payment-verification', async (req, res) => {
     try {
-      const { transaction_id, booking_id } = req.body;
-      const verification = await flw.Transaction.verify({ id: transaction_id });
-      
-      if (verification.data.status === 'successful') {
-        db.query(
-          'UPDATE insurance_applications SET payment_status = ? WHERE id = ?',
-          ['Paid', booking_id],
-        );
-        return res.json({ status: 'success' });
-      }
-      
-      res.status(400).json({ status: 'failed' });
+        const { transaction_id, booking_id } = req.body;
+        const verification = await flw.Transaction.verify({ id: transaction_id });
+
+        if (verification.data.status === 'successful') {
+            db.query(
+                'UPDATE insurance_applications SET payment_status = ? WHERE id = ?',
+                ['Paid', booking_id],
+            );
+            return res.json({ status: 'success' });
+        }
+
+        res.status(400).json({ status: 'failed' });
     } catch (error) {
-      console.error('Verification error:', error);
-      res.status(500).json({ error: 'Verification failed' });
+        console.error('Verification error:', error);
+        res.status(500).json({ error: 'Verification failed' });
     }
-  });
+});
 
 router.get('/all', authenticateAdmin, (req, res) => {
     const sql = "SELECT * FROM insurance_applications ORDER BY created_at DESC";

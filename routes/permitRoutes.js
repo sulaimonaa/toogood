@@ -2,7 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const db = require('../db');
 const authenticateAdmin = require('../middlewares/adminAuth');
-const nodemailer = require("nodemailer"); 
+const nodemailer = require("nodemailer");
 const router = express.Router();
 
 // Add Visa Destination (Admin Only)
@@ -28,7 +28,7 @@ router.post('/add_permit', authenticateAdmin, (req, res) => {
 //new route for available destinations
 router.get('/available-destinations', (req, res) => {
     const { search } = req.query;
-    
+
     // Base query
     let query = `
         SELECT id, destination, visa_description, visa_price, 
@@ -36,15 +36,15 @@ router.get('/available-destinations', (req, res) => {
         FROM permit_destinations
         WHERE 1=1
     `;
-    
+
     const params = [];
-    
+
     // Add search term filter if provided
     if (search) {
         query += ` AND (destination LIKE ? OR visa_description LIKE ?)`;
         params.push(`%${search}%`, `%${search}%`);
     }
-    
+
     // Add sorting by relevance if searching
     if (search) {
         query += `
@@ -57,26 +57,26 @@ router.get('/available-destinations', (req, res) => {
         `;
         params.push(search, `${search}%`);
     }
-    
+
     db.query(query, params, (err, results) => {
         if (err) {
             console.error("Database error:", err);
-            return res.status(500).json({ 
-                message: "Database error", 
-                error: err 
+            return res.status(500).json({
+                message: "Database error",
+                error: err
             });
         }
 
         if (results.length === 0) {
-            return res.json({ 
-                message: "No matching permit destinations found", 
-                data: [] 
+            return res.json({
+                message: "No matching permit destinations found",
+                data: []
             });
         }
 
-        res.json({ 
-            message: "Permit destinations fetched successfully", 
-            data: results 
+        res.json({
+            message: "Permit destinations fetched successfully",
+            data: results
         });
     });
 });
@@ -103,7 +103,7 @@ router.get('/destinations', (req, res) => {
 // Get visa destination by ID
 router.get('/destinations/:id', (req, res) => {
     const id = req.params.id
-    if(!id) {
+    if (!id) {
         console.log("No ID received")
     }
     db.query(
@@ -116,14 +116,14 @@ router.get('/destinations/:id', (req, res) => {
             if (results.length === 0) {
                 return res.status(404).json({ message: "Destination not found" });
             }
-    
+
             res.json(results[0]);
         });
 })
 
 router.put('/update', authenticateAdmin, async (req, res) => {
     const { destination, visa_description, visa_price, visa_agent_price, available_country } = req.body;
-    const { visa_id } = req.body; 
+    const { visa_id } = req.body;
 
     if (!destination && !visa_description && !visa_price && !visa_agent_price && !available_country) {
         return res.status(400).json({ message: "At least one field must be provided to update" });
@@ -206,11 +206,11 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 const transporter = nodemailer.createTransport({
-    host: "mail.toogoodtravels.net",
-    port: 465, 
+    host: "smtppro.zoho.com",
+    port: 465,
     secure: true,
     auth: {
-        user: "noreply@toogoodtravels.net", 
+        user: "noreply@toogoodtravels.net",
         pass: process.env.EMAIL_PASSKEY,
     },
 });
@@ -258,8 +258,8 @@ router.post("/application", upload.fields([
             // Email content
             const mailOptions = {
                 from: '"Too Good Travels" <noreply@toogoodtravels.net>',
-                to: contact_email, 
-                cc:"toogoodtravelsnigeria@gmail.com",
+                to: contact_email,
+                cc: "toogoodtravelsnigeria@gmail.com",
                 subject: "Permit Application Submitted Successfully",
                 html: `
                     <div style="padding: 20px; font-family: Arial, sans-serif; background-color: #f8f8f8; border-radius: 5px;">
@@ -316,23 +316,23 @@ router.post("/application", upload.fields([
 
 router.post('/payment-verification', async (req, res) => {
     try {
-      const { transaction_id, booking_id } = req.body;
-      const verification = await flw.Transaction.verify({ id: transaction_id });
-      
-      if (verification.data.status === 'successful') {
-        db.query(
-          'UPDATE permit_applications SET payment_status = ? WHERE id = ?',
-          ['Paid', booking_id],
-        );
-        return res.json({ status: 'success' });
-      }
-      
-      res.status(400).json({ status: 'failed' });
+        const { transaction_id, booking_id } = req.body;
+        const verification = await flw.Transaction.verify({ id: transaction_id });
+
+        if (verification.data.status === 'successful') {
+            db.query(
+                'UPDATE permit_applications SET payment_status = ? WHERE id = ?',
+                ['Paid', booking_id],
+            );
+            return res.json({ status: 'success' });
+        }
+
+        res.status(400).json({ status: 'failed' });
     } catch (error) {
-      console.error('Verification error:', error);
-      res.status(500).json({ error: 'Verification failed' });
+        console.error('Verification error:', error);
+        res.status(500).json({ error: 'Verification failed' });
     }
-  });
+});
 
 router.get('/pending', authenticateAdmin, (req, res) => {
     const sql = "SELECT * FROM permit_applications WHERE visa_status = 'Pending'";
@@ -385,7 +385,7 @@ router.get('/all-not-paid-visa', authenticateAdmin, (req, res) => {
 router.get('/first-ten', authenticateAdmin, (req, res) => {
     const sql = "SELECT * FROM permit_applications ORDER BY created_at DESC LIMIT 10";
     db.query(sql, (err, results) => {
-        if(err) return res.status(500).json({message: "Database error"});
+        if (err) return res.status(500).json({ message: "Database error" });
         res.json(results);
     });
 });
@@ -404,29 +404,29 @@ router.get('/status/:id', authenticateAdmin, (req, res) => {
 
 router.put('/upload/:id', upload.fields([{ name: "permit_file", maxCount: 1 }]), authenticateAdmin, (req, res) => {
     const { id } = req.params;
-    
+
     // Get the uploaded file - Multer puts files in req.files, not req.body
     const permitFile = req.files?.permit_file?.[0];
-    
+
     if (!permitFile) {
         return res.status(400).json({ message: "No file uploaded" });
     }
 
-    const fileUrl = `/uploads/${permitFile.filename}`; 
+    const fileUrl = `/uploads/${permitFile.filename}`;
 
     const sql = `UPDATE permit_applications SET permit_file = ? WHERE id = ?`;
     const values = [fileUrl, id];
-    
+
     db.query(sql, values, (err, result) => {
         if (err) {
             console.error("Database error:", err);
             return res.status(500).json({ message: "Error updating permit application" });
         }
-        
+
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: "Permit application not found" });
         }
-        
+
         res.json({ message: "Permit file uploaded successfully", data: result });
     });
 });

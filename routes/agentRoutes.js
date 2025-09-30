@@ -4,17 +4,17 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('../db');
 const verifyToken = require('../middlewares/authMiddleware');
-const nodemailer = require("nodemailer"); 
+const nodemailer = require("nodemailer");
 const router = express.Router();
 
 const JWT_SECRET = process.env.SECRET_KEY;
 
 const transporter = nodemailer.createTransport({
-    host: "mail.toogoodtravels.net",
-    port: 465, 
+    host: "smtppro.zoho.com",
+    port: 465,
     secure: true,
     auth: {
-        user: "noreply@toogoodtravels.net", 
+        user: "noreply@toogoodtravels.net",
         pass: process.env.EMAIL_PASSKEY,
     },
 });
@@ -49,12 +49,12 @@ router.post('/register', async (req, res) => {
                 }
 
                 // Email content
-            const mailOptions = {
-                from: '"Too Good Travels" <noreply@toogoodtravels.net>',
-                to: agent_email,
-                cc: "toogoodtravelsnigeria@gmail.com",
-                subject: "Your Agent Registration is Successful",
-                html: `
+                const mailOptions = {
+                    from: '"Too Good Travels" <noreply@toogoodtravels.net>',
+                    to: agent_email,
+                    cc: "toogoodtravelsnigeria@gmail.com",
+                    subject: "Your Agent Registration is Successful",
+                    html: `
                     <div style="padding: 20px; font-family: Arial, sans-serif; background-color: #f8f8f8; border-radius: 5px;">
                         <h2 style="color: #333;">Dear ${agent_name},</h2>
                         <p style="color: #555;">Thank you for registering to become an agent with Too Good Travels.</p>
@@ -74,16 +74,16 @@ router.post('/register', async (req, res) => {
                         <p style="color: #333;"><strong>Too Good Travels</strong></p>
                     </div>
                 `,
-            };
+                };
 
-            // Send email inside the callback function
-            transporter.sendMail(mailOptions, (emailError, info) => {
-                if (emailError) {
-                    console.error("Email sending error:", emailError);
-                } else {
-                    console.log("Email sent successfully:", info.response);
-                }
-            });
+                // Send email inside the callback function
+                transporter.sendMail(mailOptions, (emailError, info) => {
+                    if (emailError) {
+                        console.error("Email sending error:", emailError);
+                    } else {
+                        console.log("Email sent successfully:", info.response);
+                    }
+                });
                 res.json({ success: "Agent registration successful" });
             });
         });
@@ -221,18 +221,18 @@ const authenticateAgent = (req, res, next) => {
 router.get('/details', authenticateAgent, (req, res) => {
     const agent_id = req.agent.agent_id; // Extracted from JWT
 
-    db.query("SELECT agent_name, agent_phone, agent_email FROM agent_details WHERE id = ?", [agent_id], 
-    (err, results) => {
-        if (err) {
-            console.error("Database error:", err);
-            return res.status(500).json({ message: "Database error" });
-        }
-        if (results.length === 0) {
-            return res.status(404).json({ message: "Agent not found" });
-        }
+    db.query("SELECT agent_name, agent_phone, agent_email FROM agent_details WHERE id = ?", [agent_id],
+        (err, results) => {
+            if (err) {
+                console.error("Database error:", err);
+                return res.status(500).json({ message: "Database error" });
+            }
+            if (results.length === 0) {
+                return res.status(404).json({ message: "Agent not found" });
+            }
 
-        res.json(results[0]);
-    });
+            res.json(results[0]);
+        });
 });
 
 // Update Agent Details Route (Protected)
@@ -322,7 +322,7 @@ router.get('/agent-profile', verifyToken, (req, res) => {
 // Set up multer storage
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "uploads/"); 
+        cb(null, "uploads/");
     },
     filename: (req, file, cb) => {
         const safeName = file.originalname
@@ -338,7 +338,7 @@ const upload = multer({ storage });
 // Upload agent profile image
 router.post("/upload-agent-profile", authenticateAgent, upload.single("agent_image"), async (req, res) => {
     try {
-        const agentId = req.agent.agent_id; 
+        const agentId = req.agent.agent_id;
 
         if (!agentId) {
             return res.status(404).json({ message: "Agent not found" });

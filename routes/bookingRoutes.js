@@ -23,7 +23,7 @@ const upload = multer({
 
 // Email transporter configuration
 const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || "mail.toogoodtravels.net",
+    host: process.env.EMAIL_HOST || "smtppro.zoho.com",
     port: parseInt(process.env.EMAIL_PORT) || 465,
     secure: true,
     auth: {
@@ -39,9 +39,9 @@ const transporter = nodemailer.createTransport({
 router.post("/app", upload.fields([{ name: "upload_signature", maxCount: 1 }]), async (req, res) => {
     try {
         // Destructure required fields
-        const { 
-            first_name, last_name, email, phone_number, amount_to_pay, 
-            ...otherFields 
+        const {
+            first_name, last_name, email, phone_number, amount_to_pay,
+            ...otherFields
         } = req.body;
 
         // Validate required fields
@@ -211,8 +211,8 @@ async function sendConfirmationEmail(data) {
                         <li><strong>Travel Period:</strong> ${data.coverage_begin} to ${data.coverage_end}</li>
                         ${data.flight_details ? `<li><strong>Flight Details:</strong> ${data.flight_details}</li>` : ''}
                         ${data.hotel_details ? `<li><strong>Hotel Details:</strong> ${data.hotel_details}</li>` : ''}
-                        ${data.upload_signature ? 
-                            `<li><strong>Passport Data Page:</strong> 
+                        ${data.upload_signature ?
+                `<li><strong>Passport Data Page:</strong> 
                             <a href="${process.env.BASE_URL || 'https://toogood-1.onrender.com'}/uploads/${data.upload_signature}">
                                 Download/View
                             </a></li>` : ''}

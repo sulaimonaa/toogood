@@ -221,7 +221,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 const transporter = nodemailer.createTransport({
-    host: "mail.toogoodtravels.net",
+    host: "smtppro.zoho.com",
     port: 465,
     secure: true,
     auth: {
