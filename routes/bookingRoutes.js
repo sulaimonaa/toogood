@@ -23,11 +23,11 @@ const upload = multer({
 
 // Email transporter configuration
 const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || "smtppro.zoho.com",
+    host: process.env.EMAIL_HOST || "smtp.hostinger.com",
     port: parseInt(process.env.EMAIL_PORT) || 465,
     secure: true,
     auth: {
-        user: process.env.EMAIL_USER || "noreply@toogoodtravels.net",
+        user: process.env.EMAIL_USER || "dev@donadextechnology.com",
         pass: process.env.EMAIL_PASSKEY
     }
 });
