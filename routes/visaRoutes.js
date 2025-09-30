@@ -282,28 +282,61 @@ router.post("/application", upload.fields([
                             <p style="color: #555;">Thank you for submitting your visa application.</p>
 
                             <div style="background-color: #fff; padding: 15px;">
-                                <div style="display: flex; gap: 5px; flex-wrap: wrap;">
-                                    <div>
-                                        <img src="https://toogood-1.onrender.com/uploads/${passport_photograph}" alt="Your passport photograph" style="width: 120px; height: 120px; margin-bottom: 10px; border: 1px solid #ccc;">
-                                    </div>
-                                    <div>
-                                        <div style="display: flex; gap: 5px; flex-wrap: wrap; align-items: center">
-                                            <img src="https://toogoodtravels.net/static/media/tgt.7dbe67b2cd1d73dd1a15.png" alt="logo" style="width: 84px" />
-                                            <h3 style="color: green; font-weight: bolder; font-size: 1.2em; font-style: uppercase">Application Confirmation</h3>
-                                        </div>
-                                        <ul style="padding: 20px; background-color: #ccc; border: 1px solid #ccc; font-size: 1em;">
-                                            <li style="padding: 5px; border-bottom: 1px solid #ddd; list-style: none"><strong>Full Name:</strong> ${first_name} ${middle_name} ${last_name}</li>
-                                            <li style="padding: 5px; border-bottom: 1px solid #ddd; list-style: none"><strong>Phone Number:</strong> ${phone_number}</li>
-                                            <li style="padding: 5px; border-bottom: 1px solid #ddd; list-style: none"><strong>Email:</strong> ${contact_email}</li>
-                                            <li style="padding: 5px; border-bottom: 1px solid #ddd; list-style: none"><strong>Passport Number:</strong> ${passport_number}</li>
-                                            <li style="padding: 5px; border-bottom: 1px solid #ddd; list-style: none"><strong>Destination:</strong> ${visa_destination}</li>
-                                            <li style="padding: 5px; border-bottom: 1px solid #ddd; list-style: none"><strong>Tracking ID:</strong> ${tracking_id}</li>
-                                            <li style="padding: 5px; border-bottom: 1px solid #ddd; list-style: none"><strong>Processing Fee:</strong> ${visa_fee}</li>
-                                            <li style="padding: 5px; border-bottom: 1px solid #ddd; list-style: none"><strong>Passport Data Page:</strong> <a href="https://toogood-1.onrender.com/uploads/${data_page}">Download/View</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
+    <!-- Passport Photo - Top on mobile, left on desktop -->
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 15px;">
+        <tr>
+            <td align="center" style="padding-bottom: 15px;">
+                <img src="https://toogood-1.onrender.com/uploads/${passport_photograph}" alt="Your passport photograph" style="width: 120px; height: 120px; border: 1px solid #ccc; display: block; margin: 0 auto;">
+            </td>
+        </tr>
+    </table>
+
+    <!-- Logo and Title -->
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 15px;">
+        <tr>
+            <td align="center" valign="middle">
+                <img src="https://toogoodtravels.net/static/media/tgt.7dbe67b2cd1d73dd1a15.png" alt="logo" style="width: 84px; display: inline-block; vertical-align: middle;">
+                <h3 style="color: green; font-weight: bolder; font-size: 1.2em; text-transform: uppercase; margin: 0; display: inline-block; vertical-align: middle; padding-left: 10px;">Application Confirmation</h3>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Application Details Table -->
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f5f5f5; border: 1px solid #ddd;">
+        <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Full Name:</strong></td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${first_name} ${middle_name} ${last_name}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Phone Number:</strong></td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${phone_number}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Email:</strong></td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${contact_email}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Passport Number:</strong></td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${passport_number}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Destination:</strong></td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${visa_destination}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Tracking ID:</strong></td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${tracking_id}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Processing Fee:</strong></td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${visa_fee}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px;"><strong>Passport Data Page:</strong></td>
+            <td style="padding: 8px;"><a href="https://toogood-1.onrender.com/uploads/${data_page}">Download/View</a></td>
+        </tr>
+    </table>
+</div>
 
                             <p style="color: #555; margin-top: 20px;">We will review your application and get back to you soon.</p>
                             <p style="color: #333; margin-bottom: 0"><strong>Best regards,</strong></p>
