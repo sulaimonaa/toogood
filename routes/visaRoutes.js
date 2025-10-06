@@ -292,7 +292,7 @@ router.post("/application", upload.fields([
         const qr_code_data = `VISA_APPLICATION:${tracking_id}:${first_name}:${last_name}:${passport_number}`;
         const qr_code_filename = `qrcode_${tracking_id}.png`;
 
-        // Store file paths
+        // Store file paths..
         const data_page = req.files["data_page"] ? req.files["data_page"][0].filename : null;
         const passport_photograph = req.files["passport_photograph"] ? req.files["passport_photograph"][0].filename : null;
         const utility_bill = req.files["utility_bill"] ? req.files["utility_bill"][0].filename : null;
