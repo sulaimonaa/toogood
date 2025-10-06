@@ -242,12 +242,16 @@ async function generateBarcodeImage(data, filename) {
 
         console.log('🎨 Generating barcode for:', data);
         const barcodeBuffer = await bwipjs.toBuffer({
-            bcid: 'code128',
-            text: data,
-            scale: 3,
-            height: 10,
-            includetext: true,
+            bcid: 'code128',        // Barcode type
+            text: data,             // Text to encode
+            scale: 6,               // Larger scale for bigger image
+            height: 20,             // Taller bars
+            width: 25,              // Wider to make it more square
+            includetext: true,      // Show text
+            textsize: 14,           // Larger text
             textxalign: 'center',
+            paddingwidth: 25,       // More padding
+            paddingheight: 25       // More padding
         });
 
         const filePath = path.join(uploadsDir, filename);
@@ -381,10 +385,14 @@ router.post("/application", upload.fields([
                                                 <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Processing Fee:</strong></td>
                                                     <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">${visa_fee}</td></tr>
                                                 ${barcodeGenerated ? `
-                                                <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Barcode:</strong></td>
-                                                    <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
-                                                        <img src="https://toogood-1.onrender.com/uploads/${barcode_filename}" alt="Barcode" style="height: 50px;">
-                                                    </td></tr>
+                                                <tr>
+    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Barcode:</strong></td>
+    <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
+        <img src="https://toogood-1.onrender.com/uploads/${barcode_filename}" 
+             alt="Barcode" 
+             style="width: 200px; height: 150px; object-fit: contain; display: block; margin: 0 auto;">
+    </td>
+</tr>
                                                 ` : ''}
                                                 <tr><td style="padding: 8px;"><strong>Passport Data Page:</strong></td>
                                                     <td style="padding: 8px; background: #9ffab935;"><a href="https://toogood-1.onrender.com/uploads/${data_page}">Download/View</a></td></tr>
