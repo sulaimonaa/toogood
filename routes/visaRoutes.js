@@ -224,64 +224,34 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 
+const bwipjs = require('bwip-js');
+const fs = require('fs');
+const path = require('path');
+
+// Barcode generation function
 async function generateBarcodeImage(data, filename) {
     try {
-        const bwipjs = require('bwip-js');
-        const fs = require('fs');
-        const path = require('path');
+        const uploadsDir = path.join(__dirname, 'uploads');
 
-        // Get the correct uploads directory path
-        const uploadsDir = path.join(__dirname, '..', 'uploads'); // Adjust path as needed
-
-        console.log('📁 Uploads directory path:', uploadsDir);
-        console.log('📝 Barcode data:', data);
-        console.log('🖼️  Barcode filename:', filename);
-
-        // Ensure uploads directory exists
         if (!fs.existsSync(uploadsDir)) {
-            console.log('📂 Creating uploads directory...');
             fs.mkdirSync(uploadsDir, { recursive: true });
         }
 
-        // Check if directory is writable
-        try {
-            fs.accessSync(uploadsDir, fs.constants.W_OK);
-            console.log('✅ Uploads directory is writable');
-        } catch (err) {
-            console.error('❌ Uploads directory is not writable:', err);
-            throw new Error('Uploads directory not writable');
-        }
-
-        console.log('🎨 Generating barcode...');
         const barcodeBuffer = await bwipjs.toBuffer({
-            bcid: 'code128',       // Barcode type
-            text: data,            // Text to encode
-            scale: 3,              // 3x scaling factor
-            height: 10,            // Bar height, in millimeters
-            includetext: true,     // Show human-readable text
-            textxalign: 'center',  // Always good to set this
+            bcid: 'code128',
+            text: data,
+            scale: 3,
+            height: 10,
+            includetext: true,
+            textxalign: 'center',
         });
 
-        console.log('📊 Barcode buffer size:', barcodeBuffer.length);
-
-        // Full path for the barcode file
         const filePath = path.join(uploadsDir, filename);
-        console.log('💾 Saving barcode to:', filePath);
-
-        // Save barcode image
         fs.writeFileSync(filePath, barcodeBuffer);
-        console.log('✅ Barcode saved successfully:', filename);
-
-        // Verify the file was created
-        if (fs.existsSync(filePath)) {
-            const stats = fs.statSync(filePath);
-            console.log('✅ File verified. Size:', stats.size, 'bytes');
-        } else {
-            console.error('❌ File was not created!');
-        }
+        console.log('Barcode saved:', filename);
 
     } catch (error) {
-        console.error('❌ Barcode generation error:', error);
+        console.error('Barcode generation error:', error);
         throw error;
     }
 }
@@ -305,7 +275,7 @@ router.post("/application", upload.fields([
         const tracking_id = `VISA${Math.floor(Math.random() * 1000000000)}`;
         const barcode_data = tracking_id;
         const barcode_filename = `barcode_${tracking_id}.png`;
-
+        await generateBarcodeImage(tracking_id, barcode_filename);
         // Store file paths
         const data_page = req.files["data_page"] ? req.files["data_page"][0].filename : null;
         const passport_photograph = req.files["passport_photograph"] ? req.files["passport_photograph"][0].filename : null;
@@ -332,9 +302,6 @@ router.post("/application", upload.fields([
             }
 
             try {
-                console.log('🔄 Starting barcode generation...');
-                await generateBarcodeImage(barcode_data, barcode_filename);
-                console.log('✅ Barcode generation completed');
                 // Send email using Resend
                 const { data, error } = await resend.emails.send({
                     from: 'Too Good Travels <noreply@toogoodtravels.net>',
@@ -509,7 +476,7 @@ router.post("/application", upload.fields([
                     console.log("Resend email sent successfully:", data.id);
                 }
 
-                res.json({ success: "Visa application submitted successfully", tracking_id, barcode_filename: null, barcode_error: "Barcode could not be generated", created_at: new Date('YmD'), passport_photograph });
+                res.json({ success: "Visa application submitted successfully", tracking_id, barcode_filename, created_at: new Date('YmD'), passport_photograph });
 
             } catch (emailError) {
                 console.error("Email sending error:", emailError);
