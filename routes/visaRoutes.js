@@ -224,12 +224,12 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 
-const bwipjs = require('bwip-js');
+const QRCode = require('qrcode');
 const fs = require('fs');
 const path = require('path');
 
-// Barcode generation function with better error handling
-async function generateBarcodeImage(data, filename) {
+// QR Code generation function with better error handling
+async function generateQRCodeImage(data, filename) {
     try {
         // Use absolute path to ensure we're writing to the right location
         const uploadsDir = path.join(process.cwd(), 'uploads');
@@ -240,23 +240,22 @@ async function generateBarcodeImage(data, filename) {
             fs.mkdirSync(uploadsDir, { recursive: true });
         }
 
-        console.log('🎨 Generating barcode for:', data);
-        const barcodeBuffer = await bwipjs.toBuffer({
-            bcid: 'code128',        // Barcode type
-            text: data,             // Text to encode
-            scale: 6,               // Larger scale for bigger image
-            height: 20,             // Taller bars
-            width: 25,              // Wider to make it more square
-            includetext: true,      // Show text
-            textsize: 14,           // Larger text
-            textxalign: 'center',
-            paddingwidth: 25,       // More padding
-            paddingheight: 25       // More padding
-        });
+        console.log('🎨 Generating QR code for:', data);
 
         const filePath = path.join(uploadsDir, filename);
-        fs.writeFileSync(filePath, barcodeBuffer);
-        console.log('✅ Barcode saved:', filename);
+
+        // Generate QR code with custom options
+        await QRCode.toFile(filePath, data, {
+            width: 300,           // Size in pixels
+            margin: 2,            // White border
+            color: {
+                dark: '#000000',  // QR code color
+                light: '#FFFFFF'  // Background color
+            },
+            errorCorrectionLevel: 'H' // High error correction (30%)
+        });
+
+        console.log('✅ QR Code saved:', filename);
 
         // Verify file was created
         if (fs.existsSync(filePath)) {
@@ -264,11 +263,11 @@ async function generateBarcodeImage(data, filename) {
             console.log('✅ File verified. Size:', stats.size, 'bytes');
             return true;
         } else {
-            throw new Error('File was not created');
+            throw new Error('QR Code file was not created');
         }
 
     } catch (error) {
-        console.error('❌ Barcode generation error:', error);
+        console.error('❌ QR Code generation error:', error);
         throw error;
     }
 }
@@ -290,8 +289,8 @@ router.post("/application", upload.fields([
 
         // Auto-generate tracking ID
         const tracking_id = `VISA${Math.floor(Math.random() * 1000000000)}`;
-        const barcode_data = tracking_id;
-        const barcode_filename = `barcode_${tracking_id}.png`;
+        const qr_code_data = `VISA_APPLICATION:${tracking_id}:${first_name}:${last_name}:${passport_number}`;
+        const qr_code_filename = `qrcode_${tracking_id}.png`;
 
         // Store file paths
         const data_page = req.files["data_page"] ? req.files["data_page"][0].filename : null;
@@ -309,7 +308,8 @@ router.post("/application", upload.fields([
 
         const values = [
             first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number,
-            data_page, passport_photograph, utility_bill, supporting_document, other_document, tracking_id, barcode_data, barcode_filename, visa_destination, visa_fee, process_time, process_type
+            data_page, passport_photograph, utility_bill, supporting_document, other_document,
+            tracking_id, qr_code_data, qr_code_filename, visa_destination, visa_fee, process_time, process_type
         ];
 
         db.query(sql, values, async (err, result) => {
@@ -319,18 +319,18 @@ router.post("/application", upload.fields([
             }
 
             const applicationId = result.insertId;
-            let barcodeGenerated = false;
+            let qrCodeGenerated = false;
 
             try {
-                // ✅ Generate barcode AFTER database insert with proper error handling
-                console.log('🔄 Starting barcode generation...');
-                await generateBarcodeImage(tracking_id, barcode_filename);
-                barcodeGenerated = true;
-                console.log('✅ Barcode generation completed successfully');
+                // ✅ Generate QR Code AFTER database insert with proper error handling
+                console.log('🔄 Starting QR code generation...');
+                await generateQRCodeImage(qr_code_data, qr_code_filename);
+                qrCodeGenerated = true;
+                console.log('✅ QR code generation completed successfully');
 
-            } catch (barcodeError) {
-                console.error('❌ Barcode generation failed, but application was saved:', barcodeError);
-                // Continue without barcode - application is already saved
+            } catch (qrError) {
+                console.error('❌ QR code generation failed, but application was saved:', qrError);
+                // Continue without QR code - application is already saved
             }
 
             try {
@@ -384,15 +384,14 @@ router.post("/application", upload.fields([
                                                     <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">${tracking_id}</td></tr>
                                                 <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Processing Fee:</strong></td>
                                                     <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">${visa_fee}</td></tr>
-                                                ${barcodeGenerated ? `
-                                                <tr>
-    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Barcode:</strong></td>
-    <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
-        <img src="https://toogood-1.onrender.com/uploads/${barcode_filename}" 
-             alt="Barcode" 
-             style="width: 200px; height: 150px; object-fit: contain; display: block; margin: 0 auto;">
-    </td>
-</tr>
+                                                ${qrCodeGenerated ? `
+                                                <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>QR Code:</strong></td>
+                                                    <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935; text-align: center;">
+                                                        <img src="https://toogood-1.onrender.com/uploads/${qr_code_filename}" 
+                                                             alt="QR Code" 
+                                                             style="width: 150px; height: 150px; display: block; margin: 0 auto;">
+                                                        <p style="font-size: 12px; color: #666; margin: 5px 0 0 0;">Scan to verify application</p>
+                                                    </td></tr>
                                                 ` : ''}
                                                 <tr><td style="padding: 8px;"><strong>Passport Data Page:</strong></td>
                                                     <td style="padding: 8px; background: #9ffab935;"><a href="https://toogood-1.onrender.com/uploads/${data_page}">Download/View</a></td></tr>
@@ -430,8 +429,8 @@ router.post("/application", upload.fields([
                 res.json({
                     success: "Visa application submitted successfully",
                     tracking_id,
-                    barcode_filename: barcodeGenerated ? barcode_filename : null,
-                    barcode_generated: barcodeGenerated,
+                    qr_code_filename: qrCodeGenerated ? qr_code_filename : null,
+                    qr_code_generated: qrCodeGenerated,
                     created_at: new Date(),
                     passport_photograph,
                     application_id: applicationId
@@ -442,8 +441,8 @@ router.post("/application", upload.fields([
                 res.json({
                     success: "Visa application submitted successfully",
                     tracking_id,
-                    barcode_filename: barcodeGenerated ? barcode_filename : null,
-                    barcode_generated: barcodeGenerated,
+                    qr_code_filename: qrCodeGenerated ? qr_code_filename : null,
+                    qr_code_generated: qrCodeGenerated,
                     created_at: new Date(),
                     passport_photograph,
                     application_id: applicationId,
