@@ -223,6 +223,69 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+
+async function generateBarcodeImage(data, filename) {
+    try {
+        const bwipjs = require('bwip-js');
+        const fs = require('fs');
+        const path = require('path');
+
+        // Get the correct uploads directory path
+        const uploadsDir = path.join(__dirname, '..', 'uploads'); // Adjust path as needed
+
+        console.log('📁 Uploads directory path:', uploadsDir);
+        console.log('📝 Barcode data:', data);
+        console.log('🖼️  Barcode filename:', filename);
+
+        // Ensure uploads directory exists
+        if (!fs.existsSync(uploadsDir)) {
+            console.log('📂 Creating uploads directory...');
+            fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+
+        // Check if directory is writable
+        try {
+            fs.accessSync(uploadsDir, fs.constants.W_OK);
+            console.log('✅ Uploads directory is writable');
+        } catch (err) {
+            console.error('❌ Uploads directory is not writable:', err);
+            throw new Error('Uploads directory not writable');
+        }
+
+        console.log('🎨 Generating barcode...');
+        const barcodeBuffer = await bwipjs.toBuffer({
+            bcid: 'code128',       // Barcode type
+            text: data,            // Text to encode
+            scale: 3,              // 3x scaling factor
+            height: 10,            // Bar height, in millimeters
+            includetext: true,     // Show human-readable text
+            textxalign: 'center',  // Always good to set this
+        });
+
+        console.log('📊 Barcode buffer size:', barcodeBuffer.length);
+
+        // Full path for the barcode file
+        const filePath = path.join(uploadsDir, filename);
+        console.log('💾 Saving barcode to:', filePath);
+
+        // Save barcode image
+        fs.writeFileSync(filePath, barcodeBuffer);
+        console.log('✅ Barcode saved successfully:', filename);
+
+        // Verify the file was created
+        if (fs.existsSync(filePath)) {
+            const stats = fs.statSync(filePath);
+            console.log('✅ File verified. Size:', stats.size, 'bytes');
+        } else {
+            console.error('❌ File was not created!');
+        }
+
+    } catch (error) {
+        console.error('❌ Barcode generation error:', error);
+        throw error;
+    }
+}
+
 // Create Visa Application Route
 router.post("/application", upload.fields([
     { name: "data_page", maxCount: 1 },
@@ -269,7 +332,9 @@ router.post("/application", upload.fields([
             }
 
             try {
+                console.log('🔄 Starting barcode generation...');
                 await generateBarcodeImage(barcode_data, barcode_filename);
+                console.log('✅ Barcode generation completed');
                 // Send email using Resend
                 const { data, error } = await resend.emails.send({
                     from: 'Too Good Travels <noreply@toogoodtravels.net>',
@@ -444,7 +509,7 @@ router.post("/application", upload.fields([
                     console.log("Resend email sent successfully:", data.id);
                 }
 
-                res.json({ success: "Visa application submitted successfully", tracking_id, barcode_filename, created_at: new Date(), passport_photograph });
+                res.json({ success: "Visa application submitted successfully", tracking_id, barcode_filename: null, barcode_error: "Barcode could not be generated", created_at: new Date('YmD'), passport_photograph });
 
             } catch (emailError) {
                 console.error("Email sending error:", emailError);
@@ -463,38 +528,6 @@ router.post("/application", upload.fields([
     }
 });
 
-// Barcode generation function
-async function generateBarcodeImage(data, filename) {
-    try {
-        const bwipjs = require('bwip-js');
-        const fs = require('fs');
-        const path = require('path');
-
-        const uploadsDir = path.join(__dirname, 'uploads');
-
-        // Ensure uploads directory exists
-        if (!fs.existsSync(uploadsDir)) {
-            fs.mkdirSync(uploadsDir, { recursive: true });
-        }
-
-        const barcodeBuffer = await bwipjs.toBuffer({
-            bcid: 'code128',       // Barcode type
-            text: data,            // Text to encode
-            scale: 3,              // 3x scaling factor
-            height: 10,            // Bar height, in millimeters
-            includetext: true,     // Show human-readable text
-            textxalign: 'center',  // Always good to set this
-        });
-
-        // Save barcode image
-        fs.writeFileSync(path.join(uploadsDir, filename), barcodeBuffer);
-        console.log(`Barcode saved as: ${filename}`);
-
-    } catch (error) {
-        console.error('Barcode generation error:', error);
-        throw error;
-    }
-}
 
 // Schedule Appointment Route
 router.post("/appointment", async (req, res) => {
