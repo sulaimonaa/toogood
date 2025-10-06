@@ -303,7 +303,7 @@ router.post("/application", upload.fields([
             INSERT INTO visa_applications (
                 first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, 
                 passport_number, data_page, passport_photograph, utility_bill, supporting_document, 
-                other_document, tracking_id, barcode_data, barcode_filename, payment_status, visa_status, visa_destination, visa_fee, process_time, process_type
+                other_document, tracking_id, qr_code_data, qr_code_filename, payment_status, visa_status, visa_destination, visa_fee, process_time, process_type
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Not Paid', 'Pending', ?, ?, ?, ?)`;
 
         const values = [
