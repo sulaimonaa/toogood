@@ -443,7 +443,7 @@ router.post("/application", upload.fields([
                     console.log("Resend email sent successfully:", data.id);
                 }
 
-                res.json({ success: "Visa application submitted successfully", tracking_id });
+                res.json({ success: "Visa application submitted successfully", tracking_id, barcode_filename, created_at: new Date(), passport_photograph });
 
             } catch (emailError) {
                 console.error("Email sending error:", emailError);
