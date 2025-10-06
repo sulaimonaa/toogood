@@ -317,7 +317,7 @@ router.post("/application", upload.fields([
                                     <tr>
                                         <td align="center" style="padding-bottom: 15px;">
                                             <p style="color: #555; margin-bottom: 15px;">Thank you ${first_name}
-                                                ${last_name}, for submitting your visa application.</p>
+                                                ${last_name}, for submitting your permit application.</p>
                                             <img src="https://toogood-1.onrender.com/uploads/${passport_photograph}"
                                                 alt="Your passport photograph"
                                                 style="width: 120px; height: 120px; border: 1px solid #ccc; display: block; margin: 0 auto;">
@@ -364,7 +364,7 @@ router.post("/application", upload.fields([
                                     </tr>
                                     <tr>
                                         <td style="padding: 8px; border-bottom: 1px solid #ddd;">
-                                            <strong>Destination:</strong>
+                                            <strong>Permit Destination:</strong>
                                         </td>
                                         <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
                                             ${visa_destination}
