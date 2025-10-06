@@ -269,6 +269,7 @@ router.post("/application", upload.fields([
             }
 
             try {
+                await generateBarcodeImage(barcode_data, barcode_filename);
                 // Send email using Resend
                 const { data, error } = await resend.emails.send({
                     from: 'Too Good Travels <noreply@toogoodtravels.net>',
