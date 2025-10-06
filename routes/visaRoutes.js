@@ -240,6 +240,8 @@ router.post("/application", upload.fields([
 
         // Auto-generate tracking ID
         const tracking_id = `VISA${Math.floor(Math.random() * 1000000000)}`;
+        const barcode_data = tracking_id;
+        const barcode_filename = `barcode_${tracking_id}.png`;
 
         // Store file paths
         const data_page = req.files["data_page"] ? req.files["data_page"][0].filename : null;
@@ -252,12 +254,12 @@ router.post("/application", upload.fields([
             INSERT INTO visa_applications (
                 first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, 
                 passport_number, data_page, passport_photograph, utility_bill, supporting_document, 
-                other_document, tracking_id, payment_status, visa_status, visa_destination, visa_fee, process_time, process_type
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Not Paid', 'Pending', ?, ?, ?, ?)`;
+                other_document, tracking_id, barcode_data, barcode_filename, payment_status, visa_status, visa_destination, visa_fee, process_time, process_type
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Not Paid', 'Pending', ?, ?, ?, ?)`;
 
         const values = [
             first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number,
-            data_page, passport_photograph, utility_bill, supporting_document, other_document, tracking_id, visa_destination, visa_fee, process_time, process_type
+            data_page, passport_photograph, utility_bill, supporting_document, other_document, tracking_id, barcode_data, barcode_filename, visa_destination, visa_fee, process_time, process_type
         ];
 
         db.query(sql, values, async (err, result) => {
@@ -460,6 +462,38 @@ router.post("/application", upload.fields([
     }
 });
 
+// Barcode generation function
+async function generateBarcodeImage(data, filename) {
+    try {
+        const bwipjs = require('bwip-js');
+        const fs = require('fs');
+        const path = require('path');
+
+        const uploadsDir = path.join(__dirname, 'uploads');
+
+        // Ensure uploads directory exists
+        if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+
+        const barcodeBuffer = await bwipjs.toBuffer({
+            bcid: 'code128',       // Barcode type
+            text: data,            // Text to encode
+            scale: 3,              // 3x scaling factor
+            height: 10,            // Bar height, in millimeters
+            includetext: true,     // Show human-readable text
+            textxalign: 'center',  // Always good to set this
+        });
+
+        // Save barcode image
+        fs.writeFileSync(path.join(uploadsDir, filename), barcodeBuffer);
+        console.log(`Barcode saved as: ${filename}`);
+
+    } catch (error) {
+        console.error('Barcode generation error:', error);
+        throw error;
+    }
+}
 
 // Schedule Appointment Route
 router.post("/appointment", async (req, res) => {
