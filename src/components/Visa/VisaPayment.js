@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FlutterWaveButton, closePaymentModal } from 'flutterwave-react-v3';
 import Loading from "../Loading";
@@ -8,8 +8,109 @@ const VisaPayment = () => {
     const navigate = useNavigate();
     const [paymentInitialized, setPaymentInitialized] = useState(true);
     const [paymentProcessing, setPaymentProcessing] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const pdfRef = useRef(null);
 
-    const { booking_id, tracking_id, barcode_filename, destination, phone_number, passport_number, passport_photograph, price, first_name, last_name, contact_email, created_at } = location.state || {};
+
+
+    const downloadPDF = async () => {
+        setLoading(true);
+        try {
+            // Check if ref exists
+            if (!pdfRef.current) {
+                throw new Error("PDF element not found");
+            }
+
+            // Dynamically import the libraries
+            const html2canvas = (await import("html2canvas")).default;
+            const jsPDF = (await import("jspdf")).default;
+
+            const element = pdfRef.current;
+
+            // Show the element temporarily for capture
+            element.style.display = 'block';
+            element.style.position = 'absolute';
+            element.style.left = '-9999px';
+            element.style.top = '0';
+
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                logging: true,
+                backgroundColor: '#ffffff',
+            });
+
+            // Hide the element again
+            element.style.display = 'none';
+            element.style.position = '';
+            element.style.left = '';
+            element.style.top = '';
+
+            const imgData = canvas.toDataURL('image/png', 1.0);
+            const pdf = new jsPDF('p', 'mm', 'a4');
+
+            const imgWidth = 210;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+            pdf.save(`invoice-${tracking_id}.pdf`);
+
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            // Fallback: Generate simple text PDF
+            await generateSimplePDF();
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const generateSimplePDF = async () => {
+        try {
+            const jsPDF = (await import("jspdf")).default;
+            const pdf = new jsPDF();
+
+            // Add content
+            pdf.setFontSize(20);
+            pdf.text('TOO GOOD TRAVELS', 20, 20);
+            pdf.setFontSize(16);
+            pdf.text('INVOICE', 160, 20);
+            pdf.setFontSize(10);
+            pdf.text(`#${tracking_id}`, 160, 28);
+
+            // Invoice details
+            pdf.setFontSize(12);
+            pdf.text('Invoice Details:', 20, 50);
+            pdf.setFontSize(10);
+            pdf.text(`Date: ${new Date(created_at).toLocaleDateString()}`, 20, 60);
+            pdf.text(`Amount: ₦${parseFloat(price).toLocaleString()}`, 20, 67);
+
+            // Customer info
+            pdf.setFontSize(12);
+            pdf.text('Customer Information:', 20, 85);
+            pdf.setFontSize(10);
+            pdf.text(`Name: ${first_name} ${last_name}`, 20, 95);
+            pdf.text(`Phone: ${phone_number}`, 20, 102);
+            pdf.text(`Email: ${contact_email}`, 20, 109);
+
+            // Application info
+            pdf.setFontSize(12);
+            pdf.text('Application Details:', 20, 125);
+            pdf.setFontSize(10);
+            pdf.text(`Passport: ${passport_number}`, 20, 135);
+            pdf.text(`Destination: ${destination}`, 20, 142);
+            pdf.text(`Tracking ID: ${tracking_id}`, 20, 149);
+
+            pdf.save(`invoice-${tracking_id}.pdf`);
+
+        } catch (error) {
+            console.error('Simple PDF also failed:', error);
+            alert('PDF generation failed. Please contact support for your invoice.');
+        }
+    };
+
+
+    const { booking_id, tracking_id, qr_code_filename, destination, phone_number, passport_number, passport_photograph, price, first_name, last_name, contact_email, created_at, payment_status } = location.state || {};
 
     const verifyPayment = async (transactionId) => {
         try {
@@ -83,7 +184,7 @@ const VisaPayment = () => {
         onclose: () => {
             setPaymentInitialized(false);
         },
-        text: 'Make Payment Now',
+        text: 'Pay Now',
     };
 
     const cancelPayment = () => {
@@ -94,75 +195,201 @@ const VisaPayment = () => {
     return (
         <>
             <div className="spacer"></div>
-            <div className="container d-flex flex-column align-items-center justify-content-center">
+            <div className="container d-flex flex-column justify-content-center">
+                {/* Hidden PDF Content */}
+                <div
+                    ref={pdfRef}
+                    style={{
+                        display: 'none',
+                        padding: '20px',
+                        background: 'white',
+                        width: '210mm', // A4 width
+                        minHeight: '297mm' // A4 height
+                    }}
+                >
+                    {/* Simple PDF Content */}
+                    <div style={{ borderBottom: '2px solid #333', paddingBottom: '20px', marginBottom: '20px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div>
+                                <img src="https://toogoodtravels.net/static/media/tgt.7dbe67b2cd1d73dd1a15.png" alt="TooGood Travels Logo" style={{ maxWidth: '150px' }} />
+                                <p style={{ color: '#666', margin: 0 }}>Visa Support Services</p>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
+                                <h2 style={{ color: '#28a745', margin: 0 }}>INVOICE</h2>
+                                <p style={{ color: '#666', margin: 0 }}>#{tracking_id}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style={{ marginBottom: '30px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <div>
+                                <p><strong>Invoice Date:</strong> {new Date(created_at).toLocaleDateString()}</p>
+                                <p><strong>Due Date:</strong> {new Date(new Date(created_at).getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}</p>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
+                                <h3 style={{ color: '#28a745' }}>₦{parseFloat(price).toLocaleString()}</h3>
+                                <p>Total Amount Due</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style={{ marginBottom: '30px' }}>
+                        <h3 style={{ borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>Personal Information</h3>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <div>
+                                <p><strong>Name:</strong><br />{first_name} {last_name}</p>
+                            </div>
+                            <div>
+                                <p><strong>Phone:</strong><br />{phone_number}</p>
+                            </div>
+                            <div>
+                                <p><strong>Email:</strong><br />{contact_email}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style={{ marginBottom: '30px' }}>
+                        <h3 style={{ borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>Application Information</h3>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <div>
+                                <p><strong>Passport Number:</strong><br />{passport_number}</p>
+                            </div>
+                            <div>
+                                <p><strong>Destination:</strong><br />{destination}</p>
+                            </div>
+                            <div>
+                                <p><strong>Tracking ID:</strong><br />{tracking_id}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style={{ marginBottom: '30px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-even' }}>
+                            <div>
+                                <img src={`https://toogood-1.onrender.com/uploads/${qr_code_filename}`} alt="Barcode" className="img-fluid mb-3" style={{ maxWidth: '200px' }} />
+                            </div>
+                            <div>
+                                <img src={`https://toogood-1.onrender.com/uploads/${passport_photograph}`} alt="Passport" className="img-fluid mb-3" style={{ maxWidth: '200px' }} />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style={{ marginTop: '50px', paddingTop: '20px', borderTop: '1px solid #ddd', textAlign: 'center' }}>
+                        <p style={{ color: '#666', fontSize: '12px' }}>
+                            This is a computer-generated invoice. No signature required.<br />
+                            Thank you for choosing Too Good Travels!
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div className="spacer"></div>
+            <div className="container d-flex flex-column justify-content-center">
                 <div className="d-flex justify-content-between align-items-center w-100 mb-4">
                     <div>
                         <img src="https://toogoodtravels.net/static/media/tgt.7dbe67b2cd1d73dd1a15.png" alt="TooGood Travels Logo" style={{ maxWidth: '150px' }} />
                     </div>
-                    <div className="d-flex flex-column align-items-center">
-                        {paymentProcessing ? (
-                            <Loading message="Verifying payment..." />
-                        ) : (
-                            <FlutterWaveButton
-                                {...fwConfig}
-                                className="btn btn-primary w-100 py-3"
-                            />
-                        )}
-                        <button
-                            onClick={cancelPayment}
-                            className="btn border-0 mt-3 bg-danger text-white"
-                        >
-                            Cancel Payment
-                        </button>
+                    <div className="d-flex flex-column align-items-end">
+                        <h3 style={{ color: '#28a745', fontWeight: 'bolder' }}>₦{parseFloat(price).toLocaleString()}</h3>
+                        <div className="d-flex flex-column flex-md-row mb-2 align-items-center">
+                            <span className="fw-bold me-2">Payment Status:</span>
+                            {payment_status === 'Paid' ? (
+                                <span className="badge bg-success text-white p-2">Paid</span>
+                            ) : (
+                                <span className="badge bg-warning text-dark p-2">Pending Payment</span>
+                            )}
+                        </div>
+                        {paymentInitialized && fwConfig && (
+                            <div className="d-md-flex gap-1 align-items-center w-100">
+                                {paymentProcessing ? (
+                                    <Loading message="Verifying payment..." />
+                                ) : (
+                                    <FlutterWaveButton
+                                        {...fwConfig}
+                                        className="btn bg-primary text-white border-0 w-100 p-2 payment-btn-font-size mb-2 mb-md-0"
+                                    />
+                                )}
+                                <button
+                                    onClick={cancelPayment}
+                                    className="btn border-0 bg-danger w-100 text-white p-2 payment-btn-font-size"
+                                >
+                                    Cancel Payment
+                                </button>
+                            </div>)}
                     </div>
                 </div>
-                <h2 className="mb-3 mt-3 fs-3 text-green">Visa Confirmation</h2>
-                <p className="text-center mb-4">You are about to make payment for your eVisa processing, confirm your details below, copy and save your tracking ID before proceeding to make payment.</p>
-                <div className="d-flex flex-column gap-2 bg-light p-4 rounded shadow mb-4" style={{ maxWidth: '500px', width: '100%' }}>
-                    <h4>Invoice Number: {tracking_id}</h4>
-                    <h4>Invoice Date: {created_at}</h4>
+                <h2 className="mb-5 mt-5 fs-3 text-success fw-bold text-center">Visa Confirmation</h2>
+                <p className="text-start mb-4 text-center text-md-start">{first_name}, you are about to make payment for your eVisa processing, confirm your details below, copy and save your tracking ID before proceeding to make payment.</p>
+                <div className="d-flex flex-column gap-2 bg-secondary-subtle p-4 mb-4" style={{ width: '100%' }}>
+                    <h5 className="fs-5 fw-bold">Invoice Number: {tracking_id}</h5>
+                    <h5 className="fs-5">
+                        Invoice Date: {new Date(created_at).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        })}
+                    </h5>
                 </div>
-                <div className="d-flex justify-content-between align-items-center">
-                    <div className="d-flex flex-column gap-2">
-                        <h4 className="fw-bold">Name</h4>
-                        <p>{first_name} {last_name}</p>
+                <h4 className="mb-0 fw-bold text-decoration-underline mb-4 text-center text-md-start">Personal Information</h4>
+                <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4" style={{ width: '100%' }}>
+
+                    <div className="d-flex flex-column gap-1 mb-3 text-center">
+                        <h5 className="fw-bold">Name</h5>
+                        <p className="fw-thin">{first_name} {last_name}</p>
                     </div>
-                    <div className="d-flex flex-column gap-2">
-                        <h4 className="fw-bold">Phone Number</h4>
-                        <p>{phone_number}</p>
+                    <div className="d-flex flex-column gap-1 mb-3 text-center">
+                        <h5 className="fw-bold">Phone Number</h5>
+                        <p className="fw-thin">{phone_number}</p>
                     </div>
-                    <div className="d-flex flex-column gap-2">
-                        <h4 className="fw-bold">Email</h4>
-                        <p>{contact_email}</p>
-                    </div>
-                </div>
-                <div className="d-flex justify-content-between align-items-center">
-                    <div className="d-flex flex-column gap-2">
-                        <h4 className="fw-bold">Passport</h4>
-                        <p>{passport_number}</p>
-                    </div>
-                    <div className="d-flex flex-column gap-2">
-                        <h4 className="fw-bold">Visa Destination</h4>
-                        <p>{destination}</p>
-                    </div>
-                    <div className="d-flex flex-column gap-2">
-                        <h4 className="fw-bold">Tracking ID</h4>
-                        <p>{tracking_id}</p>
+                    <div className="d-flex flex-column gap-1 mb-3 text-center">
+                        <h5 className="fw-bold">Email</h5>
+                        <p className="fw-thin">{contact_email}</p>
                     </div>
                 </div>
-                <div className="d-flex justify-content-between align-items-center">
+                <h4 className="mb-0 fw-bold text-decoration-underline mb-4 text-center text-md-start">Application Information</h4>
+                <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4" style={{ width: '100%' }}>
+
+                    <div className="d-flex flex-column gap-1 mb-3 text-center">
+                        <h5 className="fw-bold">Passport</h5>
+                        <p className="fw-thin">{passport_number}</p>
+                    </div>
+                    <div className="d-flex flex-column gap-1 mb-3 text-center">
+                        <h5 className="fw-bold">Visa Destination</h5>
+                        <p className="fw-thin">{destination}</p>
+                    </div>
+                    <div className="d-flex flex-column gap-1 mb-3 text-center">
+                        <h5 className="fw-bold">Tracking ID</h5>
+                        <p className="fw-thin">{tracking_id}</p>
+                    </div>
+                </div>
+                <div className="d-md-flex gap-3 align-items-center text-center ">
                     <div>
-                        <img src={`https://toogood-1.onrender.com/uploads/${barcode_filename}`} alt="Barcode" className="img-fluid mb-3" style={{ maxWidth: '200px' }} />
+                        <img src={`https://toogood-1.onrender.com/uploads/${qr_code_filename}`} alt="Barcode" className="img-fluid mb-3" style={{ maxWidth: '200px' }} />
                     </div>
                     <div>
-                        <div style={{ width: '120px', height: '164px' }}>
-                            <img src={`https://toogood-1.onrender.com/uploads/${passport_photograph}`} alt="Barcode" className="img-fluid mb-3 w-100" />
+                        <div style={{ width: '120px', height: '164px', margin: '0 auto' }}>
+                            <img src={`https://toogood-1.onrender.com/uploads/${passport_photograph}`} alt="Passport" className="img-fluid mb-3 w-100" />
                         </div>
                     </div>
                 </div>
-                <div className="d-flex gap-4">
-                    <button className="btn border-0 bg-secondary text-white px-4 py-2">Download</button>
-                    <button className="btn border-0 bg-primary text-white px-4 py-2">Send invoice to mail</button>
+                <div className="d-flex gap-2 mt-4 justify-content-center justify-content-md-start">
+                    <button
+                        onClick={downloadPDF}
+                        disabled={loading}
+                        className="btn btn-primary px-4 py-2 d-flex align-items-center justify-content-center gap-2"
+                        style={{ minWidth: '200px' }}
+                    >
+                        {loading ? (
+                            <>
+                                <div className="spinner-border spinner-border-sm" role="status"></div>
+                                Generating PDF...
+                            </>
+                        ) : (
+                            <>
+                                📄 Download PDF Invoice
+                            </>
+                        )}
+                    </button>
                 </div>
             </div>
             <div className="spacer"></div>

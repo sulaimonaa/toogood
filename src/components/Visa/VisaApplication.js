@@ -121,6 +121,7 @@ const VisaApplication = () => {
     date_of_birth: "",
     passport_number: "",
     tracking_id: "",
+    qr_code_filename: null,
     data_page: null,
     passport_photograph: null,
     utility_bill: null,
@@ -193,7 +194,9 @@ const VisaApplication = () => {
         navigate(`/payment`, {
           state: {
             tracking_id: data.tracking_id,
-            barcode_filename: data.barcode_filename,
+            qr_code_filename: data.qr_code_filename,
+            created_at: data.created_at,
+            payment_status: "Pending",
             destination: visaById.destination,
             passport_photograph: data.passport_photograph,
             price: visaById.visa_price,
