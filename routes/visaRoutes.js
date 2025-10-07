@@ -433,7 +433,6 @@ router.post("/application", upload.fields([
                     qr_code_generated: qrCodeGenerated,
                     created_at: new Date(),
                     passport_photograph,
-                    payment_status,
                     application_id: applicationId
                 });
 
