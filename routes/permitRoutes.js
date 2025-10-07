@@ -284,12 +284,12 @@ router.post("/application", upload.fields([
             INSERT INTO permit_applications (
                 first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, 
                 passport_number, data_page, passport_photograph, utility_bill, supporting_document, 
-                other_document, payment_status, visa_status, visa_destination, qr_code_data, qr_code_filename, visa_fee
+                other_document, qr_code_data, qr_code_filename, payment_status, visa_status, visa_destination, visa_fee
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Not Paid', 'Pending', ?, ?)`;
 
         const values = [
             first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number,
-            data_page, passport_photograph, utility_bill, supporting_document, other_document, visa_destination, qr_code_data, qr_code_filename, visa_fee
+            data_page, passport_photograph, utility_bill, supporting_document, other_document, qr_code_data, qr_code_filename, visa_destination, visa_fee
         ];
 
         db.query(sql, values, async (err, result) => {
