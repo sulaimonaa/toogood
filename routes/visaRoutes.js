@@ -383,7 +383,9 @@ router.post("/application", upload.fields([
                                                 <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Tracking ID:</strong></td>
                                                     <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">${tracking_id}</td></tr>
                                                 <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Processing Fee:</strong></td>
-                                                    <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">${visa_fee}</td></tr>
+                                                    <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">&#x20A6;${visa_fee}</td></tr>
+                                                <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Payment Status:</strong></td>
+                                                    <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">${payment_status}</td></tr>
                                                 ${qrCodeGenerated ? `
                                                 <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>QR Code:</strong></td>
                                                     <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935; text-align: center;">
@@ -433,6 +435,7 @@ router.post("/application", upload.fields([
                     qr_code_generated: qrCodeGenerated,
                     created_at: new Date(),
                     passport_photograph,
+                    payment_status,
                     application_id: applicationId
                 });
 
