@@ -208,6 +208,54 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+const QRCode = require('qrcode');
+const fs = require('fs');
+const path = require('path');
+
+// QR Code generation function with better error handling
+async function generateQRCodeImage(data, filename) {
+    try {
+        // Use absolute path to ensure we're writing to the right location
+        const uploadsDir = path.join(process.cwd(), 'uploads');
+        console.log('📁 Uploads directory:', uploadsDir);
+
+        if (!fs.existsSync(uploadsDir)) {
+            console.log('📂 Creating uploads directory...');
+            fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+
+        console.log('🎨 Generating QR code for:', data);
+
+        const filePath = path.join(uploadsDir, filename);
+
+        // Generate QR code with custom options
+        await QRCode.toFile(filePath, data, {
+            width: 300,           // Size in pixels
+            margin: 2,            // White border
+            color: {
+                dark: '#000000',  // QR code color
+                light: '#FFFFFF'  // Background color
+            },
+            errorCorrectionLevel: 'H' // High error correction (30%)
+        });
+
+        console.log('✅ QR Code saved:', filename);
+
+        // Verify file was created
+        if (fs.existsSync(filePath)) {
+            const stats = fs.statSync(filePath);
+            console.log('✅ File verified. Size:', stats.size, 'bytes');
+            return true;
+        } else {
+            throw new Error('QR Code file was not created');
+        }
+
+    } catch (error) {
+        console.error('❌ QR Code generation error:', error);
+        throw error;
+    }
+}
+
 // Create Permit Application Route
 router.post("/application", upload.fields([
     { name: "data_page", maxCount: 1 },
@@ -222,7 +270,9 @@ router.post("/application", upload.fields([
         if (!first_name || !last_name || !phone_number || !contact_email || !passport_number) {
             return res.status(400).json({ message: "Missing required fields" });
         }
-
+        const tracking_id = `PER${Math.floor(Math.random() * 1000000000)}`;
+        const qr_code_data = `PERMIT_APPLICATION:${contact_email}:${first_name}:${last_name}:${passport_number}`;
+        const qr_code_filename = `qrcode_${tracking_id}.png`;
         // Store file paths
         const data_page = req.files["data_page"] ? req.files["data_page"][0].filename : null;
         const passport_photograph = req.files["passport_photograph"] ? req.files["passport_photograph"][0].filename : null;
@@ -234,12 +284,12 @@ router.post("/application", upload.fields([
             INSERT INTO permit_applications (
                 first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, 
                 passport_number, data_page, passport_photograph, utility_bill, supporting_document, 
-                other_document, payment_status, visa_status, visa_destination, visa_fee
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Not Paid', 'Pending', ?, ?)`;
+                other_document, payment_status, visa_status, visa_destination, qr_code_data, qr_code_filename, visa_fee
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Not Paid', 'Pending', ?, ?)`;
 
         const values = [
             first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number,
-            data_page, passport_photograph, utility_bill, supporting_document, other_document, visa_destination, visa_fee
+            data_page, passport_photograph, utility_bill, supporting_document, other_document, visa_destination, qr_code_data, qr_code_filename, visa_fee
         ];
 
         db.query(sql, values, async (err, result) => {
@@ -248,182 +298,130 @@ router.post("/application", upload.fields([
                 return res.status(500).json({ message: "Database error" });
             }
 
+            const applicationId = result.insertId;
+            let qrCodeGenerated = false;
+
+            try {
+                // ✅ Generate QR Code AFTER database insert with proper error handling
+                console.log('🔄 Starting QR code generation...');
+                await generateQRCodeImage(qr_code_data, qr_code_filename);
+                qrCodeGenerated = true;
+                console.log('✅ QR code generation completed successfully');
+
+            } catch (qrError) {
+                console.error('❌ QR code generation failed, but application was saved:', qrError);
+                // Continue without QR code - application is already saved
+            }
+
             try {
                 // Send email using Resend
-                const { data, error } = await resend.emails.send({
+                const emailHtml = `
+                    <!DOCTYPE html>
+                    <html lang="en" style="margin:0; padding:0;">
+                    <head>
+                        <meta charset="UTF-8" />
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                        <style>
+                            @media screen and (max-width: 640px) {
+                                .mTable { max-width: 100% !important; width: 100% !important; margin: 0 auto !important; }
+                                .step-table { width: 100% !important; display: block !important; margin-bottom: 20px !important; padding: 0 !important; }
+                            }
+                            @media screen and (max-width: 425px) { .sm { padding: 10px !important; } }
+                        </style>
+                    </head>
+                    <body style="margin:0; padding:0; background:#f5f6fa; font-family:Arial, sans-serif; color:#333;">
+                        <table width="100%" cellpadding="0" cellspacing="0" class="sm" style="background-color:#f5f6fa; padding:10px;">
+                            <tr><td align="center">
+                                <table class="mTable" width="680" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+                                    <tr><td align="center" class="sm" style="padding: 20px;">
+                                        <div style="background-color: #fff; padding: 15px;">
+                                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 15px;">
+                                                <tr><td align="center" valign="middle">
+                                                    <img src="https://toogoodtravels.net/static/media/tgt.7dbe67b2cd1d73dd1a15.png" alt="logo" style="width: 84px; display: inline-block; vertical-align: middle;">
+                                                </td></tr>
+                                            </table>
+                                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 15px;" colspan="2">
+                                                <tr><td align="center" style="padding-bottom: 15px;">
+                                                    <p style="color: #555; margin-bottom: 15px;">Thank you ${first_name} ${last_name}, for submitting your permit application.</p>
+                                                    <img src="https://toogood-1.onrender.com/uploads/${passport_photograph}" alt="Your passport photograph" style="width: 120px; height: 120px; border: 1px solid #ccc; display: block; margin: 0 auto;">
+                                                </td></tr>
+                                                <tr><td align="center" valign="middle" style="padding-top: 10px;">
+                                                    <h3 style="color: green; font-weight: bolder; font-size: 1.2em; text-transform: uppercase; margin: 0; display: inline-block; vertical-align: middle; padding-left: 10px;">Application Confirmation</h3>
+                                                </td></tr>
+                                            </table>
+                                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f5f5f5; border: 1px solid #ddd;">
+                                                <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Full Name:</strong></td>
+                                                    <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">${first_name} ${middle_name} ${last_name}</td></tr>
+                                                <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Phone Number:</strong></td>
+                                                    <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">${phone_number}</td></tr>
+                                                <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Email:</strong></td>
+                                                    <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">${contact_email}</td></tr>
+                                                <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Passport Number:</strong></td>
+                                                    <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">${passport_number}</td></tr>
+                                                <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Permit Destination:</strong></td>
+                                                    <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">${visa_destination}</td></tr>
+                                                <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Processing Fee:</strong></td>
+                                                    <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">&#x20A6;${visa_fee}</td></tr>
+                                                ${qrCodeGenerated ? `
+                                                <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>QR Code:</strong></td>
+                                                    <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935; text-align: center;">
+                                                        <img src="https://toogood-1.onrender.com/uploads/${qr_code_filename}" 
+                                                             alt="QR Code" 
+                                                             style="width: 150px; height: 150px; display: block; margin: 0 auto;">
+                                                        <p style="font-size: 12px; color: #666; margin: 5px 0 0 0;">Scan to verify application</p>
+                                                    </td></tr>
+                                                ` : ''}
+                                                <tr><td style="padding: 8px;"><strong>Passport Data Page:</strong></td>
+                                                    <td style="padding: 8px; background: #9ffab935;"><a href="https://toogood-1.onrender.com/uploads/${data_page}">Download/View</a></td></tr>
+                                            </table>
+                                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 15px;">
+                                                <tr><td align="center">
+                                                    <p style="color: #555; margin-top: 20px;">We will review your application and get back to you soon.</p>
+                                                    <p style="color: #333; margin-bottom: 0"><strong>Best regards,</strong></p>
+                                                    <p style="color: #333; margin: 0;"><strong>Too Good Travels</strong></p>
+                                                </td></tr>
+                                            </table>
+                                        </div>
+                                    </td></tr>
+                                </table>
+                            </td></tr>
+                        </table>
+                    </body>
+                    </html>
+                `;
+
+                const { data: emailData, error } = await resend.emails.send({
                     from: 'Too Good Travels <noreply@toogoodtravels.net>',
                     to: contact_email,
                     cc: "toogoodtravelsnigeria@gmail.com",
                     subject: "Permit Application Submitted Successfully",
-                    html: `
-                        <!DOCTYPE html>
-<html lang="en" style="margin:0; padding:0;">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <style>
-        @media screen and (max-width: 640px) {
-            .mTable {
-                max-width: 100% !important;
-                width: 100% !important;
-                margin: 0 auto !important;
-            }
-
-            .step-table {
-                width: 100% !important;
-                display: block !important;
-                margin-bottom: 20px !important;
-                padding: 0 !important;
-            }
-        }
-
-        @media screen and (max-width: 425px) {
-            .sm {
-                padding: 10px !important;
-            }
-
-        }
-    </style>
-</head>
-
-<body style="margin:0; padding:0; background:#f5f6fa; font-family:Arial, sans-serif; color:#333;">
-    <table width="100%" cellpadding="0" cellspacing="0" class="sm" style="background-color:#f5f6fa; padding:10px;">
-        <tr>
-            <td align="center">
-                <!-- Main container -->
-                <table class="mTable" width="680" cellpadding="0" cellspacing="0"
-                    style="background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
-
-                    <!-- Content -->
-                    <tr>
-                        <td align="center" class="sm" style="padding: 20px;">
-                            <div style="background-color: #fff; padding: 15px;">
-                                <!-- Passport Photo - Top on mobile, left on desktop -->
-                                <table width="100%" cellpadding="0" cellspacing="0" border="0"
-                                    style="margin-bottom: 15px;">
-                                    <tr>
-                                        <td align="center" valign="middle">
-                                            <img src="https://toogoodtravels.net/static/media/tgt.7dbe67b2cd1d73dd1a15.png"
-                                                alt="logo"
-                                                style="width: 84px; display: inline-block; vertical-align: middle;">
-                                        </td>
-                                    </tr>
-                                </table>
-
-                                <!-- Logo and Title -->
-                                <table width="100%" cellpadding="0" cellspacing="0" border="0"
-                                    style="margin-bottom: 15px;" colspan="2">
-                                    <tr>
-                                        <td align="center" style="padding-bottom: 15px;">
-                                            <p style="color: #555; margin-bottom: 15px;">Thank you ${first_name}
-                                                ${last_name}, for submitting your permit application.</p>
-                                            <img src="https://toogood-1.onrender.com/uploads/${passport_photograph}"
-                                                alt="Your passport photograph"
-                                                style="width: 120px; height: 120px; border: 1px solid #ccc; display: block; margin: 0 auto;">
-
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td align="center" valign="middle" style="padding-top: 10px;">
-                                            <h3
-                                                style="color: green; font-weight: bolder; font-size: 1.2em; text-transform: uppercase; margin: 0; display: inline-block; vertical-align: middle; padding-left: 10px;">
-                                                Application Confirmation</h3>
-                                        </td>
-                                    </tr>
-                                </table>
-
-                                <!-- Application Details Table -->
-                                <table width="100%" cellpadding="0" cellspacing="0" border="0"
-                                    style="background-color: #f5f5f5; border: 1px solid #ddd;">
-                                    <tr>
-                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Full
-                                                Name:</strong>
-                                        </td>
-                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
-                                            ${first_name}
-                                            ${middle_name} ${last_name}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Phone
-                                                Number:</strong></td>
-                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
-                                            ${phone_number}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Email:</strong>
-                                        </td>
-                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
-                                            ${contact_email}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Passport
-                                                Number:</strong></td>
-                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
-                                            ${passport_number}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
-                                            <strong>Permit Destination:</strong>
-                                        </td>
-                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
-                                            ${visa_destination}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Processing
-                                                Fee:</strong></td>
-                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
-                                            ${visa_fee}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 8px;"><strong>Passport Data Page:</strong></td>
-                                        <td style="padding: 8px; background: #9ffab935;"><a
-                                                href="https://toogood-1.onrender.com/uploads/${data_page}">Download/View</a>
-                                        </td>
-                                    </tr>
-                                </table>
-                                <table width="100%" cellpadding="0" cellspacing="0" border="0"
-                                    style="margin-top: 15px;">
-                                    <tr>
-                                        <td align="center">
-                                            <p style="color: #555; margin-top: 20px;">We will review your application
-                                                and get back to you soon.</p>
-                                            <p style="color: #333; margin-bottom: 0"><strong>Best regards,</strong></p>
-                                            <p style="color: #333; margin: 0;"><strong>Too Good Travels</strong></p>
-                                        </td>
-                                    </tr>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-    </td>
-    </tr>
-    </table>
-</body>
-
-</html>
-                    `,
+                    html: emailHtml,
                 });
 
                 if (error) {
                     console.error("Resend email error:", error);
-                    // Still respond success but log the email error
-                    console.log("Permit application saved but confirmation email failed to send");
                 } else {
-                    console.log("Resend email sent successfully:", data.id);
+                    console.log("Resend email sent successfully:", emailData.id);
                 }
 
-                res.json({ success: "Permit application submitted successfully" });
+                res.json({
+                    success: "Permit application submitted successfully",
+                    qr_code_filename: qrCodeGenerated ? qr_code_filename : null,
+                    qr_code_generated: qrCodeGenerated,
+                    created_at: new Date(),
+                    passport_photograph,
+                    application_id: applicationId
+                });
 
             } catch (emailError) {
                 console.error("Email sending error:", emailError);
-                // Still respond success since the application was saved to database
                 res.json({
                     success: "Permit application submitted successfully",
+                    qr_code_filename: qrCodeGenerated ? qr_code_filename : null,
+                    qr_code_generated: qrCodeGenerated,
+                    created_at: new Date(),
+                    passport_photograph,
+                    application_id: applicationId,
                     warning: "Confirmation email could not be sent"
                 });
             }
