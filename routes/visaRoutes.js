@@ -384,8 +384,6 @@ router.post("/application", upload.fields([
                                                     <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">${tracking_id}</td></tr>
                                                 <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Processing Fee:</strong></td>
                                                     <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">&#x20A6;${visa_fee}</td></tr>
-                                                <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Payment Status:</strong></td>
-                                                    <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">${payment_status}</td></tr>
                                                 ${qrCodeGenerated ? `
                                                 <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>QR Code:</strong></td>
                                                     <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935; text-align: center;">
