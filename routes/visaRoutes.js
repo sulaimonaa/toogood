@@ -313,7 +313,7 @@ router.post("/application", upload.fields([
         // Store file paths..
         const data_page = req.files["data_page"] ? req.files["data_page"][0].path : null;
         const passport_photograph = req.files["passport_photograph"] ? req.files["passport_photograph"][0].path : null;
-        const utility_bill = req.files["utility_bill"] ? req.files["utility_bill"][0].filename : null;
+        const utility_bill = req.files["utility_bill"] ? req.files["utility_bill"][0].path : null;
         const supporting_document = req.files["supporting_document"] ? req.files["supporting_document"][0].path : null;
         const other_document = req.files["other_document"] ? req.files["other_document"][0].path : null;
 
