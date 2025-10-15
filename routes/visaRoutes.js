@@ -834,6 +834,7 @@ router.put('/upload/:id', upload.fields([{ name: "visa_file", maxCount: 1 }]), a
 
 // Send receipt email with PDF attachment
 const PDFDocument = require('pdfkit');
+const https = require('https');
 router.post('/send-receipt-email', async (req, res) => {
     try {
         const { visaData, to } = req.body;
@@ -913,8 +914,21 @@ router.post('/send-receipt-email', async (req, res) => {
 });
 
 // Generate PDF that matches your page design
-async function generateReceiptPDF(visaData) {
+// Helper function to download image as buffer
+function downloadImage(url) {
     return new Promise((resolve, reject) => {
+        https.get(url, (response) => {
+            const chunks = [];
+            response.on('data', (chunk) => chunks.push(chunk));
+            response.on('end', () => resolve(Buffer.concat(chunks)));
+            response.on('error', reject);
+        }).on('error', reject);
+    });
+}
+
+// Generate PDF with logo
+async function generateReceiptPDF(visaData) {
+    return new Promise(async (resolve, reject) => {
         try {
             const doc = new PDFDocument({
                 margin: 50,
@@ -938,28 +952,45 @@ async function generateReceiptPDF(visaData) {
                 reject(error);
             });
 
-            // Add header with green accent (matching your design)
-            doc.rect(0, 0, 595, 100)
-                .fill('#f8f9fa'); // Light gray background for header
+            try {
+                // Download and add logo
+                const logoUrl = 'https://toogoodtravels.net/static/media/tgt.7dbe67b2cd1d73dd1a15.png';
+                const logoBuffer = await downloadImage(logoUrl);
 
-            // Company logo area (we'll use text since we can't embed images easily)
-            doc.fontSize(20)
-                .fillColor('#333333')
-                .text('TOO GOOD TRAVELS', 50, 30);
+                // Add logo to PDF (resize to appropriate dimensions)
+                doc.image(logoBuffer, 50, 30, {
+                    width: 120,
+                    height: 40,
+                    fit: [120, 40]
+                });
 
-            doc.fontSize(12)
-                .fillColor('#666666')
-                .text('Visa Support Services', 50, 55);
+                // Add company name below logo
+                doc.fontSize(10)
+                    .fillColor('#666666')
+                    .text('Visa Support Services', 50, 75);
+
+            } catch (imageError) {
+                console.log('Could not load logo, using text fallback:', imageError.message);
+                // Fallback to text if logo fails to load
+                doc.fontSize(20)
+                    .fillColor('#333333')
+                    .text('TOO GOOD TRAVELS', 50, 30);
+
+                doc.fontSize(12)
+                    .fillColor('#666666')
+                    .text('Visa Support Services', 50, 55);
+            }
 
             // Invoice title with green color
             doc.fontSize(24)
-                .fillColor('#28a745') // Green color matching your design
+                .fillColor('#28a745')
                 .text('INVOICE', 400, 30, { align: 'right' });
 
             doc.fontSize(12)
                 .fillColor('#666666')
                 .text(`#${visaData.tracking_id}`, 400, 60, { align: 'right' });
 
+            // Rest of your PDF content remains the same...
             // Invoice summary section
             doc.fontSize(14)
                 .fillColor('#333333')
@@ -980,7 +1011,7 @@ async function generateReceiptPDF(visaData) {
             // Total amount in green
             doc.fontSize(18)
                 .fillColor('#28a745')
-                .text(`N${parseFloat(visaData.visa_fee || 0).toLocaleString()}`, 400, 160, { align: 'right' });
+                .text(`₦${parseFloat(visaData.visa_fee || 0).toLocaleString()}`, 400, 160, { align: 'right' });
 
             doc.fontSize(10)
                 .fillColor('#666666')
@@ -1078,7 +1109,7 @@ async function generateReceiptPDF(visaData) {
             }
 
             // Footer
-            const footerY = 650;
+            const footerY = 700;
             doc.moveTo(50, footerY)
                 .lineTo(545, footerY)
                 .strokeColor('#dddddd')
@@ -1099,6 +1130,5 @@ async function generateReceiptPDF(visaData) {
     });
 }
 
-module.exports = router;
 
 module.exports = router;
