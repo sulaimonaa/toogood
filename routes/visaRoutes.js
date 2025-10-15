@@ -245,46 +245,47 @@ const QRCode = require('qrcode');
 const fs = require('fs');
 const path = require('path');
 
-// QR Code generation function with better error handling
+// QR Code generation function that saves to Cloudinary
 async function generateQRCodeImage(data, filename) {
     try {
-        // Use absolute path to ensure we're writing to the right location
-        const uploadsDir = path.join(process.cwd(), 'uploads');
-        console.log('📁 Uploads directory:', uploadsDir);
-
-        if (!fs.existsSync(uploadsDir)) {
-            console.log('📂 Creating uploads directory...');
-            fs.mkdirSync(uploadsDir, { recursive: true });
-        }
-
         console.log('🎨 Generating QR code for:', data);
 
-        const filePath = path.join(uploadsDir, filename);
-
-        // Generate QR code with custom options
-        await QRCode.toFile(filePath, data, {
-            width: 300,           // Size in pixels
-            margin: 2,            // White border
+        // Generate QR code as a data URL (base64)
+        const qrCodeDataURL = await QRCode.toDataURL(data, {
+            width: 300,
+            margin: 2,
             color: {
-                dark: '#000000',  // QR code color
-                light: '#FFFFFF'  // Background color
+                dark: '#000000',
+                light: '#FFFFFF'
             },
-            errorCorrectionLevel: 'H' // High error correction (30%)
+            errorCorrectionLevel: 'H'
         });
 
-        console.log('✅ QR Code saved:', filename);
+        console.log('✅ QR Code generated as base64, uploading to Cloudinary...');
 
-        // Verify file was created
-        if (fs.existsSync(filePath)) {
-            const stats = fs.statSync(filePath);
-            console.log('✅ File verified. Size:', stats.size, 'bytes');
-            return true;
-        } else {
-            throw new Error('QR Code file was not created');
+        // Extract the base64 data (remove the data URL prefix)
+        const base64Data = qrCodeDataURL.replace(/^data:image\/png;base64,/, '');
+
+        // Upload to Cloudinary
+        const result = await cloudinary.uploader.upload(
+            `data:image/png;base64,${base64Data}`, {
+            folder: 'visa-applications/qr-codes',
+            public_id: filename.replace('.png', ''), // Remove extension for Cloudinary
+            resource_type: 'image',
+            overwrite: false // Don't overwrite existing files
         }
+        );
+
+        console.log('✅ QR Code uploaded to Cloudinary:', result.secure_url);
+
+        return {
+            success: true,
+            url: result.secure_url,
+            public_id: result.public_id
+        };
 
     } catch (error) {
-        console.error('❌ QR Code generation error:', error);
+        console.error('❌ QR Code generation/upload error:', error);
         throw error;
     }
 }
@@ -306,15 +307,29 @@ router.post("/application", upload.fields([
 
         // Auto-generate tracking ID
         const tracking_id = `VISA${Math.floor(Math.random() * 1000000000)}`;
-        const qr_code_data = `VISA_APPLICATION:${tracking_id}:${first_name}:${last_name}:${passport_number}`;
-        const qr_code_filename = `qrcode_${tracking_id}.png`;
+        // const qr_code_data = `VISA_APPLICATION:${tracking_id}:${first_name}:${last_name}:${passport_number}`;
+        // const qr_code_filename = `qrcode_${tracking_id}.png`;
 
         // Store file paths..
-        const data_page = req.files["data_page"] ? req.files["data_page"][0].filename : null;
-        const passport_photograph = req.files["passport_photograph"] ? req.files["passport_photograph"][0].filename : null;
+        const data_page = req.files["data_page"] ? req.files["data_page"][0].path : null;
+        const passport_photograph = req.files["passport_photograph"] ? req.files["passport_photograph"][0].path : null;
         const utility_bill = req.files["utility_bill"] ? req.files["utility_bill"][0].filename : null;
-        const supporting_document = req.files["supporting_document"] ? req.files["supporting_document"][0].filename : null;
-        const other_document = req.files["other_document"] ? req.files["other_document"][0].filename : null;
+        const supporting_document = req.files["supporting_document"] ? req.files["supporting_document"][0].path : null;
+        const other_document = req.files["other_document"] ? req.files["other_document"][0].path : null;
+
+        // Generate QR code and save to Cloudinary
+        const qr_code_data = JSON.stringify({
+            tracking_id: tracking_id,
+            name: `${first_name} ${last_name}`,
+            passport_number: passport_number,
+            visa_destination: visa_destination,
+            application_date: new Date().toISOString()
+        });
+
+        const qrCodeFilename = `qr-${tracking_id}.png`;
+        const qrCodeResult = await generateQRCodeImage(qr_code_data, qrCodeFilename);
+        const qr_code_filename = qrCodeResult.url; // Use the Cloudinary URL
+
 
         const sql = `
             INSERT INTO visa_applications (
@@ -336,19 +351,8 @@ router.post("/application", upload.fields([
             }
 
             const applicationId = result.insertId;
-            let qrCodeGenerated = false;
+            let qrCodeGenerated = !!qr_code_filename;
 
-            try {
-                // ✅ Generate QR Code AFTER database insert with proper error handling
-                console.log('🔄 Starting QR code generation...');
-                await generateQRCodeImage(qr_code_data, qr_code_filename);
-                qrCodeGenerated = true;
-                console.log('✅ QR code generation completed successfully');
-
-            } catch (qrError) {
-                console.error('❌ QR code generation failed, but application was saved:', qrError);
-                // Continue without QR code - application is already saved
-            }
 
             try {
                 // Send email using Resend
