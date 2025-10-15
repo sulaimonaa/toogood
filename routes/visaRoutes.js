@@ -832,11 +832,9 @@ router.put('/upload/:id', upload.fields([{ name: "visa_file", maxCount: 1 }]), a
     });
 });
 
-const puppeteer = require('puppeteer');
-
 // Send receipt email with PDF attachment
+const PDFDocument = require('pdfkit');
 router.post('/send-receipt-email', async (req, res) => {
-    let browser;
     try {
         const { visaData, to } = req.body;
 
@@ -850,7 +848,7 @@ router.post('/send-receipt-email', async (req, res) => {
 
         console.log('Generating PDF receipt for:', visaData.tracking_id);
 
-        // Generate PDF using Puppeteer to capture exact page design
+        // Generate PDF using PDFKit
         const pdfBuffer = await generateReceiptPDF(visaData);
 
         console.log('PDF generated, sending email to:', to);
@@ -911,285 +909,196 @@ router.post('/send-receipt-email', async (req, res) => {
             success: false,
             message: 'Failed to send receipt email: ' + error.message
         });
-    } finally {
-        if (browser) {
-            await browser.close();
-        }
     }
 });
 
-// Generate PDF that matches exact page design
+// Generate PDF that matches your page design
 async function generateReceiptPDF(visaData) {
-    let browser;
-    try {
-        // Launch Puppeteer
-        browser = await puppeteer.launch({
-            headless: true,
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-accelerated-2d-canvas',
-                '--no-first-run',
-                '--no-zygote',
-                '--single-process',
-                '--disable-gpu'
-            ]
-        });
+    return new Promise((resolve, reject) => {
+        try {
+            const doc = new PDFDocument({
+                margin: 50,
+                size: 'A4',
+                info: {
+                    Title: `Receipt - ${visaData.tracking_id}`,
+                    Author: 'Too Good Travels',
+                    Subject: 'Visa Application Receipt'
+                }
+            });
 
-        const page = await browser.newPage();
+            const buffers = [];
 
-        // Set viewport to A4 size
-        await page.setViewport({ width: 1240, height: 1754 }); // A4 at 150dpi
+            doc.on('data', buffers.push.bind(buffers));
+            doc.on('end', () => {
+                const pdfData = Buffer.concat(buffers);
+                resolve(pdfData);
+            });
 
-        // Generate the exact HTML that matches your React component
-        const htmlContent = generateReceiptHTML(visaData);
+            doc.on('error', (error) => {
+                reject(error);
+            });
 
-        await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+            // Add header with green accent (matching your design)
+            doc.rect(0, 0, 595, 100)
+                .fill('#f8f9fa'); // Light gray background for header
 
-        // Generate PDF with exact styling
-        const pdfBuffer = await page.pdf({
-            format: 'A4',
-            printBackground: true,
-            margin: {
-                top: '20px',
-                right: '20px',
-                bottom: '20px',
-                left: '20px'
-            },
-            displayHeaderFooter: false,
-            preferCSSPageSize: true
-        });
+            // Company logo area (we'll use text since we can't embed images easily)
+            doc.fontSize(20)
+                .fillColor('#333333')
+                .text('TOO GOOD TRAVELS', 50, 30);
 
-        return pdfBuffer;
+            doc.fontSize(12)
+                .fillColor('#666666')
+                .text('Visa Support Services', 50, 55);
 
-    } catch (error) {
-        console.error('PDF generation error:', error);
-        throw error;
-    } finally {
-        if (browser) {
-            await browser.close();
+            // Invoice title with green color
+            doc.fontSize(24)
+                .fillColor('#28a745') // Green color matching your design
+                .text('INVOICE', 400, 30, { align: 'right' });
+
+            doc.fontSize(12)
+                .fillColor('#666666')
+                .text(`#${visaData.tracking_id}`, 400, 60, { align: 'right' });
+
+            // Invoice summary section
+            doc.fontSize(14)
+                .fillColor('#333333')
+                .text('Invoice Summary', 50, 120);
+
+            // Horizontal line
+            doc.moveTo(50, 145)
+                .lineTo(545, 145)
+                .strokeColor('#cccccc')
+                .stroke();
+
+            // Invoice dates
+            doc.fontSize(10)
+                .fillColor('#333333')
+                .text(`Invoice Date: ${visaData.created_at ? new Date(visaData.created_at).toLocaleDateString() : "N/A"}`, 50, 160)
+                .text(`Due Date: ${visaData.created_at ? new Date(new Date(visaData.created_at).getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString() : "N/A"}`, 50, 175);
+
+            // Total amount in green
+            doc.fontSize(18)
+                .fillColor('#28a745')
+                .text(`₦${parseFloat(visaData.visa_fee || 0).toLocaleString()}`, 400, 160, { align: 'right' });
+
+            doc.fontSize(10)
+                .fillColor('#666666')
+                .text('Total Amount Due', 400, 185, { align: 'right' });
+
+            // Personal Information section
+            doc.fontSize(16)
+                .fillColor('#333333')
+                .text('Personal Information', 50, 220);
+
+            // Section underline
+            doc.moveTo(50, 240)
+                .lineTo(545, 240)
+                .strokeColor('#dddddd')
+                .stroke();
+
+            let yPosition = 260;
+
+            // Name
+            doc.fontSize(12)
+                .fillColor('#333333')
+                .text('Name:', 50, yPosition)
+                .text(`${visaData.first_name} ${visaData.last_name}`, 150, yPosition);
+            yPosition += 20;
+
+            // Phone
+            doc.text('Phone:', 50, yPosition)
+                .text(visaData.phone_number, 150, yPosition);
+            yPosition += 20;
+
+            // Email
+            doc.text('Email:', 50, yPosition)
+                .text(visaData.contact_email, 150, yPosition);
+            yPosition += 40;
+
+            // Application Information section
+            doc.fontSize(16)
+                .fillColor('#333333')
+                .text('Application Information', 50, yPosition);
+
+            // Section underline
+            doc.moveTo(50, yPosition + 20)
+                .lineTo(545, yPosition + 20)
+                .strokeColor('#dddddd')
+                .stroke();
+
+            yPosition += 40;
+
+            // Passport Number
+            doc.fontSize(12)
+                .text('Passport Number:', 50, yPosition)
+                .text(visaData.passport_number, 180, yPosition);
+            yPosition += 20;
+
+            // Destination
+            doc.text('Destination:', 50, yPosition)
+                .text(visaData.visa_destination, 180, yPosition);
+            yPosition += 20;
+
+            // Tracking ID
+            doc.text('Tracking ID:', 50, yPosition)
+                .text(visaData.tracking_id, 180, yPosition);
+            yPosition += 40;
+
+            // Payment Information (if available)
+            if (visaData.payment_status) {
+                doc.fontSize(16)
+                    .fillColor('#333333')
+                    .text('Payment Information', 50, yPosition);
+
+                // Section underline
+                doc.moveTo(50, yPosition + 20)
+                    .lineTo(545, yPosition + 20)
+                    .strokeColor('#dddddd')
+                    .stroke();
+
+                yPosition += 40;
+
+                // Payment Status with color
+                const statusColor = visaData.payment_status === 'Paid' ? '#28a745' : '#dc3545';
+                doc.fontSize(12)
+                    .fillColor('#333333')
+                    .text('Payment Status:', 50, yPosition)
+                    .fillColor(statusColor)
+                    .text(visaData.payment_status, 180, yPosition);
+                yPosition += 20;
+
+                // Payment Date (if available)
+                if (visaData.payment_date) {
+                    doc.fillColor('#333333')
+                        .text('Payment Date:', 50, yPosition)
+                        .text(new Date(visaData.payment_date).toLocaleDateString(), 180, yPosition);
+                    yPosition += 20;
+                }
+            }
+
+            // Footer
+            const footerY = 750;
+            doc.moveTo(50, footerY)
+                .lineTo(545, footerY)
+                .strokeColor('#dddddd')
+                .stroke();
+
+            doc.fontSize(10)
+                .fillColor('#666666')
+                .text('This is a computer-generated invoice. No signature required.', 50, footerY + 20, { align: 'center' })
+                .text('Thank you for choosing Too Good Travels!', 50, footerY + 35, { align: 'center' });
+
+            // Finalize the PDF
+            doc.end();
+
+        } catch (error) {
+            console.error('PDF generation error:', error);
+            reject(error);
         }
-    }
+    });
 }
 
-// Generate HTML that exactly matches your React component
-function generateReceiptHTML(visaData) {
-    return `
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <style>
-            body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-                margin: 0;
-                padding: 20px;
-                background: white;
-                color: #333;
-            }
-            .container {
-                max-width: 210mm;
-                margin: 0 auto;
-                min-height: 297mm;
-            }
-            .receipt-header {
-                border-bottom: 2px solid #333;
-                padding-bottom: 20px;
-                margin-bottom: 20px;
-            }
-            .header-content {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-            .logo-section img {
-                max-width: 150px;
-                height: auto;
-            }
-            .logo-section p {
-                color: #666;
-                margin: 5px 0 0 0;
-                font-size: 0.8rem;
-                text-align: center;
-            }
-            .invoice-title {
-                text-align: right;
-            }
-            .invoice-title h2 {
-                color: #28a745;
-                margin: 0;
-                font-size: 1.8rem;
-            }
-            .invoice-title p {
-                color: #666;
-                margin: 5px 0 0 0;
-            }
-            .invoice-summary {
-                margin-bottom: 30px;
-            }
-            .summary-content {
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-            }
-            .summary-details p {
-                margin: 5px 0;
-            }
-            .summary-amount {
-                text-align: right;
-            }
-            .summary-amount h3 {
-                color: #28a745;
-                margin: 0;
-                font-size: 1.5rem;
-            }
-            .summary-amount p {
-                color: #666;
-                margin: 5px 0 0 0;
-            }
-            .section {
-                margin-bottom: 30px;
-            }
-            .section h3 {
-                border-bottom: 1px solid #ddd;
-                padding-bottom: 10px;
-                margin-bottom: 15px;
-                font-size: 1.2rem;
-            }
-            .info-grid {
-                display: flex;
-                justify-content: space-between;
-                flex-wrap: wrap;
-                gap: 20px;
-            }
-            .info-item {
-                flex: 1;
-                min-width: 200px;
-            }
-            .info-item p {
-                margin: 5px 0;
-            }
-            .info-item strong {
-                display: block;
-                margin-bottom: 5px;
-            }
-            .payment-status {
-                color: ${visaData.payment_status === 'Paid' ? '#28a745' : '#dc3545'};
-                font-weight: bold;
-            }
-            .receipt-footer {
-                margin-top: 50px;
-                padding-top: 20px;
-                border-top: 1px solid #ddd;
-                text-align: center;
-            }
-            .receipt-footer p {
-                color: #666;
-                font-size: 12px;
-                margin: 5px 0;
-            }
-            @media print {
-                body {
-                    padding: 0;
-                }
-                .container {
-                    box-shadow: none;
-                    border: none;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="receipt-header">
-                <div class="header-content">
-                    <div class="logo-section">
-                        <img src="https://toogoodtravels.net/static/media/tgt.7dbe67b2cd1d73dd1a15.png" alt="TooGood Travels Logo" />
-                        <p>Visa Support Services</p>
-                    </div>
-                    <div class="invoice-title">
-                        <h2>INVOICE</h2>
-                        <p>#${visaData.tracking_id}</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="invoice-summary">
-                <div class="summary-content">
-                    <div class="summary-details">
-                        <p><strong>Invoice Date:</strong> ${visaData.created_at ? new Date(visaData.created_at).toLocaleDateString() : "N/A"}</p>
-                        <p><strong>Due Date:</strong> ${visaData.created_at ? new Date(new Date(visaData.created_at).getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString() : "N/A"}</p>
-                    </div>
-                    <div class="summary-amount">
-                        <h3>₦${parseFloat(visaData.visa_fee || 0).toLocaleString()}</h3>
-                        <p>Total Amount Due</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="section">
-                <h3>Personal Information</h3>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <strong>Name:</strong>
-                        <p>${visaData.first_name} ${visaData.last_name}</p>
-                    </div>
-                    <div class="info-item">
-                        <strong>Phone:</strong>
-                        <p>${visaData.phone_number}</p>
-                    </div>
-                    <div class="info-item">
-                        <strong>Email:</strong>
-                        <p>${visaData.contact_email}</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="section">
-                <h3>Application Information</h3>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <strong>Passport Number:</strong>
-                        <p>${visaData.passport_number}</p>
-                    </div>
-                    <div class="info-item">
-                        <strong>Destination:</strong>
-                        <p>${visaData.visa_destination}</p>
-                    </div>
-                    <div class="info-item">
-                        <strong>Tracking ID:</strong>
-                        <p>${visaData.tracking_id}</p>
-                    </div>
-                </div>
-            </div>
-
-            ${visaData.payment_status ? `
-            <div class="section">
-                <h3>Payment Information</h3>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <strong>Payment Status:</strong>
-                        <p class="payment-status">${visaData.payment_status}</p>
-                    </div>
-                    ${visaData.payment_date ? `
-                    <div class="info-item">
-                        <strong>Payment Date:</strong>
-                        <p>${new Date(visaData.payment_date).toLocaleDateString()}</p>
-                    </div>
-                    ` : ''}
-                </div>
-            </div>
-            ` : ''}
-
-            <div class="receipt-footer">
-                <p>This is a computer-generated invoice. No signature required.</p>
-                <p>Thank you for choosing Too Good Travels!</p>
-            </div>
-        </div>
-    </body>
-    </html>
-    `;
-}
+module.exports = router;
 
 module.exports = router;
