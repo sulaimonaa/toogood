@@ -832,14 +832,28 @@ router.put('/upload/:id', upload.fields([{ name: "visa_file", maxCount: 1 }]), a
     });
 });
 
+const puppeteer = require('puppeteer');
+
 // Send receipt email with PDF attachment
-const PDFDocument = require('pdfkit');
 router.post('/send-receipt-email', async (req, res) => {
+    let browser;
     try {
         const { visaData, to } = req.body;
 
-        // Generate PDF
+        // Validate required data
+        if (!visaData || !to) {
+            return res.status(400).json({
+                success: false,
+                message: 'Missing required data: visaData and to are required'
+            });
+        }
+
+        console.log('Generating PDF receipt for:', visaData.tracking_id);
+
+        // Generate PDF using Puppeteer to capture exact page design
         const pdfBuffer = await generateReceiptPDF(visaData);
+
+        console.log('PDF generated, sending email to:', to);
 
         // Send email with PDF attachment
         const { data, error } = await resend.emails.send({
@@ -854,8 +868,8 @@ router.post('/send-receipt-email', async (req, res) => {
                     <div style="background-color: #f8f8f8; padding: 15px; border-radius: 5px; margin: 20px 0;">
                         <h3 style="color: #333;">Application Summary</h3>
                         <p><strong>Tracking ID:</strong> ${visaData.tracking_id}</p>
-                        <p><strong>Destination:</strong> ${visaData.destination}</p>
-                        <p><strong>Amount:</strong> ₦${parseFloat(visaData.price).toLocaleString()}</p>
+                        <p><strong>Destination:</strong> ${visaData.visa_destination}</p>
+                        <p><strong>Amount:</strong> ₦${parseFloat(visaData.visa_fee).toLocaleString()}</p>
                         <p><strong>Status:</strong> ${visaData.payment_status || 'Processing'}</p>
                     </div>
 
@@ -883,6 +897,8 @@ router.post('/send-receipt-email', async (req, res) => {
             throw error;
         }
 
+        console.log('Email sent successfully:', data.id);
+
         res.json({
             success: true,
             message: 'Receipt sent successfully',
@@ -893,74 +909,287 @@ router.post('/send-receipt-email', async (req, res) => {
         console.error('Email sending error:', error);
         res.status(500).json({
             success: false,
-            message: 'Failed to send receipt email'
+            message: 'Failed to send receipt email: ' + error.message
         });
+    } finally {
+        if (browser) {
+            await browser.close();
+        }
     }
 });
 
-// PDF generation function...
+// Generate PDF that matches exact page design
 async function generateReceiptPDF(visaData) {
-    return new Promise((resolve, reject) => {
-        try {
-            const doc = new PDFDocument({ margin: 50, size: 'A4' });
-            const buffers = [];
+    let browser;
+    try {
+        // Launch Puppeteer
+        browser = await puppeteer.launch({
+            headless: true,
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-accelerated-2d-canvas',
+                '--no-first-run',
+                '--no-zygote',
+                '--single-process',
+                '--disable-gpu'
+            ]
+        });
 
-            doc.on('data', buffers.push.bind(buffers));
-            doc.on('end', () => {
-                const pdfData = Buffer.concat(buffers);
-                resolve(pdfData);
-            });
+        const page = await browser.newPage();
 
-            // Add header
-            doc.fontSize(20)
-                .fillColor('#333333')
-                .text('TOO GOOD TRAVELS', 50, 50)
-                .fontSize(12)
-                .text('Visa Support Services', 50, 75);
+        // Set viewport to A4 size
+        await page.setViewport({ width: 1240, height: 1754 }); // A4 at 150dpi
 
-            // Invoice details
-            doc.fontSize(16)
-                .fillColor('#28a745')
-                .text('INVOICE', 400, 50, { align: 'right' })
-                .fontSize(10)
-                .fillColor('#333333')
-                .text(`#${visaData.tracking_id}`, 400, 70, { align: 'right' })
-                .text(`Date: ${new Date(visaData.created_at).toLocaleDateString()}`, 400, 85, { align: 'right' });
+        // Generate the exact HTML that matches your React component
+        const htmlContent = generateReceiptHTML(visaData);
 
-            // Customer information
-            doc.fontSize(12)
-                .text('Personal Information', 50, 120)
-                .fontSize(10)
-                .text(`Name: ${visaData.first_name} ${visaData.last_name}`, 50, 140)
-                .text(`Email: ${visaData.contact_email}`, 50, 155)
-                .text(`Phone: ${visaData.phone_number}`, 50, 170);
+        await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
 
-            // Application details
-            doc.fontSize(12)
-                .text('Application Information', 50, 200)
-                .fontSize(10)
-                .text(`Passport Number: ${visaData.passport_number}`, 50, 220)
-                .text(`Destination: ${visaData.destination}`, 50, 235)
-                .text(`Tracking ID: ${visaData.tracking_id}`, 50, 250);
+        // Generate PDF with exact styling
+        const pdfBuffer = await page.pdf({
+            format: 'A4',
+            printBackground: true,
+            margin: {
+                top: '20px',
+                right: '20px',
+                bottom: '20px',
+                left: '20px'
+            },
+            displayHeaderFooter: false,
+            preferCSSPageSize: true
+        });
 
-            // Payment information
-            doc.fontSize(12)
-                .text('Payment Information', 50, 280)
-                .fontSize(10)
-                .text(`Amount: ₦${parseFloat(visaData.price).toLocaleString()}`, 50, 300)
-                .text(`Status: ${visaData.payment_status || 'N/A'}`, 50, 315);
+        return pdfBuffer;
 
-            // Footer
-            doc.fontSize(8)
-                .fillColor('#666666')
-                .text('This is a computer-generated receipt. No signature required.', 50, 500)
-                .text('Thank you for choosing Too Good Travels!', 50, 515);
-
-            doc.end();
-        } catch (error) {
-            reject(error);
+    } catch (error) {
+        console.error('PDF generation error:', error);
+        throw error;
+    } finally {
+        if (browser) {
+            await browser.close();
         }
-    });
+    }
+}
+
+// Generate HTML that exactly matches your React component
+function generateReceiptHTML(visaData) {
+    return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+                margin: 0;
+                padding: 20px;
+                background: white;
+                color: #333;
+            }
+            .container {
+                max-width: 210mm;
+                margin: 0 auto;
+                min-height: 297mm;
+            }
+            .receipt-header {
+                border-bottom: 2px solid #333;
+                padding-bottom: 20px;
+                margin-bottom: 20px;
+            }
+            .header-content {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .logo-section img {
+                max-width: 150px;
+                height: auto;
+            }
+            .logo-section p {
+                color: #666;
+                margin: 5px 0 0 0;
+                font-size: 0.8rem;
+                text-align: center;
+            }
+            .invoice-title {
+                text-align: right;
+            }
+            .invoice-title h2 {
+                color: #28a745;
+                margin: 0;
+                font-size: 1.8rem;
+            }
+            .invoice-title p {
+                color: #666;
+                margin: 5px 0 0 0;
+            }
+            .invoice-summary {
+                margin-bottom: 30px;
+            }
+            .summary-content {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
+            .summary-details p {
+                margin: 5px 0;
+            }
+            .summary-amount {
+                text-align: right;
+            }
+            .summary-amount h3 {
+                color: #28a745;
+                margin: 0;
+                font-size: 1.5rem;
+            }
+            .summary-amount p {
+                color: #666;
+                margin: 5px 0 0 0;
+            }
+            .section {
+                margin-bottom: 30px;
+            }
+            .section h3 {
+                border-bottom: 1px solid #ddd;
+                padding-bottom: 10px;
+                margin-bottom: 15px;
+                font-size: 1.2rem;
+            }
+            .info-grid {
+                display: flex;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+            .info-item {
+                flex: 1;
+                min-width: 200px;
+            }
+            .info-item p {
+                margin: 5px 0;
+            }
+            .info-item strong {
+                display: block;
+                margin-bottom: 5px;
+            }
+            .payment-status {
+                color: ${visaData.payment_status === 'Paid' ? '#28a745' : '#dc3545'};
+                font-weight: bold;
+            }
+            .receipt-footer {
+                margin-top: 50px;
+                padding-top: 20px;
+                border-top: 1px solid #ddd;
+                text-align: center;
+            }
+            .receipt-footer p {
+                color: #666;
+                font-size: 12px;
+                margin: 5px 0;
+            }
+            @media print {
+                body {
+                    padding: 0;
+                }
+                .container {
+                    box-shadow: none;
+                    border: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="receipt-header">
+                <div class="header-content">
+                    <div class="logo-section">
+                        <img src="https://toogoodtravels.net/static/media/tgt.7dbe67b2cd1d73dd1a15.png" alt="TooGood Travels Logo" />
+                        <p>Visa Support Services</p>
+                    </div>
+                    <div class="invoice-title">
+                        <h2>INVOICE</h2>
+                        <p>#${visaData.tracking_id}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="invoice-summary">
+                <div class="summary-content">
+                    <div class="summary-details">
+                        <p><strong>Invoice Date:</strong> ${visaData.created_at ? new Date(visaData.created_at).toLocaleDateString() : "N/A"}</p>
+                        <p><strong>Due Date:</strong> ${visaData.created_at ? new Date(new Date(visaData.created_at).getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString() : "N/A"}</p>
+                    </div>
+                    <div class="summary-amount">
+                        <h3>₦${parseFloat(visaData.visa_fee || 0).toLocaleString()}</h3>
+                        <p>Total Amount Due</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Personal Information</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Name:</strong>
+                        <p>${visaData.first_name} ${visaData.last_name}</p>
+                    </div>
+                    <div class="info-item">
+                        <strong>Phone:</strong>
+                        <p>${visaData.phone_number}</p>
+                    </div>
+                    <div class="info-item">
+                        <strong>Email:</strong>
+                        <p>${visaData.contact_email}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Application Information</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Passport Number:</strong>
+                        <p>${visaData.passport_number}</p>
+                    </div>
+                    <div class="info-item">
+                        <strong>Destination:</strong>
+                        <p>${visaData.visa_destination}</p>
+                    </div>
+                    <div class="info-item">
+                        <strong>Tracking ID:</strong>
+                        <p>${visaData.tracking_id}</p>
+                    </div>
+                </div>
+            </div>
+
+            ${visaData.payment_status ? `
+            <div class="section">
+                <h3>Payment Information</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Payment Status:</strong>
+                        <p class="payment-status">${visaData.payment_status}</p>
+                    </div>
+                    ${visaData.payment_date ? `
+                    <div class="info-item">
+                        <strong>Payment Date:</strong>
+                        <p>${new Date(visaData.payment_date).toLocaleDateString()}</p>
+                    </div>
+                    ` : ''}
+                </div>
+            </div>
+            ` : ''}
+
+            <div class="receipt-footer">
+                <p>This is a computer-generated invoice. No signature required.</p>
+                <p>Thank you for choosing Too Good Travels!</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
 }
 
 module.exports = router;
