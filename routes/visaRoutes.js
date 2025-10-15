@@ -833,6 +833,7 @@ router.put('/upload/:id', upload.fields([{ name: "visa_file", maxCount: 1 }]), a
 });
 
 // Send receipt email with PDF attachment
+const PDFDocument = require('pdfkit');
 router.post('/send-receipt-email', async (req, res) => {
     try {
         const { visaData, to } = req.body;
