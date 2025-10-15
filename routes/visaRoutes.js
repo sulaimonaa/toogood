@@ -980,7 +980,7 @@ async function generateReceiptPDF(visaData) {
             // Total amount in green
             doc.fontSize(18)
                 .fillColor('#28a745')
-                .text(`₦${parseFloat(visaData.visa_fee || 0).toLocaleString()}`, 400, 160, { align: 'right' });
+                .text(`N${parseFloat(visaData.visa_fee || 0).toLocaleString()}`, 400, 160, { align: 'right' });
 
             doc.fontSize(10)
                 .fillColor('#666666')
@@ -1078,7 +1078,7 @@ async function generateReceiptPDF(visaData) {
             }
 
             // Footer
-            const footerY = 750;
+            const footerY = 650;
             doc.moveTo(50, footerY)
                 .lineTo(545, footerY)
                 .strokeColor('#dddddd')
