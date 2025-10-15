@@ -832,4 +832,134 @@ router.put('/upload/:id', upload.fields([{ name: "visa_file", maxCount: 1 }]), a
     });
 });
 
+// Send receipt email with PDF attachment
+router.post('/send-receipt-email', async (req, res) => {
+    try {
+        const { visaData, to } = req.body;
+
+        // Generate PDF
+        const pdfBuffer = await generateReceiptPDF(visaData);
+
+        // Send email with PDF attachment
+        const { data, error } = await resend.emails.send({
+            from: 'Too Good Travels <noreply@toogoodtravels.net>',
+            to: to,
+            subject: `Visa Application Receipt - ${visaData.tracking_id}`,
+            html: `
+                <div style="padding: 20px; font-family: Arial, sans-serif;">
+                    <h2 style="color: #333;">Dear ${visaData.first_name} ${visaData.last_name},</h2>
+                    <p style="color: #555;">Your visa application receipt is attached to this email.</p>
+                    
+                    <div style="background-color: #f8f8f8; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                        <h3 style="color: #333;">Application Summary</h3>
+                        <p><strong>Tracking ID:</strong> ${visaData.tracking_id}</p>
+                        <p><strong>Destination:</strong> ${visaData.destination}</p>
+                        <p><strong>Amount:</strong> ₦${parseFloat(visaData.price).toLocaleString()}</p>
+                        <p><strong>Status:</strong> ${visaData.payment_status || 'Processing'}</p>
+                    </div>
+
+                    <p style="color: #555;">
+                        Please keep this receipt for your records. If you have any questions, 
+                        don't hesitate to contact us.
+                    </p>
+
+                    <p style="color: #333; margin-top: 30px;">
+                        <strong>Best regards,</strong><br>
+                        <strong>Too Good Travels Team</strong>
+                    </p>
+                </div>
+            `,
+            attachments: [
+                {
+                    filename: `receipt-${visaData.tracking_id}.pdf`,
+                    content: pdfBuffer.toString('base64')
+                }
+            ]
+        });
+
+        if (error) {
+            console.error('Resend error:', error);
+            throw error;
+        }
+
+        res.json({
+            success: true,
+            message: 'Receipt sent successfully',
+            emailId: data.id
+        });
+
+    } catch (error) {
+        console.error('Email sending error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to send receipt email'
+        });
+    }
+});
+
+// PDF generation function
+async function generateReceiptPDF(visaData) {
+    return new Promise((resolve, reject) => {
+        try {
+            const doc = new PDFDocument({ margin: 50, size: 'A4' });
+            const buffers = [];
+
+            doc.on('data', buffers.push.bind(buffers));
+            doc.on('end', () => {
+                const pdfData = Buffer.concat(buffers);
+                resolve(pdfData);
+            });
+
+            // Add header
+            doc.fontSize(20)
+                .fillColor('#333333')
+                .text('TOO GOOD TRAVELS', 50, 50)
+                .fontSize(12)
+                .text('Visa Support Services', 50, 75);
+
+            // Invoice details
+            doc.fontSize(16)
+                .fillColor('#28a745')
+                .text('INVOICE', 400, 50, { align: 'right' })
+                .fontSize(10)
+                .fillColor('#333333')
+                .text(`#${visaData.tracking_id}`, 400, 70, { align: 'right' })
+                .text(`Date: ${new Date(visaData.created_at).toLocaleDateString()}`, 400, 85, { align: 'right' });
+
+            // Customer information
+            doc.fontSize(12)
+                .text('Personal Information', 50, 120)
+                .fontSize(10)
+                .text(`Name: ${visaData.first_name} ${visaData.last_name}`, 50, 140)
+                .text(`Email: ${visaData.contact_email}`, 50, 155)
+                .text(`Phone: ${visaData.phone_number}`, 50, 170);
+
+            // Application details
+            doc.fontSize(12)
+                .text('Application Information', 50, 200)
+                .fontSize(10)
+                .text(`Passport Number: ${visaData.passport_number}`, 50, 220)
+                .text(`Destination: ${visaData.destination}`, 50, 235)
+                .text(`Tracking ID: ${visaData.tracking_id}`, 50, 250);
+
+            // Payment information
+            doc.fontSize(12)
+                .text('Payment Information', 50, 280)
+                .fontSize(10)
+                .text(`Amount: ₦${parseFloat(visaData.price).toLocaleString()}`, 50, 300)
+                .text(`Status: ${visaData.payment_status || 'N/A'}`, 50, 315);
+
+            // Footer
+            doc.fontSize(8)
+                .fillColor('#666666')
+                .text('This is a computer-generated receipt. No signature required.', 50, 500)
+                .text('Thank you for choosing Too Good Travels!', 50, 515);
+
+            doc.end();
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
 module.exports = router;
