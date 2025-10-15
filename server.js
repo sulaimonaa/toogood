@@ -20,6 +20,33 @@ app.use(express.json())
 
 const port = process.env.PORT
 
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
+
+app.post('/upload', upload.single('image'), async (req, res) => {
+    try {
+        const formData = new FormData();
+        formData.append('image', req.file.buffer, {
+            filename: req.file.originalname,
+            contentType: req.file.mimetype
+        });
+
+        const response = await axios.post(
+            'https://toogoodtravels.net/api/upload',
+            formData,
+            {
+                headers: {
+                    ...formData.getHeaders()
+                }
+            }
+        );
+
+        res.json(response.data);
+    } catch (error) {
+        res.status(500).json({ error: 'Upload failed' });
+    }
+});
+
 app.use("/uploads", express.static("uploads"))
 app.use('/agents', agentRoutes)
 app.use('/admin', adminRoutes)
