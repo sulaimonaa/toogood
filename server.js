@@ -21,6 +21,8 @@ app.use(express.json())
 const port = process.env.PORT
 
 const multer = require('multer');
+const axios = require('axios');
+const FormData = require('form-data');
 const upload = multer({ storage: multer.memoryStorage() });
 
 app.post('/upload', upload.single('image'), async (req, res) => {
