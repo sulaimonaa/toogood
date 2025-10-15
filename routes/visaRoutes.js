@@ -897,7 +897,7 @@ router.post('/send-receipt-email', async (req, res) => {
     }
 });
 
-// PDF generation function
+// PDF generation function...
 async function generateReceiptPDF(visaData) {
     return new Promise((resolve, reject) => {
         try {
