@@ -221,33 +221,7 @@ const storage = multer.diskStorage({
     }
 });
 
-// const upload = multer({ storage: storage });
-
-const upload = multer({ storage: multer.memoryStorage() });
-const app = express();
-app.post('/upload', upload.single('image'), async (req, res) => {
-    try {
-        const formData = new FormData();
-        formData.append('image', req.file.buffer, {
-            filename: req.file.originalname,
-            contentType: req.file.mimetype
-        });
-
-        const response = await axios.post(
-            'https://toogoodtravels.net/api/upload',
-            formData,
-            {
-                headers: {
-                    ...formData.getHeaders()
-                }
-            }
-        );
-
-        res.json(response.data);
-    } catch (error) {
-        res.status(500).json({ error: 'Upload failed' });
-    }
-});
+const upload = multer({ storage: storage });
 
 
 const QRCode = require('qrcode');
