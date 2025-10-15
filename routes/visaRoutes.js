@@ -224,7 +224,7 @@ const storage = multer.diskStorage({
 // const upload = multer({ storage: storage });
 
 const upload = multer({ storage: multer.memoryStorage() });
-
+const app = express();
 app.post('/upload', upload.single('image'), async (req, res) => {
     try {
         const formData = new FormData();
