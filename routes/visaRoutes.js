@@ -207,18 +207,35 @@ router.put('/update', authenticateAdmin, async (req, res) => {
 const { Resend } = require('resend');
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, "uploads/");
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+// Configure Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+// Cloudinary storage for Multer
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'visa-applications',
+        format: async (req, file) => {
+            // Determine format based on file type
+            if (file.mimetype.includes('image')) {
+                return 'jpg', 'png', 'jpeg';
+            }
+            return 'pdf'; // or other formats
+        },
+        public_id: (req, file) => {
+            const safeName = file.originalname
+                .toLowerCase()
+                .replace(/\s+/g, '-')
+                .replace(/[^a-z0-9.-]/g, '');
+            return `doc-${Date.now()}-${safeName}`;
+        },
     },
-    filename: (req, file, cb) => {
-        const safeName = file.originalname
-            .toLowerCase()
-            .replace(/\s+/g, '-')         // spaces -> dashes
-            .replace(/[^a-z0-9.-]/g, ''); // remove special chars
-        const uniqueName = Date.now() + '-' + safeName;
-        cb(null, uniqueName);
-    }
 });
 
 const upload = multer({ storage: storage });
@@ -363,7 +380,7 @@ router.post("/application", upload.fields([
                                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 15px;" colspan="2">
                                                 <tr><td align="center" style="padding-bottom: 15px;">
                                                     <p style="color: #555; margin-bottom: 15px;">Thank you ${first_name} ${last_name}, for submitting your visa application.</p>
-                                                    <img src="https://toogood-1.onrender.com/uploads/${passport_photograph}" alt="Your passport photograph" style="width: 120px; height: 120px; border: 1px solid #ccc; display: block; margin: 0 auto;">
+                                                    <img src="${passport_photograph}" alt="Your passport photograph" style="width: 120px; height: 120px; border: 1px solid #ccc; display: block; margin: 0 auto;">
                                                 </td></tr>
                                                 <tr><td align="center" valign="middle" style="padding-top: 10px;">
                                                     <h3 style="color: green; font-weight: bolder; font-size: 1.2em; text-transform: uppercase; margin: 0; display: inline-block; vertical-align: middle; padding-left: 10px;">Application Confirmation</h3>
@@ -387,14 +404,14 @@ router.post("/application", upload.fields([
                                                 ${qrCodeGenerated ? `
                                                 <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>QR Code:</strong></td>
                                                     <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935; text-align: center;">
-                                                        <img src="https://toogood-1.onrender.com/uploads/${qr_code_filename}" 
+                                                        <img src="${qr_code_filename}" 
                                                              alt="QR Code" 
                                                              style="width: 150px; height: 150px; display: block; margin: 0 auto;">
                                                         <p style="font-size: 12px; color: #666; margin: 5px 0 0 0;">Scan to verify application</p>
                                                     </td></tr>
                                                 ` : ''}
                                                 <tr><td style="padding: 8px;"><strong>Passport Data Page:</strong></td>
-                                                    <td style="padding: 8px; background: #9ffab935;"><a href="https://toogood-1.onrender.com/uploads/${data_page}">Download/View</a></td></tr>
+                                                    <td style="padding: 8px; background: #9ffab935;"><a href="${data_page}">Download/View</a></td></tr>
                                             </table>
                                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 15px;">
                                                 <tr><td align="center">
