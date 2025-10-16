@@ -191,19 +191,35 @@ router.put('/update', authenticateAdmin, async (req, res) => {
 const { Resend } = require('resend');
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Configure file upload storage
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, "uploads/");
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+// Configure Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+// Cloudinary storage for Multer
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'permit-applications',
+        format: async (req, file) => {
+            // Determine format based on file type
+            if (file.mimetype.includes('image')) {
+                return 'jpg', 'png', 'jpeg';
+            }
+            return 'pdf'; // or other formats
+        },
+        public_id: (req, file) => {
+            const safeName = file.originalname
+                .toLowerCase()
+                .replace(/\s+/g, '-')
+                .replace(/[^a-z0-9.-]/g, '');
+            return `doc-${Date.now()}-${safeName}`;
+        },
     },
-    filename: (req, file, cb) => {
-        const safeName = file.originalname
-            .toLowerCase()
-            .replace(/\s+/g, '-')         // spaces -> dashes
-            .replace(/[^a-z0-9.-]/g, ''); // remove special chars
-        const uniqueName = Date.now() + '-' + safeName;
-        cb(null, uniqueName);
-    }
 });
 
 const upload = multer({ storage: storage });
@@ -212,46 +228,47 @@ const QRCode = require('qrcode');
 const fs = require('fs');
 const path = require('path');
 
-// QR Code generation function with better error handling
+// QR Code generation function that saves to Cloudinary
 async function generateQRCodeImage(data, filename) {
     try {
-        // Use absolute path to ensure we're writing to the right location
-        const uploadsDir = path.join(process.cwd(), 'uploads');
-        console.log('📁 Uploads directory:', uploadsDir);
-
-        if (!fs.existsSync(uploadsDir)) {
-            console.log('📂 Creating uploads directory...');
-            fs.mkdirSync(uploadsDir, { recursive: true });
-        }
-
         console.log('🎨 Generating QR code for:', data);
 
-        const filePath = path.join(uploadsDir, filename);
-
-        // Generate QR code with custom options
-        await QRCode.toFile(filePath, data, {
-            width: 300,           // Size in pixels
-            margin: 2,            // White border
+        // Generate QR code as a data URL (base64)
+        const qrCodeDataURL = await QRCode.toDataURL(data, {
+            width: 300,
+            margin: 2,
             color: {
-                dark: '#000000',  // QR code color
-                light: '#FFFFFF'  // Background color
+                dark: '#000000',
+                light: '#FFFFFF'
             },
-            errorCorrectionLevel: 'H' // High error correction (30%)
+            errorCorrectionLevel: 'H'
         });
 
-        console.log('✅ QR Code saved:', filename);
+        console.log('✅ QR Code generated as base64, uploading to Cloudinary...');
 
-        // Verify file was created
-        if (fs.existsSync(filePath)) {
-            const stats = fs.statSync(filePath);
-            console.log('✅ File verified. Size:', stats.size, 'bytes');
-            return true;
-        } else {
-            throw new Error('QR Code file was not created');
+        // Extract the base64 data (remove the data URL prefix)
+        const base64Data = qrCodeDataURL.replace(/^data:image\/png;base64,/, '');
+
+        // Upload to Cloudinary
+        const result = await cloudinary.uploader.upload(
+            `data:image/png;base64,${base64Data}`, {
+            folder: 'permit-applications/qr-codes',
+            public_id: filename.replace('.png', ''), // Remove extension for Cloudinary
+            resource_type: 'image',
+            overwrite: false // Don't overwrite existing files
         }
+        );
+
+        console.log('✅ QR Code uploaded to Cloudinary:', result.secure_url);
+
+        return {
+            success: true,
+            url: result.secure_url,
+            public_id: result.public_id
+        };
 
     } catch (error) {
-        console.error('❌ QR Code generation error:', error);
+        console.error('❌ QR Code generation/upload error:', error);
         throw error;
     }
 }
@@ -271,14 +288,26 @@ router.post("/application", upload.fields([
             return res.status(400).json({ message: "Missing required fields" });
         }
         const tracking_id = `PER${Math.floor(Math.random() * 1000000000)}`;
-        const qr_code_data = `PERMIT_APPLICATION:${contact_email}:${first_name}:${last_name}:${passport_number}`;
-        const qr_code_filename = `qrcode_${tracking_id}.png`;
+
         // Store file paths
-        const data_page = req.files["data_page"] ? req.files["data_page"][0].filename : null;
-        const passport_photograph = req.files["passport_photograph"] ? req.files["passport_photograph"][0].filename : null;
-        const utility_bill = req.files["utility_bill"] ? req.files["utility_bill"][0].filename : null;
-        const supporting_document = req.files["supporting_document"] ? req.files["supporting_document"][0].filename : null;
-        const other_document = req.files["other_document"] ? req.files["other_document"][0].filename : null;
+        const data_page = req.files["data_page"] ? req.files["data_page"][0].path : null;
+        const passport_photograph = req.files["passport_photograph"] ? req.files["passport_photograph"][0].path : null;
+        const utility_bill = req.files["utility_bill"] ? req.files["utility_bill"][0].path : null;
+        const supporting_document = req.files["supporting_document"] ? req.files["supporting_document"][0].path : null;
+        const other_document = req.files["other_document"] ? req.files["other_document"][0].path : null;
+
+        // Generate QR code and save to Cloudinary
+        const qr_code_data = JSON.stringify({
+            tracking_id: tracking_id,
+            name: `${first_name} ${last_name}`,
+            passport_number: passport_number,
+            visa_destination: visa_destination,
+            application_date: new Date().toISOString()
+        });
+
+        const qrCodeFilename = `qr-${tracking_id}.png`;
+        const qrCodeResult = await generateQRCodeImage(qr_code_data, qrCodeFilename);
+        const qr_code_filename = qrCodeResult.url; // Use the Cloudinary URL
 
         const sql = `
             INSERT INTO permit_applications (
@@ -299,19 +328,7 @@ router.post("/application", upload.fields([
             }
 
             const applicationId = result.insertId;
-            let qrCodeGenerated = false;
-
-            try {
-                // ✅ Generate QR Code AFTER database insert with proper error handling
-                console.log('🔄 Starting QR code generation...');
-                await generateQRCodeImage(qr_code_data, qr_code_filename);
-                qrCodeGenerated = true;
-                console.log('✅ QR code generation completed successfully');
-
-            } catch (qrError) {
-                console.error('❌ QR code generation failed, but application was saved:', qrError);
-                // Continue without QR code - application is already saved
-            }
+            let qrCodeGenerated = !!qr_code_filename;
 
             try {
                 // Send email using Resend
@@ -343,7 +360,7 @@ router.post("/application", upload.fields([
                                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 15px;" colspan="2">
                                                 <tr><td align="center" style="padding-bottom: 15px;">
                                                     <p style="color: #555; margin-bottom: 15px;">Thank you ${first_name} ${last_name}, for submitting your permit application.</p>
-                                                    <img src="https://toogood-1.onrender.com/uploads/${passport_photograph}" alt="Your passport photograph" style="width: 120px; height: 120px; border: 1px solid #ccc; display: block; margin: 0 auto;">
+                                                    <img src="${passport_photograph}" alt="Your passport photograph" style="width: 120px; height: 120px; border: 1px solid #ccc; display: block; margin: 0 auto;">
                                                 </td></tr>
                                                 <tr><td align="center" valign="middle" style="padding-top: 10px;">
                                                     <h3 style="color: green; font-weight: bolder; font-size: 1.2em; text-transform: uppercase; margin: 0; display: inline-block; vertical-align: middle; padding-left: 10px;">Application Confirmation</h3>
@@ -365,14 +382,14 @@ router.post("/application", upload.fields([
                                                 ${qrCodeGenerated ? `
                                                 <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>QR Code:</strong></td>
                                                     <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935; text-align: center;">
-                                                        <img src="https://toogood-1.onrender.com/uploads/${qr_code_filename}" 
+                                                        <img src="${qr_code_filename}" 
                                                              alt="QR Code" 
                                                              style="width: 150px; height: 150px; display: block; margin: 0 auto;">
                                                         <p style="font-size: 12px; color: #666; margin: 5px 0 0 0;">Scan to verify application</p>
                                                     </td></tr>
                                                 ` : ''}
                                                 <tr><td style="padding: 8px;"><strong>Passport Data Page:</strong></td>
-                                                    <td style="padding: 8px; background: #9ffab935;"><a href="https://toogood-1.onrender.com/uploads/${data_page}">Download/View</a></td></tr>
+                                                    <td style="padding: 8px; background: #9ffab935;"><a href="${data_page}">Download/View</a></td></tr>
                                             </table>
                                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 15px;">
                                                 <tr><td align="center">
@@ -549,5 +566,298 @@ router.put('/upload/:id', upload.fields([{ name: "permit_file", maxCount: 1 }]),
         res.json({ message: "Permit file uploaded successfully", data: result });
     });
 });
+
+// Send receipt email with PDF attachment
+const PDFDocument = require('pdfkit');
+const https = require('https');
+router.post('/send-receipt-email', async (req, res) => {
+    try {
+        const { visaData, to } = req.body;
+
+        // Validate required data
+        if (!visaData || !to) {
+            return res.status(400).json({
+                success: false,
+                message: 'Missing required data: visaData and to are required'
+            });
+        }
+
+        console.log('Generating PDF receipt for:', visaData.tracking_id);
+
+        // Generate PDF using PDFKit
+        const pdfBuffer = await generateReceiptPDF(visaData);
+
+        console.log('PDF generated, sending email to:', to);
+
+        // Send email with PDF attachment
+        const { data, error } = await resend.emails.send({
+            from: 'Too Good Travels <noreply@toogoodtravels.net>',
+            to: to,
+            subject: `Permit Application Receipt - ${visaData.tracking_id}`,
+            html: `
+                <div style="padding: 20px; font-family: Arial, sans-serif;">
+                    <h2 style="color: #333;">Dear ${visaData.first_name} ${visaData.last_name},</h2>
+                    <p style="color: #555;">Your permit application receipt is attached to this email.</p>
+                    
+                    <div style="background-color: #f8f8f8; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                        <h3 style="color: #333;">Application Summary</h3>
+                        <p><strong>Destination:</strong> ${visaData.visa_destination}</p>
+                        <p><strong>Amount:</strong> ₦${parseFloat(visaData.visa_fee).toLocaleString()}</p>
+                        <p><strong>Status:</strong> ${visaData.payment_status || 'Processing'}</p>
+                    </div>
+
+                    <p style="color: #555;">
+                        Please keep this receipt for your records. If you have any questions, 
+                        don't hesitate to contact us.
+                    </p>
+
+                    <p style="color: #333; margin-top: 30px;">
+                        <strong>Best regards,</strong><br>
+                        <strong>Too Good Travels Team</strong>
+                    </p>
+                </div>
+            `,
+            attachments: [
+                {
+                    filename: `receipt-${visaData.tracking_id}.pdf`,
+                    content: pdfBuffer.toString('base64')
+                }
+            ]
+        });
+
+        if (error) {
+            console.error('Resend error:', error);
+            throw error;
+        }
+
+        console.log('Email sent successfully:', data.id);
+
+        res.json({
+            success: true,
+            message: 'Receipt sent successfully',
+            emailId: data.id
+        });
+
+    } catch (error) {
+        console.error('Email sending error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to send receipt email: ' + error.message
+        });
+    }
+});
+
+// Generate PDF that matches your page design
+// Helper function to download image as buffer
+function downloadImage(url) {
+    return new Promise((resolve, reject) => {
+        https.get(url, (response) => {
+            const chunks = [];
+            response.on('data', (chunk) => chunks.push(chunk));
+            response.on('end', () => resolve(Buffer.concat(chunks)));
+            response.on('error', reject);
+        }).on('error', reject);
+    });
+}
+
+// Generate PDF with logo
+async function generateReceiptPDF(visaData) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const doc = new PDFDocument({
+                margin: 50,
+                size: 'A4',
+                info: {
+                    Title: `Receipt - ${visaData.tracking_id}`,
+                    Author: 'Too Good Travels',
+                    Subject: 'Visa Application Receipt'
+                }
+            });
+
+            const buffers = [];
+
+            doc.on('data', buffers.push.bind(buffers));
+            doc.on('end', () => {
+                const pdfData = Buffer.concat(buffers);
+                resolve(pdfData);
+            });
+
+            doc.on('error', (error) => {
+                reject(error);
+            });
+
+            try {
+                // Download and add logo
+                const logoUrl = 'https://toogoodtravels.net/static/media/tgt.7dbe67b2cd1d73dd1a15.png';
+                const logoBuffer = await downloadImage(logoUrl);
+
+                // Add logo to PDF (resize to appropriate dimensions)
+                doc.image(logoBuffer, 50, 30, {
+                    width: 120,
+                    height: 40,
+                    fit: [120, 40]
+                });
+
+                // Add company name below logo
+                doc.fontSize(10)
+                    .fillColor('#666666')
+                    .text('Visa Support Services', 50, 75);
+
+            } catch (imageError) {
+                console.log('Could not load logo, using text fallback:', imageError.message);
+                // Fallback to text if logo fails to load
+                doc.fontSize(20)
+                    .fillColor('#333333')
+                    .text('TOO GOOD TRAVELS', 50, 30);
+
+                doc.fontSize(12)
+                    .fillColor('#666666')
+                    .text('Visa Support Services', 50, 55);
+            }
+
+            // Invoice title with green color
+            doc.fontSize(24)
+                .fillColor('#28a745')
+                .text('INVOICE', 400, 30, { align: 'right' });
+
+            doc.fontSize(12)
+                .fillColor('#666666')
+                .text(`#${visaData.tracking_id}`, 400, 60, { align: 'right' });
+
+            // Rest of your PDF content remains the same...
+            // Invoice summary section
+            doc.fontSize(14)
+                .fillColor('#333333')
+                .text('Invoice Summary', 50, 120);
+
+            // Horizontal line
+            doc.moveTo(50, 145)
+                .lineTo(545, 145)
+                .strokeColor('#cccccc')
+                .stroke();
+
+            // Invoice dates
+            doc.fontSize(10)
+                .fillColor('#333333')
+                .text(`Invoice Date: ${visaData.created_at ? new Date(visaData.created_at).toLocaleDateString() : "N/A"}`, 50, 160)
+                .text(`Due Date: ${visaData.created_at ? new Date(new Date(visaData.created_at).getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString() : "N/A"}`, 50, 175);
+
+            // Total amount in green
+            doc.fontSize(18)
+                .fillColor('#28a745')
+                .text(`N${parseFloat(visaData.visa_fee || 0).toLocaleString()}`, 400, 160, { align: 'right' });
+
+            doc.fontSize(10)
+                .fillColor('#666666')
+                .text('Total Amount Due', 400, 185, { align: 'right' });
+
+            // Personal Information section
+            doc.fontSize(16)
+                .fillColor('#333333')
+                .text('Personal Information', 50, 220);
+
+            // Section underline
+            doc.moveTo(50, 240)
+                .lineTo(545, 240)
+                .strokeColor('#dddddd')
+                .stroke();
+
+            let yPosition = 260;
+
+            // Name
+            doc.fontSize(12)
+                .fillColor('#333333')
+                .text('Name:', 50, yPosition)
+                .text(`${visaData.first_name} ${visaData.last_name}`, 150, yPosition);
+            yPosition += 20;
+
+            // Phone
+            doc.text('Phone:', 50, yPosition)
+                .text(visaData.phone_number, 150, yPosition);
+            yPosition += 20;
+
+            // Email
+            doc.text('Email:', 50, yPosition)
+                .text(visaData.contact_email, 150, yPosition);
+            yPosition += 40;
+
+            // Application Information section
+            doc.fontSize(16)
+                .fillColor('#333333')
+                .text('Application Information', 50, yPosition);
+
+            // Section underline
+            doc.moveTo(50, yPosition + 20)
+                .lineTo(545, yPosition + 20)
+                .strokeColor('#dddddd')
+                .stroke();
+
+            yPosition += 40;
+
+            // Passport Number
+            doc.fontSize(12)
+                .text('Passport Number:', 50, yPosition)
+                .text(visaData.passport_number, 180, yPosition);
+            yPosition += 20;
+
+            // Destination
+            doc.text('Destination:', 50, yPosition)
+                .text(visaData.visa_destination, 180, yPosition);
+            yPosition += 20;
+
+
+            // Payment Information (if available)
+            if (visaData.payment_status) {
+                doc.fontSize(16)
+                    .fillColor('#333333')
+                    .text('Payment Information', 50, yPosition);
+
+                // Section underline
+                doc.moveTo(50, yPosition + 20)
+                    .lineTo(545, yPosition + 20)
+                    .strokeColor('#dddddd')
+                    .stroke();
+
+                yPosition += 40;
+
+                // Payment Status with color
+                const statusColor = visaData.payment_status === 'Paid' ? '#28a745' : '#dc3545';
+                doc.fontSize(12)
+                    .fillColor('#333333')
+                    .text('Payment Status:', 50, yPosition)
+                    .fillColor(statusColor)
+                    .text(visaData.payment_status, 180, yPosition);
+                yPosition += 20;
+
+                // Payment Date (if available)
+                if (visaData.payment_date) {
+                    doc.fillColor('#333333')
+                        .text('Payment Date:', 50, yPosition)
+                        .text(new Date(visaData.payment_date).toLocaleDateString(), 180, yPosition);
+                    yPosition += 20;
+                }
+            }
+
+            // Footer
+            const footerY = 700;
+            doc.moveTo(50, footerY)
+                .lineTo(545, footerY)
+                .strokeColor('#dddddd')
+                .stroke();
+
+            doc.fontSize(10)
+                .fillColor('#666666')
+                .text('This is a computer-generated invoice. No signature required.', 50, footerY + 20, { align: 'center' })
+                .text('Thank you for choosing Too Good Travels!', 50, footerY + 35, { align: 'center' });
+
+            // Finalize the PDF
+            doc.end();
+
+        } catch (error) {
+            console.error('PDF generation error:', error);
+            reject(error);
+        }
+    });
+}
 
 module.exports = router;

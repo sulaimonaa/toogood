@@ -307,8 +307,6 @@ router.post("/application", upload.fields([
 
         // Auto-generate tracking ID
         const tracking_id = `VISA${Math.floor(Math.random() * 1000000000)}`;
-        // const qr_code_data = `VISA_APPLICATION:${tracking_id}:${first_name}:${last_name}:${passport_number}`;
-        // const qr_code_filename = `qrcode_${tracking_id}.png`;
 
         // Store file paths..
         const data_page = req.files["data_page"] ? req.files["data_page"][0].path : null;
