@@ -593,7 +593,7 @@ router.post('/send-receipt-email', async (req, res) => {
         const { data, error } = await resend.emails.send({
             from: 'Too Good Travels <noreply@toogoodtravels.net>',
             to: to,
-            subject: `Permit Application Receipt - #PER-${Date(visaData.created_at).toLocaleDateString()}`,
+            subject: `Permit Application Receipt - #PER-${visaData.created_at}`,
             html: `
                 <div style="padding: 20px; font-family: Arial, sans-serif;">
                     <h2 style="color: #333;">Dear ${visaData.first_name} ${visaData.last_name},</h2>
@@ -619,7 +619,7 @@ router.post('/send-receipt-email', async (req, res) => {
             `,
             attachments: [
                 {
-                    filename: `receipt-#PER-${Date(visaData.created_at).toLocaleDateString()}.pdf`,
+                    filename: `receipt-#PER-${visaData.created_at}.pdf`,
                     content: pdfBuffer.toString('base64')
                 }
             ]
@@ -668,7 +668,7 @@ async function generateReceiptPDF(visaData) {
                 margin: 50,
                 size: 'A4',
                 info: {
-                    Title: `Receipt - #PER-${Date(visaData.created_at).toLocaleDateString()}`,
+                    Title: `Receipt - #PER-${visaData.created_at}`,
                     Author: 'Too Good Travels',
                     Subject: 'Visa Application Receipt'
                 }
