@@ -722,7 +722,7 @@ async function generateReceiptPDF(visaData) {
 
             doc.fontSize(12)
                 .fillColor('#666666')
-                .text(`#PER-${Date(visaData.created_at).toLocaleDateString()}`, 400, 60, { align: 'right' });
+                .text(`#PER-${visaData.created_at}`, 400, 60, { align: 'right' });
 
             // Rest of your PDF content remains the same...
             // Invoice summary section
