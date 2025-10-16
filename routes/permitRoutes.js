@@ -593,7 +593,7 @@ router.post('/send-receipt-email', async (req, res) => {
         const { data, error } = await resend.emails.send({
             from: 'Too Good Travels <noreply@toogoodtravels.net>',
             to: to,
-            subject: `Permit Application Receipt - ${visaData.tracking_id}`,
+            subject: `Permit Application Receipt - #PER-${Date(visaData.created_at).toLocaleDateString()}`,
             html: `
                 <div style="padding: 20px; font-family: Arial, sans-serif;">
                     <h2 style="color: #333;">Dear ${visaData.first_name} ${visaData.last_name},</h2>
@@ -619,7 +619,7 @@ router.post('/send-receipt-email', async (req, res) => {
             `,
             attachments: [
                 {
-                    filename: `receipt-${visaData.tracking_id}.pdf`,
+                    filename: `receipt-#PER-${Date(visaData.created_at).toLocaleDateString()}.pdf`,
                     content: pdfBuffer.toString('base64')
                 }
             ]
@@ -668,7 +668,7 @@ async function generateReceiptPDF(visaData) {
                 margin: 50,
                 size: 'A4',
                 info: {
-                    Title: `Receipt - ${visaData.tracking_id}`,
+                    Title: `Receipt - #PER-${Date(visaData.created_at).toLocaleDateString()}`,
                     Author: 'Too Good Travels',
                     Subject: 'Visa Application Receipt'
                 }
@@ -722,7 +722,7 @@ async function generateReceiptPDF(visaData) {
 
             doc.fontSize(12)
                 .fillColor('#666666')
-                .text(`#${visaData.tracking_id}`, 400, 60, { align: 'right' });
+                .text(`#PER-${Date(visaData.created_at).toLocaleDateString()}`, 400, 60, { align: 'right' });
 
             // Rest of your PDF content remains the same...
             // Invoice summary section
