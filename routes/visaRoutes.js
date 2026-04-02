@@ -5,6 +5,43 @@ const authenticateAdmin = require('../middlewares/adminAuth');
 // const nodemailer = require("nodemailer");
 const router = express.Router();
 
+// Configure file upload storage
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+// Configure Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+// Cloudinary storage for Multer
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'visa-applications',
+        format: async (req, file) => {
+            // Determine format based on file type
+            if (file.mimetype.includes('image')) {
+                return 'jpg', 'png', 'jpeg';
+            }
+            return 'pdf'; // or other formats
+        },
+        public_id: (req, file) => {
+            const safeName = file.originalname
+                .toLowerCase()
+                .replace(/\s+/g, '-')
+                .replace(/[^a-z0-9.-]/g, '');
+            return `doc-${Date.now()}-${safeName}`;
+        },
+    },
+});
+
+const upload = multer({ storage: storage });
+
 
 // Add Visa Destination (Admin Only)
 router.post('/add_visa', authenticateAdmin, upload.single('visa_img'), (req, res) => {
@@ -230,43 +267,6 @@ router.put('/update', authenticateAdmin, upload.single('visa_img'), async (req, 
     }
 });
 
-
-// Configure file upload storage
-const { Resend } = require('resend');
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-// Configure Cloudinary
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-// Cloudinary storage for Multer
-const storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-        folder: 'visa-applications',
-        format: async (req, file) => {
-            // Determine format based on file type
-            if (file.mimetype.includes('image')) {
-                return 'jpg', 'png', 'jpeg';
-            }
-            return 'pdf'; // or other formats
-        },
-        public_id: (req, file) => {
-            const safeName = file.originalname
-                .toLowerCase()
-                .replace(/\s+/g, '-')
-                .replace(/[^a-z0-9.-]/g, '');
-            return `doc-${Date.now()}-${safeName}`;
-        },
-    },
-});
-
-const upload = multer({ storage: storage });
 
 
 const QRCode = require('qrcode');
