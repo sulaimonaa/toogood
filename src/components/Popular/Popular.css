@@ -1,6 +1,7 @@
 .p-container {
     padding: 3rem 0;
 }
+
 .pd {
     height: auto;
     display: flex;
@@ -17,27 +18,32 @@
     background-size: cover;
     background-position: center center;
 }
+
 .pd-2 {
     background-image: url('../../assets/images/camera.jpg');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
 }
+
 .pd-3 {
     background-image: url('../../assets/images/water.jpg');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
 }
+
 .pd-4 {
     background-image: url('../../assets/images/ocean.jpg');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
 }
+
 .pd a {
     font-size: .5rem;
 }
+
 @media (max-width: 425px) {
     .pop-list {
         height: 150px;
@@ -47,10 +53,12 @@
         width: 100px !important;
     }
 }
+
 @media (min-width: 768px) {
     .pd {
         height: 300px;
     }
+
     .pd a {
         font-size: 1rem;
     }
