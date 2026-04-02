@@ -267,10 +267,10 @@ const VisaPayment = () => {
                     <div style={{ marginBottom: '30px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-even' }}>
                             <div>
-                                <img src={`https://toogood-1.onrender.com/uploads/${qr_code_filename}`} alt="Barcode" className="img-fluid mb-3" style={{ maxWidth: '200px' }} />
+                                <img src={`${qr_code_filename}`} alt="Barcode" className="img-fluid mb-3" style={{ maxWidth: '200px' }} />
                             </div>
                             <div>
-                                <img src={`https://toogood-1.onrender.com/uploads/${passport_photograph}`} alt="Passport" className="img-fluid mb-3" style={{ maxWidth: '200px' }} />
+                                <img src={`${passport_photograph}`} alt="Passport" className="img-fluid mb-3" style={{ maxWidth: '200px' }} />
                             </div>
                         </div>
                     </div>
@@ -364,11 +364,11 @@ const VisaPayment = () => {
                 </div>
                 <div className="d-md-flex gap-3 align-items-center text-center ">
                     <div>
-                        <img src={`https://toogood-1.onrender.com/uploads/${qr_code_filename}`} alt="Barcode" className="img-fluid mb-3" style={{ maxWidth: '200px' }} />
+                        <img src={`${qr_code_filename}`} alt="Barcode" className="img-fluid mb-3" style={{ maxWidth: '200px' }} />
                     </div>
                     <div>
                         <div style={{ width: '120px', height: '164px', margin: '0 auto' }}>
-                            <img src={`https://toogood-1.onrender.com/uploads/${passport_photograph}`} alt="Passport" className="img-fluid mb-3 w-100" />
+                            <img src={`${passport_photograph}`} alt="Passport" className="img-fluid mb-3 w-100" />
                         </div>
                     </div>
                 </div>

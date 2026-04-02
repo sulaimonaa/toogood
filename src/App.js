@@ -64,18 +64,20 @@ import SuccessfulPayments from './components/SuccessfulPayments'
 import CompleteInsurance from './components/Insurance/CompleteInsurance'
 import Appointment from './components/Appointment/Home'
 import AppPayment from './components/Appointment/AppPayment'
+import VisaReceipt from './components/Admin/VisaReceipt'
+import PermitReceipt from './components/Permit/PermitReceipt'
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path='/' element={<Home/>} />
+        <Route path='/' element={<Home />} />
         <Route path='/e-visa' element={<Visa />} />
         <Route path='/evisa' element={<Evisa />} />
         <Route path='/results' element={<VisaResult />} />
         <Route path='/epermit' element={<Epermit />} />
         <Route path='/permit-results' element={<PermitResult />} />
-        <Route path='/login' element={<Login/>} />
+        <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
         <Route path='/reset-password' element={<ResetPassword />} />
         <Route path='/update-profile' element={<UpdateAgentDetails />} />
@@ -103,6 +105,8 @@ const App = () => {
         <Route path='/payment' element={<VisaPayment />} />
         <Route path='/complete-permit' element={<CompletePermit />} />
         <Route path='/visa-status/:id' element={<VisaStatus />} />
+        <Route path="/visa-receipt/:id" element={<VisaReceipt />} />
+        <Route path="/permit-receipt/:id" element={<PermitReceipt />} />
         <Route path='/permit-status/:id' element={<PermitStatus />} />
         <Route path='/insurance-status/:id' element={<InsuranceStatus />} />
         <Route path='/track-visa' element={<TrackVisa />} />
@@ -130,7 +134,7 @@ const App = () => {
         <Route path='/insurance' element={<Insurance />} />
         <Route path='/visa-support' element={<Itinerary />} />
         <Route path='/successful-payment' element={<SuccessfulPayments />} />
-        <Route path='/complete-insurance' element={ <CompleteInsurance />} />
+        <Route path='/complete-insurance' element={<CompleteInsurance />} />
       </Routes>
     </Router>
   )

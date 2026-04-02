@@ -16,8 +16,8 @@ const Footer = () => {
       </div>
       <div className='updateBtn'>
         <a href='https://blog.toogoodtravels.net' className='text-decoration-none' target='_blank' rel="noopener noreferrer">
-          <div className='text-white bg-dark rounded-pill p-2 text-center' style={{ fontSize: '0.8rem' }}>
-            Check latest updates
+          <div className='text-white bg-dark rounded-pill p-2 text-center text-capitalize' style={{ fontSize: '0.8rem' }}>
+            latest travel updates
           </div>
         </a>
       </div>
