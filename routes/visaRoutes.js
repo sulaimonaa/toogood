@@ -89,7 +89,7 @@ router.get('/destinations', (req, res) => {
 router.get('/selected-destinations', (req, res) => {
 
     db.query(
-        "SELECT id, destination, visa_excerpt, visa_description, visa_price, visa_agent_price, process_time, process_type, available_country, visa_img FROM visa_destinations ORDER BY id DESC LIMIT 4",
+        "SELECT id, destination, visa_excerpt, visa_description, visa_price, visa_agent_price, process_time, process_type, available_country, visa_img FROM visa_destinations ORDER BY id DESC LIMIT 6",
         (err, results) => {
             if (err) {
                 console.error("Database error:", err);
