@@ -94,11 +94,10 @@ const HotDeals = () => {
                                     <p className="card-text" style={{ flex: '0 0 auto' }}>
                                         {dest.visa_excerpt || ((dest.visa_description || '').slice(0, 120) + ((dest.visa_description || '').length > 120 ? '...' : ''))}
                                     </p>
-                                    <div className="mt-auto">
-                                        <p className="mb-2"><strong>From:</strong> ${dest.visa_price}</p>
-                                        <div className="d-flex gap-2">
+                                    <div className="mt-auto shadow" style={{ padding: '0.75rem', borderRadius: '0.25rem' }}>
+                                        <div className="d-flex gap-2 align-items-center justify-content-between">
+                                            <p className="mb-0"><strong>From: </strong>&#x20A6;{Number(dest.visa_price).toLocaleString()}</p>
                                             <button className="btn btn-primary btn-sm" onClick={() => navigate(`/visa/${dest.id}`)}>Apply Now</button>
-
                                         </div>
                                     </div>
                                 </div>
