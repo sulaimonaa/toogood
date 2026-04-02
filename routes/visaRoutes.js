@@ -7,15 +7,17 @@ const router = express.Router();
 
 
 // Add Visa Destination (Admin Only)
-router.post('/add_visa', authenticateAdmin, (req, res) => {
+router.post('/add_visa', authenticateAdmin, upload.single('visa_img'), (req, res) => {
     const { destination, visa_excerpt, visa_description, visa_price, visa_agent_price, process_time, process_type, available_country } = req.body;
+    // visa_img will come from the uploaded file (Cloudinary storage)
+    const visa_img = req.file ? req.file.path : null;
 
     if (!destination || !visa_excerpt || !visa_description || !visa_price || !visa_agent_price || !process_time || !process_type || !available_country) {
         return res.status(400).json({ message: "All fields are required" });
     }
 
-    const sql = "INSERT INTO visa_destinations (destination, visa_excerpt, visa_description, visa_price, visa_agent_price, process_time, process_type, available_country) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    const values = [destination, visa_excerpt, visa_description, visa_price, visa_agent_price, process_time, process_type, available_country];
+    const sql = "INSERT INTO visa_destinations (destination, visa_excerpt, visa_description, visa_price, visa_agent_price, process_time, process_type, available_country, visa_img) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    const values = [destination, visa_excerpt, visa_description, visa_price, visa_agent_price, process_time, process_type, available_country, visa_img];
 
     db.query(sql, values, (err, result) => {
         if (err) {
@@ -30,7 +32,27 @@ router.post('/add_visa', authenticateAdmin, (req, res) => {
 router.get('/destinations', (req, res) => {
 
     db.query(
-        "SELECT id, destination, visa_excerpt, visa_description, visa_price, visa_agent_price, process_time, process_type, available_country FROM visa_destinations",
+        "SELECT id, destination, visa_excerpt, visa_description, visa_price, visa_agent_price, process_time, process_type, available_country, visa_img FROM visa_destinations",
+        (err, results) => {
+            if (err) {
+                console.error("Database error:", err);
+                return res.status(500).json({ message: "Database error", error: err });
+            }
+
+            if (results.length === 0) {
+                return res.json({ message: "No visa destinations found", data: [] });
+            }
+
+            res.json({ message: "Visa destinations fetched successfully", data: results });
+        }
+    );
+});
+
+//Get first 4 destinations for homepage
+router.get('/selected-destinations', (req, res) => {
+
+    db.query(
+        "SELECT id, destination, visa_excerpt, visa_description, visa_price, visa_agent_price, process_time, process_type, available_country, visa_img FROM visa_destinations ORDER BY id DESC LIMIT 4",
         (err, results) => {
             if (err) {
                 console.error("Database error:", err);
@@ -53,7 +75,7 @@ router.get('/available-destinations', (req, res) => {
     // Base query
     let query = `
         SELECT id, destination, visa_excerpt, visa_description, visa_price, 
-               visa_agent_price, process_time, process_type, available_country 
+               visa_agent_price, process_time, process_type, available_country, visa_img
         FROM visa_destinations 
         WHERE 1=1
     `;
@@ -123,11 +145,13 @@ router.get('/destinations/:id', (req, res) => {
         });
 })
 
-router.put('/update', authenticateAdmin, async (req, res) => {
+router.put('/update', authenticateAdmin, upload.single('visa_img'), async (req, res) => {
     const { destination, visa_excerpt, visa_description, visa_price, visa_agent_price, process_time, process_type, available_country } = req.body;
     const { visa_id } = req.body;
+    // Accept either a new uploaded image or a URL via body.visa_img
+    const visa_img = req.file ? req.file.path : req.body.visa_img;
 
-    if (!destination && !visa_excerpt && !visa_description && !visa_price && !visa_agent_price && !process_time && !process_type && !available_country) {
+    if (!destination && !visa_excerpt && !visa_description && !visa_price && !visa_agent_price && !process_time && !process_type && !available_country && !visa_img) {
         return res.status(400).json({ message: "At least one field must be provided to update" });
     }
 
@@ -178,6 +202,10 @@ router.put('/update', authenticateAdmin, async (req, res) => {
             if (available_country && available_country !== visa.available_country) {
                 updateFields.push("available_country= ?");
                 values.push(available_country);
+            }
+            if (visa_img && visa_img !== visa.visa_img) {
+                updateFields.push("visa_img = ?");
+                values.push(visa_img);
             }
             if (updateFields.length === 0) {
                 return res.json({ message: "No changes detected" });
