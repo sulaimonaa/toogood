@@ -135,8 +135,8 @@ const Home = () => {
           )}
         </div>
       </div>
-      <PopularDeals />
       <HotDeals />
+      <PopularDeals />
       <Footer />
     </>
   )
