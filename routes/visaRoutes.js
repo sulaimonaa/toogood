@@ -85,11 +85,11 @@ router.get('/destinations', (req, res) => {
     );
 });
 
-//Get first 4 destinations for homepage
+//Get first 12 destinations for homepage
 router.get('/selected-destinations', (req, res) => {
 
     db.query(
-        "SELECT id, destination, visa_excerpt, visa_description, visa_price, visa_agent_price, process_time, process_type, available_country, visa_img FROM visa_destinations ORDER BY id DESC LIMIT 6",
+        "SELECT id, destination, visa_excerpt, visa_description, visa_price, visa_agent_price, process_time, process_type, available_country, visa_img FROM visa_destinations ORDER BY id DESC LIMIT 12",
         (err, results) => {
             if (err) {
                 console.error("Database error:", err);
