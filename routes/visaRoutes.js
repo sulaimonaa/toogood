@@ -507,7 +507,8 @@ router.post("/application", upload.fields([
 // Schedule Appointment Route
 router.post("/appointment", async (req, res) => {
     try {
-        const { first_name, last_name, phone_number, email_address, how_to_contact, appointment_date, appointment_time, reason, amount_to_pay } = req.body;
+        const { first_name, last_name, phone_number, email_address, appointment_date, selected_country, amount_to_pay } = req.body;
+        const data_page = req.files["upload_file"] ? req.files["upload_file"][0].path : null;
 
         if (!first_name || !last_name || !phone_number || !email_address) {
             return res.status(400).json({ message: "Missing required fields" });
@@ -515,11 +516,11 @@ router.post("/appointment", async (req, res) => {
 
         const sql = `
             INSERT INTO schedule_appointment (
-                first_name, last_name, phone_number, email_address, how_to_contact, appointment_date, appointment_time, reason, amount_to_pay, payment_status
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Not Paid')`;
+                first_name, last_name, phone_number, email_address, data_page, appointment_date, selected_country, amount_to_pay, payment_status
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Not Paid')`;
 
         const values = [
-            first_name, last_name, phone_number, email_address, how_to_contact, appointment_date, appointment_time, reason, amount_to_pay
+            first_name, last_name, phone_number, email_address, data_page, appointment_date, selected_country, amount_to_pay
         ];
 
         db.query(sql, values, async (err, result) => {
@@ -633,30 +634,15 @@ router.post("/appointment", async (req, res) => {
                                             ${email_address}</td>
                                     </tr>
                                     <tr>
-                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Preferred
-                                                Contact Method:</strong></td>
+                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Country of Appointment:</strong></td>
                                         <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
-                                            ${how_to_contact}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
-                                            <strong>Reason for the appointment:</strong>
-                                        </td>
-                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
-                                            ${reason}
-                                        </td>
+                                            ${selected_country}</td>
                                     </tr>
                                     <tr>
                                         <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Appointment
                                                 Date:</strong></td>
                                         <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
                                             ${appointment_date}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Appointment
-                                                Time:</strong></td>
-                                        <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">
-                                            ${appointment_time}</td>
                                     </tr>
                                     <tr>
                                         <td style="padding: 8px;"><strong>Amount to Pay:</strong></td>
