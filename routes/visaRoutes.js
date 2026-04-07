@@ -515,7 +515,7 @@ router.post("/application", upload.fields([
 // Schedule Appointment Route
 router.post("/appointment", upload.single('upload_file'), async (req, res) => {
     try {
-        const { first_name, last_name, phone_number, email_address, appointment_date, selected_country, amount_to_pay } = req.body;
+        const { first_name, last_name, phone_number, email_address, appointment_date, selected_country, amount_to_pay, service_charge } = req.body;
 
         // when using upload.single, uploaded file is available as req.file
         const data_page = req.file ? (req.file.secure_url || req.file.path || null) : null;
@@ -661,12 +661,12 @@ router.post("/appointment", upload.single('upload_file'), async (req, res) => {
                                     </tr>
                                     <tr>
                                         <td style="padding: 8px;"><strong>Service Charge:</strong></td>
-                                        <td style="padding: 8px; background: #9ffab935;">${service_charge ? `Service Charge: ${service_charge}` : '50,000'}
+                                        <td style="padding: 8px; background: #9ffab935;">${service_charge}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="padding: 8px;"><strong>Total Amount to Pay:</strong></td>
-                                        <td style="padding: 8px; background: #9ffab935;">${amount_to_pay + 50000}
+                                        <td style="padding: 8px; background: #9ffab935;">${amount_to_pay + service_charge}
                                         </td>
                                     </tr>
                                 </table>
