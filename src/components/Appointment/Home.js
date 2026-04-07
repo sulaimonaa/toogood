@@ -167,10 +167,6 @@ export default function Appointment() {
 
         response = await fetch("https://toogood-1.onrender.com/visa/appointment", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json", // Tell backend it's JSON
-            "Accept": "application/json"
-          },
           body // browser will set Content-Type with boundary
         });
       } else {
@@ -227,7 +223,7 @@ export default function Appointment() {
       <div className="d-flex flex-column p-5 bg-light-subtle opacity-75">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h4 className="fw-bold mb-0">Schedule an appointment</h4>
-          <h4 className="fw-bold mb-0">&#x20A6;{amount_to_pay}</h4>
+          <h4 className="fw-bold mb-0">&#x20A6;{Number(amount_to_pay).toLocaleString()}</h4>
         </div>
         <p className="text-gray-100 mb-0">Your details are safe with us!<br />
           We value your privacy and ensure that your information is kept confidential. Please, provide correct information.</p>
@@ -280,13 +276,23 @@ export default function Appointment() {
                   onChange={handleAmountSelect}
                 >
                   <option value={0}>Select service amount</option>
-                  <option value={150000}>Standard — ₦150,000</option>
-                  <option value={200000}>Premium — ₦200,000</option>
+                  <option value={270000}>🇺🇸 USA – 270k </option>
+                  <option value={230000}>🇩🇪 Germany – 230k</option>
+                  <option value={220000}>🇫🇷 France – 220k</option>
+                  <option value={230000}>🇪🇸 Spain – 230k</option>
+                  <option value={230000}>🇲🇽 Mexico – 230k</option>
+                  <option value={240000}>🇧🇬 Bulgaria – 240k</option>
+                  <option value={230000}>🇮🇹 Italy – 230k</option>
+                  <option value={250000}>🇭🇺 Hungary – 250k</option>
+                  <option value={200000}>🇦🇹 Austria – 200k</option>
+                  <option value={230000}>🇳🇱 Netherlands – 230k</option>
+                  <option value={230000}>🇳🇴 Norway – 230k</option>
+                  <option value={250000}>🇮🇸 Iceland – 250k</option>
                 </select>
               </div>
             </div>
             <div className="d-md-flex gap-3 mb-2">
-              <div className="d-flex flex-column gap-1">
+              <div className="d-flex flex-column gap-1 formDualContainer" >
                 <label htmlFor="file-upload" className="form-label mb-0">Upload supporting document (optional)</label>
                 <input
                   type="file"
@@ -295,7 +301,7 @@ export default function Appointment() {
                   className="form-control p-3 rounded shadow mb-3 h-[40px]"
                 />
               </div>
-              <div className="d-flex flex-column gap-1">
+              <div className="d-flex flex-column gap-1 formDualContainer" >
                 <label htmlFor="appointment_date" className="form-label mb-0">Select appointment date  (Not guaranteed)</label>
                 <input
                   className="form-control p-3 mb-0 rounded shadow h-[40px]"

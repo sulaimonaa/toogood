@@ -68,6 +68,10 @@ body {
   font-size: 12px !important;
 }
 
+.formDualContainer {
+  width: 100%;
+}
+
 @media (min-width: 768px) {
   .search-container {
     top: 3rem !important;
@@ -93,5 +97,9 @@ body {
     border-top-left-radius: 0 !important;
     border-bottom-left-radius: 0 !important;
     height: 3rem;
+  }
+
+  .formDualContainer {
+    width: 50%;
   }
 }
