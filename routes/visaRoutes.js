@@ -856,7 +856,7 @@ router.put('/upload/:id', upload.fields([{ name: "visa_file", maxCount: 1 }]), a
     }
 
     // Store the public URL instead of the filesystem path
-    const fileUrl = `/uploads/${permitFile.filename}`;
+    const fileUrl = `${permitFile.filename}`;
 
     const sql = `UPDATE visa_applications SET visa_file = ? WHERE id = ?`;
     const values = [fileUrl, id];
