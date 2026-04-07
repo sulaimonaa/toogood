@@ -516,10 +516,12 @@ router.post("/application", upload.fields([
 });
 
 // Schedule Appointment Route
-router.post("/appointment", async (req, res) => {
+router.post("/appointment", upload.single('upload_file'), async (req, res) => {
     try {
         const { first_name, last_name, phone_number, email_address, appointment_date, selected_country, amount_to_pay } = req.body;
-        const upload_file = req.files["upload_file"] ? req.files["upload_file"][0].path : null;
+
+        // when using upload.single, uploaded file is available as req.file
+        const upload_file = req.file ? (req.file.secure_url || req.file.path || null) : null;
 
         if (!first_name || !last_name || !phone_number || !email_address) {
             return res.status(400).json({ message: "Missing required fields" });
@@ -696,10 +698,8 @@ router.post("/appointment", async (req, res) => {
                 }
 
                 res.json({ success: "Appointment submitted successfully" });
-
             } catch (emailError) {
                 console.error("Email sending error:", emailError);
-                // Still respond success since the appointment was saved to database
                 res.json({
                     success: "Appointment submitted successfully",
                     warning: "Confirmation email could not be sent"
