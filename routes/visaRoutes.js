@@ -11,6 +11,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const path = require('path');
 // Configure Cloudinary
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -24,14 +25,19 @@ const storage = new CloudinaryStorage({
     params: {
         folder: 'visa-applications',
         format: async (req, file) => {
-            // Determine format based on file type
-            if (file.mimetype.includes('image')) {
-                return 'jpg', 'png', 'jpeg';
+            // return a single format string based on mimetype
+            if (file.mimetype && file.mimetype.startsWith('image/')) {
+                // keep original image subtype (jpeg, png, webp, etc.)
+                return file.mimetype.split('/')[1] || 'jpg';
             }
-            return 'pdf'; // or other formats
+            // fallback for non-images
+            return 'pdf';
         },
         public_id: (req, file) => {
-            const safeName = file.originalname
+            // strip extension from original filename to avoid double extensions
+            const original = file.originalname || 'file';
+            const nameWithoutExt = original.replace(/\.[^/.]+$/, '');
+            const safeName = nameWithoutExt
                 .toLowerCase()
                 .replace(/\s+/g, '-')
                 .replace(/[^a-z0-9.-]/g, '');
