@@ -229,11 +229,11 @@ export default function Appointment() {
           <h4 className="fw-bold mb-0">Schedule an appointment</h4>
           <h4 className="fw-bold mb-0">&#x20A6;{amount_to_pay}</h4>
         </div>
-        <p className="text-gray-100 mb-0">Your details are safe with us</p>
+        <p className="text-gray-100 mb-0">Your details are safe with us!<br />
+          We value your privacy and ensure that your information is kept confidential. Please, provide correct information.</p>
         <hr />
         <form onSubmit={subAppointment}>
           <div className="d-flex flex-column gap-2">
-            <h4 className="text-dark fw-bold text-capitalize">Enter customer details</h4>
             <div className="d-md-flex gap-3 mb-2">
               <input
                 className="form-control p-3 rounded shadow mb-3 h-[40px]"
