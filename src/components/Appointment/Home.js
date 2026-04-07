@@ -343,6 +343,7 @@ export default function Appointment() {
                 />
               </div>
             </div>
+            <input type="hidden" name="service_charge" value="50000" />
             <button type="submit" disabled={!isLoaded || error} className="border-0 p-3 bg-primary text-white rounded">
               {error ? 'CAPTCHA Error' : isLoaded ? 'Schedule Now' : 'Loading...'}
             </button>
