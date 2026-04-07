@@ -11,6 +11,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const path = require('path');
 
 // Configure Cloudinary
 cloudinary.config({
@@ -277,7 +278,6 @@ router.put('/update', authenticateAdmin, upload.single('visa_img'), async (req, 
 
 const QRCode = require('qrcode');
 const fs = require('fs');
-const path = require('path');
 
 // QR Code generation function that saves to Cloudinary
 async function generateQRCodeImage(data, filename) {
