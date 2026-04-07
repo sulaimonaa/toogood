@@ -102,17 +102,16 @@ const useRecaptcha = (siteKey, version = 'v3') => {
 
 export default function Appointment() {
   const [loading, setLoading] = useState(false);
-  const { isLoaded, error, executeRecaptcha, resetRecaptcha } = useRecaptcha('6Lc__bkrAAAAANXv3oBEBIsjH6NJeW5KGiALifM_', 'v3');
+  const { isLoaded, error, executeRecaptcha } = useRecaptcha('6Lc__bkrAAAAANXv3oBEBIsjH6NJeW5KGiALifM_', 'v3');
+  const [amount_to_pay, setAmountToPay] = useState(0);
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
     email_address: '',
     phone_number: '',
-    how_to_contact: '',
     appointment_date: '',
-    appointment_time: '',
-    reason: '',
-    amount_to_pay: '10000'
+    amount_to_pay: amount_to_pay,
+    upload_file: null
   })
 
   const navigate = useNavigate();
@@ -131,6 +130,17 @@ export default function Appointment() {
     }));
   };
 
+  const handleAmountSelect = (e) => {
+    const value = Number(e.target.value);
+    setAmountToPay(value);
+    setFormData(prev => ({ ...prev, amount_to_pay: value }));
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files && e.target.files[0];
+    setFormData(prev => ({ ...prev, upload_file: file || null }));
+  };
+
   const subAppointment = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -141,14 +151,40 @@ export default function Appointment() {
         setLoading(false);
         return;
       }
-      const response = await fetch("https://toogood-1.onrender.com/visa/appointment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json", // Tell backend it's JSON
-          "Accept": "application/json"
-        },
-        body: JSON.stringify(formData) // Send JSON
-      });
+
+      let response;
+      // If a file is present, use FormData (multipart)
+      if (formData.upload_file) {
+        const body = new FormData();
+        body.append('first_name', formData.first_name);
+        body.append('last_name', formData.last_name);
+        body.append('email_address', formData.email_address);
+        body.append('phone_number', formData.phone_number);
+        body.append('appointment_date', formData.appointment_date);
+        body.append('amount_to_pay', formData.amount_to_pay);
+        body.append('recaptcha_token', token);
+        body.append('upload_file', formData.upload_file);
+
+        response = await fetch("https://toogood-1.onrender.com/visa/appointment", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Tell backend it's JSON
+            "Accept": "application/json"
+          },
+          body // browser will set Content-Type with boundary
+        });
+      } else {
+        // No file: send JSON
+        const payload = { ...formData, recaptcha_token: token };
+        response = await fetch("https://toogood-1.onrender.com/visa/appointment", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+      }
 
       const data = await response.json();
 
@@ -158,11 +194,9 @@ export default function Appointment() {
           last_name: '',
           email_address: '',
           phone_number: '',
-          how_to_contact: '',
           appointment_date: '',
-          appointment_time: '',
-          reason: '',
-          amount_to_pay: '10000'
+          amount_to_pay: 0,
+          upload_file: null
         });
 
         navigate(`/apt-payment`, {
@@ -193,7 +227,7 @@ export default function Appointment() {
       <div className="d-flex flex-column p-5 bg-light-subtle opacity-75">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h4 className="fw-bold mb-0">Schedule an appointment</h4>
-          <h4 className="fw-bold mb-0">&#x20A6;10,000</h4>
+          <h4 className="fw-bold mb-0">&#x20A6;{amount_to_pay}</h4>
         </div>
         <p className="text-gray-100 mb-0">Your details are safe with us</p>
         <hr />
@@ -236,47 +270,43 @@ export default function Appointment() {
                 onChange={handleChange}
                 value={formData.phone_number} />
             </div>
-            <h4 className="text-dark fw-bold text-capitalize">Choose Your method of appointment</h4>
             <div className="d-md-flex gap-3 mb-2">
-              <select
-                className="form-control p-3 rounded shadow mb-3 h-[40px]"
-                value={formData.how_to_contact}
-                name="how_to_contact"
-                onChange={handleChange}>
-                <option value="">How can we contact you?</option>
-                <option value="WhatsApp Call">WhatsApp Call</option>
-                <option value="Zoom">Zoom</option>
-              </select>
-              <select
-                className="form-control p-3 rounded shadow mb-3 h-[40px]"
-                value={formData.reason}
-                name="reason"
-                onChange={handleChange}>
-                <option value="">Reason for the appointment</option>
-                <option value="Visa">Visa</option>
-                <option value="Permit">Permit</option>
-                <option value="Others">Others</option>
-              </select>
+              <div className="d-flex flex-column gap-1 w-100">
+                <label htmlFor="amount_to_pay" className="form-label mb-0">Select country to get fees</label>
+                <select
+                  className="form-control p-3 rounded shadow mb-3 h-[40px]"
+                  name="amount_to_pay"
+                  value={amount_to_pay}
+                  onChange={handleAmountSelect}
+                >
+                  <option value={0}>Select service amount</option>
+                  <option value={150000}>Standard — ₦150,000</option>
+                  <option value={200000}>Premium — ₦200,000</option>
+                </select>
+              </div>
             </div>
             <div className="d-md-flex gap-3 mb-2">
-              <input
-                className="form-control p-3 rounded shadow h-[40px]"
-                type="date"
-                name="appointment_date"
-                required
-                onChange={handleChange}
-                value={formData.appointment_date}
-              />
-              <input
-                className="form-control p-3 rounded shadow h-[40px]"
-                type="time"
-                name="appointment_time"
-                required
-                onChange={handleChange}
-                value={formData.appointment_time}
-              />
+              <div className="d-flex flex-column gap-1">
+                <label htmlFor="file-upload" className="form-label mb-0">Upload supporting document (optional)</label>
+                <input
+                  type="file"
+                  accept="image/*,application/pdf"
+                  onChange={handleFileChange}
+                  className="form-control p-3 rounded shadow mb-3 h-[40px]"
+                />
+              </div>
+              <div className="d-flex flex-column gap-1">
+                <label htmlFor="appointment_date" className="form-label mb-0">Select appointment date  (Not guaranteed)</label>
+                <input
+                  className="form-control p-3 mb-0 rounded shadow h-[40px]"
+                  type="date"
+                  name="appointment_date"
+                  required
+                  onChange={handleChange}
+                  value={formData.appointment_date}
+                />
+              </div>
             </div>
-            <input type="hidden" value={formData.amount_to_pay} name="amount_to_pay" />
             <button type="submit" disabled={!isLoaded || error} className="border-0 p-3 bg-primary text-white rounded">
               {error ? 'CAPTCHA Error' : isLoaded ? 'Schedule Now' : 'Loading...'}
             </button>

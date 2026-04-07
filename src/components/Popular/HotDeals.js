@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import '../Popular/Popular.css';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../Loading';
@@ -13,7 +13,7 @@ const HotDeals = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const navigate = useNavigate();
 
-    const fetchDestinations = async (search = "") => {
+    const fetchDestinations = useCallback(async (search = "") => {
         try {
             setLoading(true);
             const base = "https://toogood-1.onrender.com/visa";
@@ -33,11 +33,11 @@ const HotDeals = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [navigate]);
 
     useEffect(() => {
         fetchDestinations();
-    }, [navigate]);
+    }, [fetchDestinations]);
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);

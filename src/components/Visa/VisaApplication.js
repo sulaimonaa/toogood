@@ -103,7 +103,7 @@ const useRecaptcha = (siteKey, version = 'v3') => {
 
 const VisaApplication = () => {
   const { id } = useParams();
-  const { isLoaded, error, executeRecaptcha, resetRecaptcha } = useRecaptcha('6Lc__bkrAAAAANXv3oBEBIsjH6NJeW5KGiALifM_', 'v3');
+  const { isLoaded, error, executeRecaptcha } = useRecaptcha('6Lc__bkrAAAAANXv3oBEBIsjH6NJeW5KGiALifM_', 'v3');
   const [visaById, setVisaById] = useState({
     destination: "",
     visa_excerpt: "",
