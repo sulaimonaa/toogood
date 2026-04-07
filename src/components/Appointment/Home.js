@@ -104,11 +104,13 @@ export default function Appointment() {
   const [loading, setLoading] = useState(false);
   const { isLoaded, error, executeRecaptcha } = useRecaptcha('6Lc__bkrAAAAANXv3oBEBIsjH6NJeW5KGiALifM_', 'v3');
   const [amount_to_pay, setAmountToPay] = useState(0);
+  const [selectedCountry, setSelectedCountry] = useState('');
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
     email_address: '',
     phone_number: '',
+    selected_country: selectedCountry,
     appointment_date: '',
     amount_to_pay: amount_to_pay,
     upload_file: null
@@ -116,30 +118,54 @@ export default function Appointment() {
 
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, type, value } = e.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: type === "number"
-        ? (
-          value === ""
-            ? ""
-            : Number(value)
-        )
+        ? (value === "" ? "" : Number(value))
         : value
     }));
-  };
+  }, []);
 
-  const handleAmountSelect = (e) => {
+  const handleAmountSelect = useCallback((e) => {
     const value = Number(e.target.value);
     setAmountToPay(value);
     setFormData(prev => ({ ...prev, amount_to_pay: value }));
-  };
+  }, []);
 
-  const handleFileChange = (e) => {
+  useEffect(() => {
+    let country = '';
+    switch (amount_to_pay) {
+      case 270000:
+        country = 'USA';
+        break;
+      case 230000:
+        country = 'Germany/Spain/Mexico/Italy/Netherlands/Norway';
+        break;
+      case 220000:
+        country = 'France';
+        break;
+      case 240000:
+        country = 'Bulgaria';
+        break;
+      case 250000:
+        country = 'Hungary/Iceland';
+        break;
+      case 200000:
+        country = 'Austria';
+        break;
+      default:
+        country = '';
+    }
+    setSelectedCountry(country);
+    setFormData(prev => ({ ...prev, selected_country: country }));
+  }, [amount_to_pay]);
+
+  const handleFileChange = useCallback((e) => {
     const file = e.target.files && e.target.files[0];
     setFormData(prev => ({ ...prev, upload_file: file || null }));
-  };
+  }, []);
 
   const subAppointment = async (e) => {
     e.preventDefault();
@@ -161,6 +187,7 @@ export default function Appointment() {
         body.append('email_address', formData.email_address);
         body.append('phone_number', formData.phone_number);
         body.append('appointment_date', formData.appointment_date);
+        body.append('selected_country', selectedCountry);
         body.append('amount_to_pay', formData.amount_to_pay);
         body.append('recaptcha_token', token);
         body.append('upload_file', formData.upload_file);
@@ -191,6 +218,7 @@ export default function Appointment() {
           email_address: '',
           phone_number: '',
           appointment_date: '',
+          selected_country: selectedCountry,
           amount_to_pay: 0,
           upload_file: null
         });
@@ -202,7 +230,8 @@ export default function Appointment() {
             first_name: formData.first_name,
             phone_number: formData.phone_number,
             email_address: formData.email_address,
-            amount_to_pay: formData.amount_to_pay
+            amount_to_pay: formData.amount_to_pay,
+            selected_country: selectedCountry
           }
         });
       } else {
@@ -299,6 +328,7 @@ export default function Appointment() {
                   accept="image/*,application/pdf"
                   onChange={handleFileChange}
                   className="form-control p-3 rounded shadow mb-3 h-[40px]"
+                  name="upload_file"
                 />
               </div>
               <div className="d-flex flex-column gap-1 formDualContainer" >
