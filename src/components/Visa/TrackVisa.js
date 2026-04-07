@@ -14,9 +14,9 @@ const TrackVisa = () => {
             alert("Please enter a tracking ID");
             return;
         }
-    
+
         setLoading(true);
-        
+
         axios.post("https://toogood-1.onrender.com/visa/track-visa", { tracking_id: trackingID })
             .then(response => {
                 setStatus(response.data);
@@ -29,62 +29,62 @@ const TrackVisa = () => {
         <div className='container-fluid'>
             <div className='spacer'></div>
             <div className='container'>
-            <form onSubmit={handleSubmit} className='mb-4'>
-                <div className='d-flex flex-column gap-2'>
-                    <h4 className='text-center'>Enter Tracking Number</h4>
-                    <input
-                        className='p-2 rounded-pill bg-secondary-subtle'
-                        name='tracking_id'
-                        value={trackingID}
-                        onChange={(e) => setTrackingId(e.target.value)}
-                        placeholder='Enter Tracking ID'
-                    />
-                    <input type='submit' className='bg-primary border-0 text-white rounded-pill shadow p-2' value='Track Visa' />
-                </div>
-            </form>
+                <form onSubmit={handleSubmit} className='mb-4'>
+                    <div className='d-flex flex-column gap-2'>
+                        <h4 className='text-center'>Enter Tracking Number</h4>
+                        <input
+                            className='p-2 rounded-pill bg-secondary-subtle'
+                            name='tracking_id'
+                            value={trackingID}
+                            onChange={(e) => setTrackingId(e.target.value)}
+                            placeholder='Enter Tracking ID'
+                        />
+                        <input type='submit' className='bg-primary border-0 text-white rounded-pill shadow p-2' value='Track Visa' />
+                    </div>
+                </form>
             </div>
             <div className='container'>
-                {loading ? ( 
-                    <p>Loading visa status...</p> 
+                {loading ? (
+                    <p>Loading visa status...</p>
                 ) : status ? (
                     <div className='d-flex flex-column gap-2'>
                         <div className='d-flex gap-0 align-items-center'>
-                                <div className='bg-dark text-white p-2 w-25'>Visa Application</div>
-                                <div className='bg-secondary-subtle p-2 w-75'>
-                                    {status?.visa_destination}
-                                </div>
+                            <div className='bg-dark text-white p-2 w-25'>Visa Application</div>
+                            <div className='bg-secondary-subtle p-2 w-75'>
+                                {status?.visa_destination}
                             </div>
-                            <div className='d-flex gap-0 align-items-center'>
-                                <div className='bg-dark text-white p-2 w-25'>Full Name</div>
-                                <div className='bg-secondary-subtle p-2 w-75'>
-                                    {status?.first_name} {status?.last_name}
-                                </div>
+                        </div>
+                        <div className='d-flex gap-0 align-items-center'>
+                            <div className='bg-dark text-white p-2 w-25'>Full Name</div>
+                            <div className='bg-secondary-subtle p-2 w-75'>
+                                {status?.first_name} {status?.last_name}
                             </div>
-                            <div className='d-flex gap-0 align-items-center'>
-                                <div className='bg-dark text-white p-2 w-25'>Contact Number</div>
-                                <div className='bg-secondary-subtle p-2 w-75'>
-                                    {status?.phone_number} 
-                                </div>
+                        </div>
+                        <div className='d-flex gap-0 align-items-center'>
+                            <div className='bg-dark text-white p-2 w-25'>Contact Number</div>
+                            <div className='bg-secondary-subtle p-2 w-75'>
+                                {status?.phone_number}
                             </div>
-                            <div className='d-flex gap-0 align-items-center'>
-                                <div className='bg-dark text-white p-2 w-25'>Email</div>
-                                <div className='bg-secondary-subtle p-2 w-75'>
-                                    {status?.contact_email} 
-                                </div>
+                        </div>
+                        <div className='d-flex gap-0 align-items-center'>
+                            <div className='bg-dark text-white p-2 w-25'>Email</div>
+                            <div className='bg-secondary-subtle p-2 w-75'>
+                                {status?.contact_email}
                             </div>
-                            <div className='d-flex gap-0 align-items-center'>
-                                <div className='bg-dark text-white p-2 w-25'>Date of Birth</div>
-                                <div className='bg-secondary-subtle p-2 w-75'>
-                                    {status?.date_of_birth ? new Date(status.date_of_birth).toLocaleDateString() : "N/A"} 
-                                </div>
+                        </div>
+                        <div className='d-flex gap-0 align-items-center'>
+                            <div className='bg-dark text-white p-2 w-25'>Date of Birth</div>
+                            <div className='bg-secondary-subtle p-2 w-75'>
+                                {status?.date_of_birth ? new Date(status.date_of_birth).toLocaleDateString() : "N/A"}
                             </div>
-                            <div className='d-flex gap-0 align-items-center'>
-                                <div className='bg-dark text-white p-2 w-25'>Passport Number</div>
-                                <div className='bg-secondary-subtle p-2 w-75'>
-                                    {status?.passport_number} 
-                                </div>
+                        </div>
+                        <div className='d-flex gap-0 align-items-center'>
+                            <div className='bg-dark text-white p-2 w-25'>Passport Number</div>
+                            <div className='bg-secondary-subtle p-2 w-75'>
+                                {status?.passport_number}
                             </div>
-                            <div className='d-flex gap-0 align-items-center'>
+                        </div>
+                        <div className='d-flex gap-0 align-items-center'>
                             <div className='bg-dark text-white p-2 w-25'>Payment Status</div>
                             <div className='bg-secondary-subtle p-2 w-75'>{status?.payment_status}</div>
                         </div>
@@ -101,7 +101,7 @@ const TrackVisa = () => {
                                 <div key={key} className='d-flex gap-0 align-items-center'>
                                     <div className='bg-dark text-white p-2 w-25'>{key.replace('_', ' ').toUpperCase()}</div>
                                     <div className='bg-secondary-subtle p-2 w-75'>
-                                        <a href={`https://toogood-1.onrender.com/uploads/${status[key]}`} target='_blank' rel="noopener noreferrer" className='text-decoration-none'>
+                                        <a href={`${status[key]}`} target='_blank' rel="noopener noreferrer" className='text-decoration-none'>
                                             View/Download
                                         </a>
                                     </div>
@@ -112,15 +112,15 @@ const TrackVisa = () => {
                             <div className='bg-dark text-white p-2 w-25'>Download Visa Document</div>
                             <div className='bg-secondary-subtle p-2 w-75'>
                                 {status?.visa_file ? (
-                                    <a 
-                                        href={`https://toogood-1.onrender.com${status.visa_file}`} 
-                                        target='_blank' 
-                                        rel="noopener noreferrer" 
+                                    <a
+                                        href={`${status.visa_file}`}
+                                        target='_blank'
+                                        rel="noopener noreferrer"
                                         className='text-decoration-none'
                                     >
                                         View/Download
                                     </a>
-                                    ) : (
+                                ) : (
                                     <span className="text-muted">Not yet approved</span>
                                 )}
                             </div>
