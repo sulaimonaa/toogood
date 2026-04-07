@@ -659,6 +659,16 @@ router.post("/appointment", upload.single('upload_file'), async (req, res) => {
                                         <td style="padding: 8px; background: #9ffab935;">${amount_to_pay}
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td style="padding: 8px;"><strong>Service Charge:</strong></td>
+                                        <td style="padding: 8px; background: #9ffab935;">${service_charge ? `Service Charge: ${service_charge}` : '50,000'}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px;"><strong>Total Amount to Pay:</strong></td>
+                                        <td style="padding: 8px; background: #9ffab935;">${amount_to_pay + 50000}
+                                        </td>
+                                    </tr>
                                 </table>
                                 <table width="100%" cellpadding="0" cellspacing="0" border="0"
                                     style="margin-top: 15px;">
