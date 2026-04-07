@@ -25,17 +25,15 @@ const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
         folder: 'visa-applications',
+        resource_type: 'auto',    // allow images/docs
+        access_mode: 'public',    // ensure public delivery (remove if you intentionally want authenticated)
         format: async (req, file) => {
-            // return a single format string based on mimetype
             if (file.mimetype && file.mimetype.startsWith('image/')) {
-                // keep original image subtype (jpeg, png, webp, etc.)
                 return file.mimetype.split('/')[1] || 'jpg';
             }
-            // fallback for non-images
             return 'pdf';
         },
         public_id: (req, file) => {
-            // strip extension from original filename to avoid double extensions
             const original = file.originalname || 'file';
             const nameWithoutExt = original.replace(/\.[^/.]+$/, '');
             const safeName = nameWithoutExt
@@ -48,11 +46,10 @@ const storage = new CloudinaryStorage({
 });
 
 const upload = multer({
-    storage: storage,
-    limits: {
-        fileSize: 10 * 1024 * 1024 // 10 MB (adjust as needed)
-    }
+    storage,
+    limits: { fileSize: 10 * 1024 * 1024 } // 10 MB
 });
+
 
 
 // Add Visa Destination (Admin Only)
@@ -852,9 +849,8 @@ router.put('/upload/:id', upload.fields([{ name: "visa_file", maxCount: 1 }]), a
         return res.status(400).json({ message: "No file uploaded" });
     }
 
-    // Store the public URL instead of the filesystem path
-    // const fileUrl = `${permitFile.filename}`;
-    const fileUrl = permitFile.path || permitFile.secure_url || `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/${permitFile.filename}`;
+    // Prefer Cloudinary's secure_url (public HTTPS); fallback to path or constructed url
+    const fileUrl = permitFile.secure_url || permitFile.path || `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/${permitFile.filename}`;
 
     const sql = `UPDATE visa_applications SET visa_file = ? WHERE id = ?`;
     const values = [fileUrl, id];
