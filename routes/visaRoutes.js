@@ -855,12 +855,19 @@ router.put('/upload/:id', upload.fields([{ name: "visa_file", maxCount: 1 }]), a
     const { id } = req.params;
     const permitFile = req.files?.visa_file?.[0];
 
+    console.log('PUT /upload/:id upload result:', permitFile);
+
     if (!permitFile) {
         return res.status(400).json({ message: "No file uploaded" });
     }
 
     // Prefer Cloudinary's secure_url (public HTTPS); fallback to path or constructed url
-    const fileUrl = permitFile.secure_url || permitFile.path || `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/${permitFile.filename}`;
+    const fileUrl = permitFile.secure_url || permitFile.path || null;
+
+    if (!fileUrl) {
+        console.warn('No secure_url/path found on the uploaded file object. Check storage config.');
+        return res.status(500).json({ message: "Upload succeeded but URL not available. Check Cloudinary storage config." });
+    }
 
     const sql = `UPDATE visa_applications SET visa_file = ? WHERE id = ?`;
     const values = [fileUrl, id];
