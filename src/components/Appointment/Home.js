@@ -305,18 +305,18 @@ export default function Appointment() {
                   onChange={handleAmountSelect}
                 >
                   <option value={0}>Select service amount</option>
-                  <option value={270000}>🇺🇸 USA – 270k </option>
-                  <option value={230000}>🇩🇪 Germany – 230k</option>
-                  <option value={220000}>🇫🇷 France – 220k</option>
-                  <option value={230000}>🇪🇸 Spain – 230k</option>
-                  <option value={230000}>🇲🇽 Mexico – 230k</option>
-                  <option value={240000}>🇧🇬 Bulgaria – 240k</option>
-                  <option value={230000}>🇮🇹 Italy – 230k</option>
-                  <option value={250000}>🇭🇺 Hungary – 250k</option>
-                  <option value={200000}>🇦🇹 Austria – 200k</option>
-                  <option value={230000}>🇳🇱 Netherlands – 230k</option>
-                  <option value={230000}>🇳🇴 Norway – 230k</option>
-                  <option value={250000}>🇮🇸 Iceland – 250k</option>
+                  <option value={270000}>🇺🇸 USA – &#x20A6;270k </option>
+                  <option value={230000}>🇩🇪 Germany – &#x20A6;230k</option>
+                  <option value={220000}>🇫🇷 France – &#x20A6;220k</option>
+                  <option value={230000}>🇪🇸 Spain – &#x20A6;230k</option>
+                  <option value={230000}>🇲🇽 Mexico – &#x20A6;230k</option>
+                  <option value={240000}>🇧🇬 Bulgaria – &#x20A6;240k</option>
+                  <option value={230000}>🇮🇹 Italy – &#x20A6;230k</option>
+                  <option value={250000}>🇭🇺 Hungary – &#x20A6;250k</option>
+                  <option value={200000}>🇦🇹 Austria – &#x20A6;200k</option>
+                  <option value={230000}>🇳🇱 Netherlands – &#x20A6;230k</option>
+                  <option value={230000}>🇳🇴 Norway – &#x20A6;230k</option>
+                  <option value={250000}>🇮🇸 Iceland – &#x20A6;250k</option>
                 </select>
               </div>
             </div>
@@ -343,7 +343,6 @@ export default function Appointment() {
                 />
               </div>
             </div>
-            <input type="hidden" name="service_charge" value="50000" />
             <button type="submit" disabled={!isLoaded || error} className="border-0 p-3 bg-primary text-white rounded">
               {error ? 'CAPTCHA Error' : isLoaded ? 'Schedule Now' : 'Loading...'}
             </button>
