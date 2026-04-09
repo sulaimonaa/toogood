@@ -515,7 +515,7 @@ router.post("/application", upload.fields([
 // Schedule Appointment Route
 router.post("/appointment", upload.single('upload_file'), async (req, res) => {
     try {
-        const { first_name, last_name, phone_number, email_address, appointment_date, selected_country, amount_to_pay, service_charge } = req.body;
+        const { first_name, last_name, phone_number, email_address, appointment_date, selected_country, amount_to_pay } = req.body;
 
         // when using upload.single, uploaded file is available as req.file
         const data_page = req.file ? (req.file.secure_url || req.file.path || null) : null;
@@ -657,16 +657,6 @@ router.post("/appointment", upload.single('upload_file'), async (req, res) => {
                                     <tr>
                                         <td style="padding: 8px;"><strong>Amount to Pay:</strong></td>
                                         <td style="padding: 8px; background: #9ffab935;">${amount_to_pay}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 8px;"><strong>Service Charge:</strong></td>
-                                        <td style="padding: 8px; background: #9ffab935;">${service_charge}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 8px;"><strong>Total Amount to Pay:</strong></td>
-                                        <td style="padding: 8px; background: #9ffab935;">${amount_to_pay + service_charge}
                                         </td>
                                     </tr>
                                 </table>
@@ -854,8 +844,6 @@ router.post('/track-visa', (req, res) => {
 router.put('/upload/:id', upload.fields([{ name: "visa_file", maxCount: 1 }]), authenticateAdmin, (req, res) => {
     const { id } = req.params;
     const permitFile = req.files?.visa_file?.[0];
-
-    console.log('PUT /upload/:id upload result:', permitFile);
 
     if (!permitFile) {
         return res.status(400).json({ message: "No file uploaded" });
