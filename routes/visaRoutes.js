@@ -62,7 +62,7 @@ router.post('/add_visa', authenticateAdmin, upload.single('visa_img'), (req, res
         return res.status(400).json({ message: "All fields are required" });
     }
 
-    const sql = "INSERT INTO visa_destinations (destination, visa_excerpt, visa_description, visa_price, visa_agent_price, service_charge, process_time, process_type, available_country, visa_img) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    const sql = "INSERT INTO visa_destinations (destination, visa_excerpt, visa_description, visa_price, visa_agent_price, service_charge, process_time, process_type, available_country, visa_img) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     const values = [destination, visa_excerpt, visa_description, visa_price, visa_agent_price, service_charge, process_time, process_type, available_country, visa_img];
 
     db.query(sql, values, (err, result) => {
@@ -533,7 +533,7 @@ router.post("/appointment", upload.single('upload_file'), async (req, res) => {
         const sql = `
             INSERT INTO schedule_appointment (
                 first_name, last_name, phone_number, email_address, data_page, appointment_date, selected_country, amount_to_pay, service_charge, payment_status
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Not Paid')`;
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Not Paid')`;
 
         const values = [
             first_name, last_name, phone_number, email_address, data_page, appointment_date, selected_country, amount_to_pay, service_charge

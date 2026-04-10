@@ -318,11 +318,12 @@ router.post("/application", upload.fields([
                 first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, 
                 passport_number, data_page, passport_photograph, utility_bill, supporting_document, 
                 other_document, qr_code_data, qr_code_filename, payment_status, visa_status, visa_destination, visa_fee, service_charge, process_time, process_type
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Not Paid', 'Pending', ?, ?, ?)`;
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Not Paid', 'Pending', ?, ?, ?, ?, ?)`;
 
         const values = [
             first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number,
-            data_page, passport_photograph, utility_bill, supporting_document, other_document, qr_code_data, qr_code_filename, visa_destination, visa_fee, service_charge, process_time, process_type
+            data_page, passport_photograph, utility_bill, supporting_document, other_document, qr_code_data, qr_code_filename,
+            visa_destination, visa_fee, service_charge, process_time, process_type
         ];
 
         db.query(sql, values, async (err, result) => {
