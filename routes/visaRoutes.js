@@ -54,7 +54,7 @@ const upload = multer({
 
 // Add Visa Destination (Admin Only)
 router.post('/add_visa', authenticateAdmin, upload.single('visa_img'), (req, res) => {
-    const { destination, visa_excerpt, visa_description, visa_price, visa_agent_price, process_time, process_type, available_country } = req.body;
+    const { destination, visa_excerpt, visa_description, visa_price, visa_agent_price, service_charge, process_time, process_type, available_country } = req.body;
     // visa_img will come from the uploaded file (Cloudinary storage)
     const visa_img = req.file ? req.file.path : null;
 
@@ -62,8 +62,8 @@ router.post('/add_visa', authenticateAdmin, upload.single('visa_img'), (req, res
         return res.status(400).json({ message: "All fields are required" });
     }
 
-    const sql = "INSERT INTO visa_destinations (destination, visa_excerpt, visa_description, visa_price, visa_agent_price, process_time, process_type, available_country, visa_img) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    const values = [destination, visa_excerpt, visa_description, visa_price, visa_agent_price, process_time, process_type, available_country, visa_img];
+    const sql = "INSERT INTO visa_destinations (destination, visa_excerpt, visa_description, visa_price, visa_agent_price, service_charge, process_time, process_type, available_country, visa_img) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    const values = [destination, visa_excerpt, visa_description, visa_price, visa_agent_price, service_charge, process_time, process_type, available_country, visa_img];
 
     db.query(sql, values, (err, result) => {
         if (err) {
@@ -78,7 +78,7 @@ router.post('/add_visa', authenticateAdmin, upload.single('visa_img'), (req, res
 router.get('/destinations', (req, res) => {
 
     db.query(
-        "SELECT id, destination, visa_excerpt, visa_description, visa_price, visa_agent_price, process_time, process_type, available_country, visa_img FROM visa_destinations",
+        "SELECT id, destination, visa_excerpt, visa_description, visa_price, visa_agent_price, service_charge, process_time, process_type, available_country, visa_img FROM visa_destinations",
         (err, results) => {
             if (err) {
                 console.error("Database error:", err);
@@ -98,7 +98,7 @@ router.get('/destinations', (req, res) => {
 router.get('/selected-destinations', (req, res) => {
 
     db.query(
-        "SELECT id, destination, visa_excerpt, visa_description, visa_price, visa_agent_price, process_time, process_type, available_country, visa_img FROM visa_destinations ORDER BY id DESC LIMIT 12",
+        "SELECT id, destination, visa_excerpt, visa_description, visa_price, visa_agent_price, service_charge, process_time, process_type, available_country, visa_img FROM visa_destinations ORDER BY id DESC LIMIT 12",
         (err, results) => {
             if (err) {
                 console.error("Database error:", err);
@@ -121,7 +121,7 @@ router.get('/available-destinations', (req, res) => {
     // Base query
     let query = `
         SELECT id, destination, visa_excerpt, visa_description, visa_price, 
-               visa_agent_price, process_time, process_type, available_country, visa_img
+               visa_agent_price, service_charge, process_time, process_type, available_country, visa_img
         FROM visa_destinations 
         WHERE 1=1
     `;
@@ -192,12 +192,12 @@ router.get('/destinations/:id', (req, res) => {
 })
 
 router.put('/update', authenticateAdmin, upload.single('visa_img'), async (req, res) => {
-    const { destination, visa_excerpt, visa_description, visa_price, visa_agent_price, process_time, process_type, available_country } = req.body;
+    const { destination, visa_excerpt, visa_description, visa_price, visa_agent_price, service_charge, process_time, process_type, available_country } = req.body;
     const { visa_id } = req.body;
     // Accept either a new uploaded image or a URL via body.visa_img
     const visa_img = req.file ? req.file.path : req.body.visa_img;
 
-    if (!destination && !visa_excerpt && !visa_description && !visa_price && !visa_agent_price && !process_time && !process_type && !available_country && !visa_img) {
+    if (!destination && !visa_excerpt && !visa_description && !visa_price && !visa_agent_price && !service_charge && !process_time && !process_type && !available_country && !visa_img) {
         return res.status(400).json({ message: "At least one field must be provided to update" });
     }
 
@@ -236,6 +236,10 @@ router.put('/update', authenticateAdmin, upload.single('visa_img'), async (req, 
             if (visa_agent_price && visa_agent_price !== visa.visa_agent_price) {
                 updateFields.push("visa_agent_price = ?");
                 values.push(visa_agent_price);
+            }
+            if (service_charge && service_charge !== visa.service_charge) {
+                updateFields.push("service_charge= ?");
+                values.push(service_charge);
             }
             if (process_time && process_time !== visa.process_time) {
                 updateFields.push("process_time= ?");
@@ -335,7 +339,7 @@ router.post("/application", upload.fields([
     { name: "other_document", maxCount: 1 }
 ]), async (req, res) => {
     try {
-        const { first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number, visa_destination, visa_fee, process_time, process_type } = req.body;
+        const { first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number, visa_destination, visa_fee, service_charge, process_time, process_type } = req.body;
 
         if (!first_name || !last_name || !phone_number || !contact_email || !passport_number) {
             return res.status(400).json({ message: "Missing required fields" });
@@ -369,13 +373,13 @@ router.post("/application", upload.fields([
             INSERT INTO visa_applications (
                 first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, 
                 passport_number, data_page, passport_photograph, utility_bill, supporting_document, 
-                other_document, tracking_id, qr_code_data, qr_code_filename, payment_status, visa_status, visa_destination, visa_fee, process_time, process_type
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Not Paid', 'Pending', ?, ?, ?, ?)`;
+                other_document, tracking_id, qr_code_data, qr_code_filename, payment_status, visa_status, visa_destination, visa_fee, service_charge, process_time, process_type
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Not Paid', 'Pending', ?, ?, ?, ?, ?)`;
 
         const values = [
             first_name, middle_name, last_name, phone_number, contact_email, date_of_birth, passport_number,
             data_page, passport_photograph, utility_bill, supporting_document, other_document,
-            tracking_id, qr_code_data, qr_code_filename, visa_destination, visa_fee, process_time, process_type
+            tracking_id, qr_code_data, qr_code_filename, visa_destination, visa_fee, service_charge, process_time, process_type
         ];
 
         db.query(sql, values, async (err, result) => {
@@ -439,6 +443,8 @@ router.post("/application", upload.fields([
                                                     <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">${tracking_id}</td></tr>
                                                 <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Processing Fee:</strong></td>
                                                     <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">&#x20A6;${visa_fee}</td></tr>
+                                                    <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Service Charge:</strong></td>
+                                                    <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935;">&#x20A6;${service_charge}</td></tr>
                                                 ${qrCodeGenerated ? `
                                                 <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>QR Code:</strong></td>
                                                     <td style="padding: 8px; border-bottom: 1px solid #ddd; background: #9ffab935; text-align: center;">
@@ -515,7 +521,7 @@ router.post("/application", upload.fields([
 // Schedule Appointment Route
 router.post("/appointment", upload.single('upload_file'), async (req, res) => {
     try {
-        const { first_name, last_name, phone_number, email_address, appointment_date, selected_country, amount_to_pay } = req.body;
+        const { first_name, last_name, phone_number, email_address, appointment_date, selected_country, amount_to_pay, service_charge } = req.body;
 
         // when using upload.single, uploaded file is available as req.file
         const data_page = req.file ? (req.file.secure_url || req.file.path || null) : null;
@@ -526,11 +532,11 @@ router.post("/appointment", upload.single('upload_file'), async (req, res) => {
 
         const sql = `
             INSERT INTO schedule_appointment (
-                first_name, last_name, phone_number, email_address, data_page, appointment_date, selected_country, amount_to_pay, payment_status
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Not Paid')`;
+                first_name, last_name, phone_number, email_address, data_page, appointment_date, selected_country, amount_to_pay, service_charge, payment_status
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Not Paid')`;
 
         const values = [
-            first_name, last_name, phone_number, email_address, data_page, appointment_date, selected_country, amount_to_pay
+            first_name, last_name, phone_number, email_address, data_page, appointment_date, selected_country, amount_to_pay, service_charge
         ];
 
         db.query(sql, values, async (err, result) => {
@@ -658,6 +664,10 @@ router.post("/appointment", upload.single('upload_file'), async (req, res) => {
                                         <td style="padding: 8px;"><strong>Amount to Pay:</strong></td>
                                         <td style="padding: 8px; background: #9ffab935;">${amount_to_pay}
                                         </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px;"><strong>Service Charge:</strong></td>
+                                        <td style="padding: 8px; background: #9ffab935;">${service_charge}</td>
                                     </tr>
                                 </table>
                                 <table width="100%" cellpadding="0" cellspacing="0" border="0"
@@ -915,6 +925,7 @@ router.post('/send-receipt-email', async (req, res) => {
                         <p><strong>Tracking ID:</strong> ${visaData.tracking_id}</p>
                         <p><strong>Destination:</strong> ${visaData.visa_destination}</p>
                         <p><strong>Amount:</strong> ₦${parseFloat(visaData.visa_fee).toLocaleString()}</p>
+                        <p><strong>Service Charge:</strong> ₦${parseFloat(visaData.service_charge).toLocaleString()}</p>
                         <p><strong>Status:</strong> ${visaData.payment_status || 'Processing'}</p>
                     </div>
 
@@ -1058,6 +1069,14 @@ async function generateReceiptPDF(visaData) {
             doc.fontSize(18)
                 .fillColor('#28a745')
                 .text(`N${parseFloat(visaData.visa_fee || 0).toLocaleString()}`, 400, 160, { align: 'right' });
+
+            doc.fontSize(10)
+                .fillColor('#666666')
+                .text('Service Charge', 400, 175, { align: 'right' });
+
+            doc.fontSize(18)
+                .fillColor('#28a745')
+                .text(`N${parseFloat(visaData.service_charge || 0).toLocaleString()}`, 400, 175, { align: 'right' });
 
             doc.fontSize(10)
                 .fillColor('#666666')
