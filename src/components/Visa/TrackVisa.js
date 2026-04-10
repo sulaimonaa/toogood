@@ -93,6 +93,10 @@ const TrackVisa = () => {
                             <div className='bg-secondary-subtle p-2 w-75'>{status?.visa_fee}</div>
                         </div>
                         <div className='d-flex gap-0 align-items-center'>
+                            <div className='bg-dark text-white p-2 w-25'>Service Fee</div>
+                            <div className='bg-secondary-subtle p-2 w-75'>{status?.service_charge}</div>
+                        </div>
+                        <div className='d-flex gap-0 align-items-center'>
                             <div className='bg-dark text-white p-2 w-25'>Visa Status</div>
                             <div className='bg-secondary-subtle p-2 w-75'>{status?.visa_status}</div>
                         </div>

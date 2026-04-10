@@ -113,6 +113,7 @@ export default function Appointment() {
     selected_country: selectedCountry,
     appointment_date: '',
     amount_to_pay: amount_to_pay,
+    service_charge: 50000,
     upload_file: null
   })
 
@@ -137,22 +138,22 @@ export default function Appointment() {
   useEffect(() => {
     let country = '';
     switch (amount_to_pay) {
-      case 270000:
+      case 220000:
         country = 'USA';
         break;
-      case 230000:
+      case 180000:
         country = 'Germany/Spain/Mexico/Italy/Netherlands/Norway';
         break;
-      case 220000:
+      case 170000:
         country = 'France';
         break;
-      case 240000:
+      case 190000:
         country = 'Bulgaria';
         break;
-      case 250000:
+      case 200000:
         country = 'Hungary/Iceland';
         break;
-      case 200000:
+      case 150000:
         country = 'Austria';
         break;
       default:
@@ -189,6 +190,7 @@ export default function Appointment() {
         body.append('appointment_date', formData.appointment_date);
         body.append('selected_country', selectedCountry);
         body.append('amount_to_pay', formData.amount_to_pay);
+        body.append('service_charge', 50000); // Add service charge as a separate field
         body.append('recaptcha_token', token);
         body.append('upload_file', formData.upload_file);
 
@@ -231,6 +233,7 @@ export default function Appointment() {
             phone_number: formData.phone_number,
             email_address: formData.email_address,
             amount_to_pay: formData.amount_to_pay,
+            service_charge: formData.service_charge,
             selected_country: selectedCountry
           }
         });
@@ -252,7 +255,9 @@ export default function Appointment() {
       <div className="d-flex flex-column p-5 bg-light-subtle opacity-75">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h4 className="fw-bold mb-0">Schedule an appointment</h4>
-          <h4 className="fw-bold mb-0">&#x20A6;{Number(amount_to_pay).toLocaleString()}</h4>
+          <h6 className="fw-bold mb-0">&#x20A6;{Number(amount_to_pay).toLocaleString()}</h6>
+          <h6 className="fw-bold mb-0">&#x20A6;{Number(formData.service_charge).toLocaleString()}</h6>
+          <span className="text-gray-100">Total: &#x20A6;{Number(amount_to_pay + formData.service_charge).toLocaleString()}</span>
         </div>
         <p className="text-gray-100 mb-0">Your details are safe with us!<br />
           We value your privacy and ensure that your information is kept confidential. Please, provide correct information.</p>
@@ -305,18 +310,18 @@ export default function Appointment() {
                   onChange={handleAmountSelect}
                 >
                   <option value={0}>Select service amount</option>
-                  <option value={270000}>🇺🇸 USA – &#x20A6;270k </option>
-                  <option value={230000}>🇩🇪 Germany – &#x20A6;230k</option>
-                  <option value={220000}>🇫🇷 France – &#x20A6;220k</option>
-                  <option value={230000}>🇪🇸 Spain – &#x20A6;230k</option>
-                  <option value={230000}>🇲🇽 Mexico – &#x20A6;230k</option>
-                  <option value={240000}>🇧🇬 Bulgaria – &#x20A6;240k</option>
-                  <option value={230000}>🇮🇹 Italy – &#x20A6;230k</option>
-                  <option value={250000}>🇭🇺 Hungary – &#x20A6;250k</option>
-                  <option value={200000}>🇦🇹 Austria – &#x20A6;200k</option>
-                  <option value={230000}>🇳🇱 Netherlands – &#x20A6;230k</option>
-                  <option value={230000}>🇳🇴 Norway – &#x20A6;230k</option>
-                  <option value={250000}>🇮🇸 Iceland – &#x20A6;250k</option>
+                  <option value={270000}>🇺🇸 USA – &#x20A6;220,000 </option>
+                  <option value={230000}>🇩🇪 Germany – &#x20A6;180,000 </option>
+                  <option value={220000}>🇫🇷 France – &#x20A6;170,000 </option>
+                  <option value={230000}>🇪🇸 Spain – &#x20A6;180,000 </option>
+                  <option value={230000}>🇲🇽 Mexico – &#x20A6;180,000 </option>
+                  <option value={240000}>🇧🇬 Bulgaria – &#x20A6;190,000 </option>
+                  <option value={230000}>🇮🇹 Italy – &#x20A6;180,000 </option>
+                  <option value={250000}>🇭🇺 Hungary – &#x20A6;200,000 </option>
+                  <option value={200000}>🇦🇹 Austria – &#x20A6;150,000 </option>
+                  <option value={230000}>🇳🇱 Netherlands – &#x20A6;180,000 </option>
+                  <option value={230000}>🇳🇴 Norway – &#x20A6;180,000 </option>
+                  <option value={250000}>🇮🇸 Iceland – &#x20A6;200,000 </option>
                 </select>
               </div>
             </div>
@@ -343,6 +348,7 @@ export default function Appointment() {
                 />
               </div>
             </div>
+            <input type="hidden" name="service_charge" value="50000" />
             <button type="submit" disabled={!isLoaded || error} className="border-0 p-3 bg-primary text-white rounded">
               {error ? 'CAPTCHA Error' : isLoaded ? 'Schedule Now' : 'Loading...'}
             </button>

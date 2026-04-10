@@ -173,6 +173,7 @@ const VisaAppAgent = () => {
     });
     formDataObj.append("visa_destination", visaById.destination);
     formDataObj.append("visa_fee", visaById.visa_agent_price);
+    formDataObj.append("service_charge", visaById.service_charge);
 
     setLoading(true);
 
@@ -201,6 +202,7 @@ const VisaAppAgent = () => {
             destination: visaById.destination,
             passport_photograph: data.passport_photograph,
             price: visaById.visa_price,
+            service_charge: visaById.service_charge,
             first_name: formData.first_name,
             last_name: formData.last_name,
             passport_number: formData.passport_number,
@@ -298,6 +300,7 @@ const VisaAppAgent = () => {
           <input type='hidden' name='tracking_id' value={formData.tracking_id} />
           <input type='hidden' name='visa_destination' value={visaById.destination} />
           <input type='hidden' name='visa_fee' value={visaById.visa_agent_price} />
+          <input type='hidden' name='service_charge' value={visaById.service_charge} />
           <input type='hidden' name='process_time' value={visaById.process_time} />
           <input type='hidden' name='process_type' value={visaById.process_type} />
           <button type="submit" disabled={!isLoaded || error} className="p-2 px-md-4 rounded-pill bg-primary text-white fw-bold border-0" style={{ fontSize: '0.8rem' }}>

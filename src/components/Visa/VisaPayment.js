@@ -110,8 +110,8 @@ const VisaPayment = () => {
     };
 
 
-    const { booking_id, tracking_id, qr_code_filename, destination, phone_number, passport_number, passport_photograph, price, first_name, last_name, contact_email, created_at, payment_status } = location.state || {};
-
+    const { booking_id, tracking_id, qr_code_filename, destination, phone_number, passport_number, passport_photograph, price, service_charge, first_name, last_name, contact_email, created_at, payment_status } = location.state || {};
+    const total_price = parseFloat(price) + parseFloat(service_charge);
     const verifyPayment = async (transactionId) => {
         try {
             const response = await fetch(
@@ -140,7 +140,7 @@ const VisaPayment = () => {
     const fwConfig = {
         public_key: process.env.REACT_APP_API_FLW_PUBLIC_KEY,
         tx_ref: Date.now(),
-        amount: price,
+        amount: total_price,
         currency: 'NGN',
         payment_options: 'card,mobilemoney,ussd',
         customer: {
@@ -290,7 +290,7 @@ const VisaPayment = () => {
                         <img src="https://toogoodtravels.net/static/media/tgt.7dbe67b2cd1d73dd1a15.png" alt="TooGood Travels Logo" style={{ maxWidth: '150px' }} />
                     </div>
                     <div className="d-flex flex-column align-items-end">
-                        <h3 style={{ color: '#28a745', fontWeight: 'bolder' }}>₦{parseFloat(price).toLocaleString()}</h3>
+                        <h3 style={{ color: '#28a745', fontWeight: 'bolder' }}>₦{parseFloat(total_price).toLocaleString()}</h3>
                         <div className="d-flex flex-column flex-md-row mb-2 align-items-center">
                             <span className="fw-bold me-2">Payment Status:</span>
                             {payment_status === 'Paid' ? (

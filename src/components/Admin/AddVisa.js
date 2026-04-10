@@ -10,6 +10,7 @@ const AddVisa = () => {
         visa_description: "",
         visa_price: "",
         visa_agent_price: "",
+        service_charge: "",
         process_time: "",
         process_type: "",
         available_country: "",
@@ -62,6 +63,7 @@ const AddVisa = () => {
             data.append('visa_description', formData.visa_description);
             data.append('visa_price', formData.visa_price);
             data.append('visa_agent_price', formData.visa_agent_price);
+            data.append('service_charge', formData.service_charge);
             data.append('process_time', formData.process_time);
             data.append('process_type', formData.process_type);
             data.append('available_country', formData.available_country);
@@ -112,6 +114,10 @@ const AddVisa = () => {
                     <div className='d-flex flex-column gap-1'>
                         <label>Visa Agent Price</label>
                         <input type='number' name='visa_agent_price' onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2 focus-0 rounded' />
+                    </div>
+                    <div className='d-flex flex-column gap-1'>
+                        <label>Service Charge</label>
+                        <input type='number' name='service_charge' onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2 focus-0 rounded' />
                     </div>
                     <div className='d-flex flex-column gap-1'>
                         <label>Processing Time</label>

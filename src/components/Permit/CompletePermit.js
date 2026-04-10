@@ -110,8 +110,8 @@ const CompletePermit = () => {
     };
 
 
-    const { booking_id, qr_code_filename, destination, phone_number, passport_number, passport_photograph, price, first_name, last_name, contact_email, created_at, payment_status } = location.state || {};
-
+    const { booking_id, qr_code_filename, destination, phone_number, passport_number, passport_photograph, price, service_charge, first_name, last_name, contact_email, created_at, payment_status } = location.state || {};
+    const total_price = parseFloat(price) + parseFloat(service_charge);
     const verifyPayment = async (transactionId) => {
         try {
             const response = await fetch(
@@ -140,7 +140,7 @@ const CompletePermit = () => {
     const fwConfig = {
         public_key: process.env.REACT_APP_API_FLW_PUBLIC_KEY,
         tx_ref: Date.now(),
-        amount: price,
+        amount: total_price,
         currency: 'NGN',
         payment_options: 'card,mobilemoney,ussd',
         customer: {

@@ -10,8 +10,8 @@ const AppPayment = () => {
     const [paymentInitialized, setPaymentInitialized] = useState(true);
     const [paymentProcessing, setPaymentProcessing] = useState(false);
 
-    const { tnx_id, phone_number, amount_to_pay, first_name, last_name, email_address, selected_country } = location.state || {};
-
+    const { tnx_id, phone_number, amount_to_pay, service_charge, first_name, last_name, email_address, selected_country } = location.state || {};
+    const totalAmount = amount_to_pay + service_charge;
     const verifyPayment = async (transactionId) => {
         try {
             const response = await fetch(
@@ -40,7 +40,7 @@ const AppPayment = () => {
     const fwConfig = {
         public_key: process.env.REACT_APP_API_FLW_PUBLIC_KEY,
         tx_ref: Date.now(),
-        amount: amount_to_pay,
+        amount: totalAmount,
         currency: 'NGN',
         payment_options: 'card,mobilemoney,ussd',
         customer: {
@@ -102,6 +102,8 @@ const AppPayment = () => {
                     <p><strong>Applicant:</strong> {first_name} {last_name}</p>
                     <p><strong>Country Embassy Applied:</strong> {selected_country}</p>
                     <p><strong>Amount to Pay:</strong> &#x20A6;{amount_to_pay}</p>
+                    <p><strong>Service Charge:</strong> &#x20A6;{service_charge}</p>
+                    <p><strong>Total Amount:</strong> &#x20A6;{totalAmount}</p>
 
 
                     {paymentInitialized && fwConfig && (

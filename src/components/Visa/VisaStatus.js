@@ -163,6 +163,12 @@ const VisaStatus = () => {
                                 </div>
                             </div>
                             <div className='d-flex gap-0 align-items-center'>
+                                <div className='bg-dark text-white p-2 w-25'>Service Fee</div>
+                                <div className='bg-secondary-subtle p-2 w-75'>
+                                    &#x20A6;{Number(status?.service_charge).toLocaleString()}
+                                </div>
+                            </div>
+                            <div className='d-flex gap-0 align-items-center'>
                                 <div className='bg-dark text-white p-2 w-25'>Visa Status</div>
                                 <div className='d-flex flex-column flex-md-row gap-2 align-items-md-start align-items-center w-75 bg-secondary-subtle'>
                                     <div className='bg-secondary-subtle p-2'>
