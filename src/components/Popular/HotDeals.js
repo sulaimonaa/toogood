@@ -29,11 +29,11 @@ const HotDeals = () => {
             setFilteredDestinations(list);
         } catch (err) {
             setError(err.message);
-            navigate(-1);
+            // navigate(-1);
         } finally {
             setLoading(false);
         }
-    }, [navigate]);
+    }, []);
 
     useEffect(() => {
         fetchDestinations();
