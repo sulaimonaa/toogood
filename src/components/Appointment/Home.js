@@ -251,13 +251,25 @@ export default function Appointment() {
   }
   return (
     <> < div className="container-fluid appointment-banner p-0" > <div
-      className='container vh-100 vw-100 d-flex justify-content-center align-items-center'>
-      <div className="d-flex flex-column p-5 bg-light-subtle opacity-75">
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <h4 className="fw-bold mb-0">Schedule an appointment</h4>
-          <h6 className="fw-bold mb-0">&#x20A6;{Number(amount_to_pay).toLocaleString()}</h6>
-          <h6 className="fw-bold mb-0">&#x20A6;{Number(formData.service_charge).toLocaleString()}</h6>
-          <span className="text-gray-100">Total: &#x20A6;{Number(amount_to_pay + formData.service_charge).toLocaleString()}</span>
+      className='container py-5 d-flex justify-content-center align-items-start align-items-md-center'>
+      <div className="d-flex flex-column p-5 bg-light-subtle opacity-75 rounded">
+        <div className="d-flex flex-column align-items-center flex-md-row justify-content-md-between p-4 p-md-0 bg-light-subtle rounded"
+          style={{ width: '100%', maxWidth: 980, maxHeight: '85vh', overflowY: 'auto' }}>
+          <h4 className="fw-bold mb-0 text-center text-md-start">Schedule an appointment</h4>
+          <div className="d-flex flex-column align-items-end gap-1">
+            <div className="d-flex flex-row align-items-end gap-1">
+              <h6 className="fw-bold mb-0 text-center text-md-start" style={{ fontSize: "0.8rem" }}>Appointment Fee:</h6>
+              <h6 className="fw-bold mb-0 text-gray-100 text-center text-md-start" style={{ fontSize: "0.8rem" }}>&#x20A6;{Number(amount_to_pay).toLocaleString()}</h6>
+            </div>
+            <div className="d-flex flex-row align-items-end gap-1">
+              <h6 className="fw-bold mb-0 text-center text-md-start" style={{ fontSize: "0.8rem" }}>Service Charge:</h6>
+              <h6 className="fw-bold mb-0 text-gray-100 text-center text-md-start" style={{ fontSize: "0.8rem" }}>&#x20A6;{Number(formData.service_charge).toLocaleString()}</h6>
+            </div>
+            <div className="d-flex flex-row align-items-end gap-1">
+              <h6 className="fw-bold mb-0 text-center text-md-start" style={{ fontSize: "0.8rem" }}>Total Amount Due:</h6>
+              <h6 className="fw-bold mb-0 text-gray-100 text-center text-md-start" style={{ fontSize: "0.8rem" }}>&#x20A6;{Number(amount_to_pay + formData.service_charge).toLocaleString()}</h6>
+            </div>
+          </div>
         </div>
         <p className="text-gray-100 mb-0">Your details are safe with us!<br />
           We value your privacy and ensure that your information is kept confidential. Please, provide correct information.</p>
