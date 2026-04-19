@@ -28,7 +28,7 @@ const HotDeals = () => {
             setDestinations(list);
             setFilteredDestinations(list);
         } catch (err) {
-            setError(err.message);
+            setError(err.message || "An error occurred while fetching today's hot deals");
             // navigate(-1);
         } finally {
             setLoading(false);

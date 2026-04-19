@@ -322,18 +322,18 @@ export default function Appointment() {
                   onChange={handleAmountSelect}
                 >
                   <option value={0}>Select service amount</option>
-                  <option value={270000}>🇺🇸 USA – &#x20A6;220,000 </option>
-                  <option value={230000}>🇩🇪 Germany – &#x20A6;180,000 </option>
-                  <option value={220000}>🇫🇷 France – &#x20A6;170,000 </option>
-                  <option value={230000}>🇪🇸 Spain – &#x20A6;180,000 </option>
-                  <option value={230000}>🇲🇽 Mexico – &#x20A6;180,000 </option>
-                  <option value={240000}>🇧🇬 Bulgaria – &#x20A6;190,000 </option>
-                  <option value={230000}>🇮🇹 Italy – &#x20A6;180,000 </option>
-                  <option value={250000}>🇭🇺 Hungary – &#x20A6;200,000 </option>
-                  <option value={200000}>🇦🇹 Austria – &#x20A6;150,000 </option>
-                  <option value={230000}>🇳🇱 Netherlands – &#x20A6;180,000 </option>
-                  <option value={230000}>🇳🇴 Norway – &#x20A6;180,000 </option>
-                  <option value={250000}>🇮🇸 Iceland – &#x20A6;200,000 </option>
+                  <option value={220000}>🇺🇸 USA – &#x20A6;220,000 </option>
+                  <option value={180000}>🇩🇪 Germany – &#x20A6;180,000 </option>
+                  <option value={170000}>🇫🇷 France – &#x20A6;170,000 </option>
+                  <option value={180000}>🇪🇸 Spain – &#x20A6;180,000 </option>
+                  <option value={180000}>🇲🇽 Mexico – &#x20A6;180,000 </option>
+                  <option value={190000}>🇧🇬 Bulgaria – &#x20A6;190,000 </option>
+                  <option value={180000}>🇮🇹 Italy – &#x20A6;180,000 </option>
+                  <option value={200000}>🇭🇺 Hungary – &#x20A6;200,000 </option>
+                  <option value={150000}>🇦🇹 Austria – &#x20A6;150,000 </option>
+                  <option value={180000}>🇳🇱 Netherlands – &#x20A6;180,000 </option>
+                  <option value={180000}>🇳🇴 Norway – &#x20A6;180,000 </option>
+                  <option value={200000}>🇮🇸 Iceland – &#x20A6;200,000 </option>
                 </select>
               </div>
             </div>
