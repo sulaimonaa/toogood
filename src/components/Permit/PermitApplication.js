@@ -167,6 +167,7 @@ const PermitApplication = () => {
     });
     formDataObj.append("visa_destination", visaById.destination);
     formDataObj.append("visa_fee", visaById.visa_price);
+    formDataObj.append("service_charge", visaById.service_charge);
 
     setLoading(true);
 
@@ -191,6 +192,7 @@ const PermitApplication = () => {
             booking_id: `${id}`,
             destination: visaById.destination,
             price: visaById.visa_price,
+            service_charge: visaById.service_charge,
             qr_code_filename: data.qr_code_filename,
             created_at: data.created_at,
             payment_status: "Pending",
@@ -286,6 +288,7 @@ const PermitApplication = () => {
           </div>
           <input type='hidden' name='visa_destination' value={visaById.destination} />
           <input type='hidden' name='visa_fee' value={visaById.visa_price} />
+          <input type='hidden' name='service_charge' value={visaById.service_charge} />
           <button type="submit" disabled={!isLoaded || error} className="p-2 px-md-4 rounded-pill bg-primary text-white fw-bold border-0" style={{ fontSize: '0.8rem' }}>
             {error ? 'CAPTCHA Error' : isLoaded ? 'Complete Application & Proceed to Payment' : 'Loading...'}
           </button>

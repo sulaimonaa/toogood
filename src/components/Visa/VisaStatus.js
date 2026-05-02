@@ -70,7 +70,6 @@ const VisaStatus = () => {
 
         axios.put(`https://toogood-1.onrender.com/visa/upload/${status.id}`, formData, {
             headers: {
-                'Content-Type': 'multipart/form-data',
                 Authorization: `Bearer ${token}`
             }
         })
@@ -164,6 +163,12 @@ const VisaStatus = () => {
                                 </div>
                             </div>
                             <div className='d-flex gap-0 align-items-center'>
+                                <div className='bg-dark text-white p-2 w-25'>Service Fee</div>
+                                <div className='bg-secondary-subtle p-2 w-75'>
+                                    &#x20A6;{Number(status?.service_charge).toLocaleString()}
+                                </div>
+                            </div>
+                            <div className='d-flex gap-0 align-items-center'>
                                 <div className='bg-dark text-white p-2 w-25'>Visa Status</div>
                                 <div className='d-flex flex-column flex-md-row gap-2 align-items-md-start align-items-center w-75 bg-secondary-subtle'>
                                     <div className='bg-secondary-subtle p-2'>
@@ -171,10 +176,19 @@ const VisaStatus = () => {
                                     </div>
                                     <div className='bg-secondary-subtle p-2'>
                                         {(status?.visa_status === 'Pending') ? (<div className='d-flex gap-2'><button className='border-0 bg-success rounded-pill text-white px-2 ms-3' onClick={() => visaStatus(status?.id, "Approved")}>Change to Approved</button><button className='border-0 bg-danger rounded-pill text-white px-2 ms-3' onClick={() => visaStatus(status?.id, "Denied")}>Change to Denied</button></div>) : ('')}
-                                        {(status?.visa_status === 'Approved') ? (<form onSubmit={handleSubmit}>
-                                            <input type='file' name='visa_file' id='permitFileInput' style={{ width: '100px', fontSize: '0.8em' }} class='py-0' onChange={handleChange} />
-                                            <button className='border-0 bg-secondary rounded-pill text-white p-2' style={{ fontSize: '0.8em' }}>Upload Visa</button>
-                                        </form>) : ('')}
+                                        {(status?.visa_status === 'Approved') ? (
+                                            <form onSubmit={handleSubmit}>
+                                                <input
+                                                    type='file'
+                                                    name='visa_file'
+                                                    id='permitFileInput'
+                                                    style={{ width: '100px', fontSize: '0.8em' }}
+                                                    className='py-0'
+                                                    onChange={handleChange}
+                                                />
+                                                <button className='border-0 bg-secondary rounded-pill text-white p-2' style={{ fontSize: '0.8em' }}>Upload Visa</button>
+                                            </form>
+                                        ) : ('')}
                                     </div>
                                 </div>
                             </div>

@@ -45,7 +45,7 @@ const Visa = () => {
         setFilteredDestinations(filtered);
     };
 
-    if (loading) return <Loading message="Loading visa destinations..."/>;
+    if (loading) return <Loading message="Loading visa destinations..." />;
     if (error) return <p className="text-red-500">{error}</p>;
 
     return (
@@ -55,7 +55,7 @@ const Visa = () => {
             </div>
             <div className="container-fluid rounded-top-4 bg-white self-section">
                 <div className="container pt-4">
-                    <h2 className="text-xl fw-bold mb-4" style={{fontSize: '1.2rem'}}>Apply for eVisa in a few clicks</h2>
+                    <h2 className="text-xl fw-bold mb-4" style={{ fontSize: '1.2rem' }}>Apply for eVisa in a few clicks</h2>
                     <VisaInfo />
                 </div>
                 <div className="spacer"></div>
@@ -67,7 +67,7 @@ const Visa = () => {
                         onChange={handleSearchChange}
                         className="w-100 px-3 py-2 mb-4 border border-gray-300 rounded-pill bg-dark-subtle"
                     />
-                    
+
                     {/* Show results only if the user has typed something */}
                     {searchTerm && filteredDestinations.length > 0 ? (
                         filteredDestinations.map((destination, index) => (
@@ -76,25 +76,27 @@ const Visa = () => {
                                 <div className="fw-bold mb-2 d-flex justify-content-between">
                                     <div>{destination.visa_excerpt}</div>
                                     <div className="d-flex flex-column">
-                                        <div className="text-dark fw-bold" style={{fontSize: '0.5rem'}}>available to this passport holders:</div>
-                                        <div className="text-secondary" style={{fontSize: '0.7rem', fontStyle: 'italic'}}>{destination.available_country}</div>
+                                        <div className="text-dark fw-bold" style={{ fontSize: '0.5rem' }}>available to this passport holders:</div>
+                                        <div className="text-secondary" style={{ fontSize: '0.7rem', fontStyle: 'italic' }}>{destination.available_country}</div>
                                     </div>
                                 </div>
                                 <hr />
                                 <div className="d-flex justify-content-between align-items-center">
                                     <div className="d-flex flex-column">
-                                        <span className="font-italics text-secondary-subtle" style={{fontSize: '0.6rem', fontStyle: 'italic'}}>visa processing fee</span>
-                                        <span className="fw-bold text-dark" style={{fontSize: '1.1rem'}}> &#x20A6;{Number(destination.visa_price).toLocaleString()}</span>
+                                        <span className="font-italics text-secondary-subtle" style={{ fontSize: '0.6rem', fontStyle: 'italic' }}>visa processing fee</span>
+                                        <span className="fw-bold text-dark" style={{ fontSize: '1.1rem' }}> &#x20A6;{Number(destination.visa_price).toLocaleString()}</span>
+                                        <span className="font-italics text-secondary-subtle" style={{ fontSize: '0.6rem', fontStyle: 'italic' }}>service charge</span>
+                                        <span className="fw-bold text-dark" style={{ fontSize: '1.1rem' }}> &#x20A6;{Number(destination.service_charge).toLocaleString()}</span>
                                     </div>
                                     <Link to={`/visa/${destination.id}`} className="text-decoration-none">
-                                        <div className="border-0 py-2 px-3 fw-bold rounded-pill bg-primary text-white cursor-pointer" style={{fontSize: '0.8rem'}}>Apply Now</div>
+                                        <div className="border-0 py-2 px-3 fw-bold rounded-pill bg-primary text-white cursor-pointer" style={{ fontSize: '0.8rem' }}>Apply Now</div>
                                     </Link>
                                 </div>
                             </div>
                         ))
                     ) : searchTerm ? (
                         <div className="p-4 text-center">No visa destinations found.</div>
-                    ) : null} 
+                    ) : null}
                     {/* Hide everything when searchTerm is empty */}
                 </div>
             </div>

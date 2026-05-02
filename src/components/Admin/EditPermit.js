@@ -16,6 +16,7 @@ const EditPermit = () => {
         destination: "",
         visa_description: "",
         visa_price: "",
+        service_charge: "",
         available_country: "",
     });
 
@@ -23,7 +24,7 @@ const EditPermit = () => {
         const fetchVisaDetails = async () => {
             try {
                 const token = localStorage.getItem("adminToken");
-    
+
                 if (!token) {
                     setMessage("Unauthorized: Please log in.");
                     setLoading(false);
@@ -50,6 +51,7 @@ const EditPermit = () => {
                     destination: response.data.destination || "",
                     visa_description: response.data.visa_description || "",
                     visa_price: response.data.visa_price || "",
+                    service_charge: response.data.service_charge || "",
                     available_country: response.data.available_country || "",
                 });
 
@@ -100,37 +102,41 @@ const EditPermit = () => {
 
     return (
         <>
-        <div className='container-fluid py-4'>
-            <div className='spacer'></div>
-            <div className='container vw-100 vh-100 d-flex align-items-center justify-content-center flex-column gap-2'>
-                <h2>Edit Permit Destination</h2>
-                {message && <p className="text-center text-danger">{message}</p>}
-                {error && <p className="error text-danger">{error}</p>}
-                {success && <p className="success text-success">{success}</p>}
-                
-                <form onSubmit={handleUpdateVisa} className='p-4 shadow rounded d-flex flex-column gap-2 w-100'>
-                    <div className='d-flex flex-column gap-1'>
-                        <label>Permit Destination</label>
-                        <input type='text' name='destination' value={formData.destination} onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2' />
-                    </div>
-                    <div className='d-flex flex-column gap-1'>
-                        <label>Permit Description</label>
-                        <textarea name='visa_description' value={formData.visa_description} onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2' rows='5' />
-                    </div>
-                    <div className='d-flex flex-column gap-1'>
-                        <label>Permit Price</label>
-                        <input type='number' name='visa_price' value={Number(formData.visa_price)} onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2' />
-                    </div>
-                    <div className='d-flex flex-column gap-1'>
-                        <label>Available Countries - separate with |</label>
-                        <input type='text' name='available_country' value={formData.available_country} onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2' />
-                    </div>
-                    <input type='hidden' name='visa_id' value={formData.visa_id} />
-                    <button type="submit" disabled={loading} className="border-0 rounded-pill p-2 bg-primary text-white mt-3">Update Permit Destination</button>
-                </form>
+            <div className='container-fluid py-4'>
+                <div className='spacer'></div>
+                <div className='container vw-100 vh-100 d-flex align-items-center justify-content-center flex-column gap-2'>
+                    <h2>Edit Permit Destination</h2>
+                    {message && <p className="text-center text-danger">{message}</p>}
+                    {error && <p className="error text-danger">{error}</p>}
+                    {success && <p className="success text-success">{success}</p>}
+
+                    <form onSubmit={handleUpdateVisa} className='p-4 shadow rounded d-flex flex-column gap-2 w-100'>
+                        <div className='d-flex flex-column gap-1'>
+                            <label>Permit Destination</label>
+                            <input type='text' name='destination' value={formData.destination} onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2' />
+                        </div>
+                        <div className='d-flex flex-column gap-1'>
+                            <label>Permit Description</label>
+                            <textarea name='visa_description' value={formData.visa_description} onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2' rows='5' />
+                        </div>
+                        <div className='d-flex flex-column gap-1'>
+                            <label>Permit Price</label>
+                            <input type='number' name='visa_price' value={Number(formData.visa_price)} onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2' />
+                        </div>
+                        <div className='d-flex flex-column gap-1'>
+                            <label>Service Charge</label>
+                            <input type='number' name='service_charge' value={Number(formData.service_charge)} onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2' />
+                        </div>
+                        <div className='d-flex flex-column gap-1'>
+                            <label>Available Countries - separate with |</label>
+                            <input type='text' name='available_country' value={formData.available_country} onChange={handleChange} className='border-0 bg-secondary-subtle rounded p-2' />
+                        </div>
+                        <input type='hidden' name='visa_id' value={formData.visa_id} />
+                        <button type="submit" disabled={loading} className="border-0 rounded-pill p-2 bg-primary text-white mt-3">Update Permit Destination</button>
+                    </form>
+                </div>
+                <div className='spacer'></div>
             </div>
-            <div className='spacer'></div>
-        </div>
         </>
     );
 };

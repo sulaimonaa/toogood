@@ -10,8 +10,8 @@ const AppPayment = () => {
     const [paymentInitialized, setPaymentInitialized] = useState(true);
     const [paymentProcessing, setPaymentProcessing] = useState(false);
 
-    const { tnx_id, phone_number, amount_to_pay, first_name, last_name, email_address } = location.state || {};
-
+    const { tnx_id, phone_number, amount_to_pay, service_charge, first_name, last_name, email_address, selected_country } = location.state || {};
+    const totalAmount = amount_to_pay + service_charge;
     const verifyPayment = async (transactionId) => {
         try {
             const response = await fetch(
@@ -25,11 +25,11 @@ const AppPayment = () => {
                     }),
                 }
             );
-            
+
             if (!response.ok) {
                 throw new Error("Payment verification failed");
             }
-            
+
             return await response.json();
         } catch (error) {
             console.error("Verification Error:", error);
@@ -38,9 +38,9 @@ const AppPayment = () => {
     };
 
     const fwConfig = {
-        public_key: process.env.REACT_APP_API_FLW_PUBLIC_KEY, 
+        public_key: process.env.REACT_APP_API_FLW_PUBLIC_KEY,
         tx_ref: Date.now(),
-        amount: amount_to_pay,
+        amount: totalAmount,
         currency: 'NGN',
         payment_options: 'card,mobilemoney,ussd',
         customer: {
@@ -57,79 +57,83 @@ const AppPayment = () => {
             console.log(response);
             closePaymentModal();
             if (response.status === 'successful') {
-              setPaymentProcessing(true);
-              try {
-                  const verification = await verifyPayment(response.transaction_id);
-                  console.log('Verification result:', verification);
-                  
-                  if (verification.success) {
-                      navigate('/success', {
-                          state: {
-                              transactionId: response.transaction_id,
-                              fromPayment: true,
-                          },
-                          replace: true 
-                      });
-                  } else {
-                      alert('Payment verification failed. Please contact support.');
-                  }
-              } catch (error) {
-                  console.error('Payment verification error:', error);
-                  alert('Payment was successful but verification failed. Please check your email for confirmation.');
-        }finally {
-          setPaymentProcessing(false);
-      }
-  }},
+                setPaymentProcessing(true);
+                try {
+                    const verification = await verifyPayment(response.transaction_id);
+                    console.log('Verification result:', verification);
+
+                    if (verification.success) {
+                        navigate('/success', {
+                            state: {
+                                transactionId: response.transaction_id,
+                                fromPayment: true,
+                            },
+                            replace: true
+                        });
+                    } else {
+                        alert('Payment verification failed. Please contact support.');
+                    }
+                } catch (error) {
+                    console.error('Payment verification error:', error);
+                    alert('Payment was successful but verification failed. Please check your email for confirmation.');
+                } finally {
+                    setPaymentProcessing(false);
+                }
+            }
+        },
         onclose: () => {
             setPaymentInitialized(false);
         },
         text: 'Make Payment Now',
-    }; 
+    };
 
     const cancelPayment = () => {
         setPaymentInitialized(false);
-        navigate(-1); 
-      };
-    
+        navigate(-1);
+    };
+
     return (
         <>
-        <div className="spacer"></div>
-        <div className="container d-flex flex-column align-items-center justify-content-center">
-            <h2 className="mb-3">Appointment Schedule Payment</h2>
-            <p className="text-center mb-4">You are about to make payment for your appointment schedule processing, confirm your details below before proceeding to make payment.</p>
-            <div className="p-4 rounded shadow bg-white">
-            <p><strong>Applicant:</strong> {first_name} {last_name}</p>
-            <p><strong>Amount to Pay:</strong> &#x20A6;{amount_to_pay}</p>
+            <div className="spacer"></div>
+            <div className="container d-flex flex-column align-items-center justify-content-center">
+                <h2 className="mb-3 text-center">Appointment Schedule Payment</h2>
+                <p className="text-center mb-4 w-80 mx-auto">You are about to make payment for your appointment schedule processing, confirm your details below before proceeding to make payment.</p>
+                <div className="p-4 rounded shadow bg-white">
+                    <p><strong>Applicant:</strong> {first_name} {last_name}</p>
+                    <p><strong>Country Embassy Applied:</strong> {selected_country}</p>
+                    <p><strong>Amount to Pay:</strong> &#x20A6;{amount_to_pay}</p>
+                    <p><strong>Service Charge:</strong> &#x20A6;{service_charge}</p>
+                    <p><strong>Total Amount:</strong> &#x20A6;{totalAmount}</p>
 
-        
-            {paymentInitialized && fwConfig && (
-                <div className="alert alert-success d-flex flex-column gap-2 justify-content-center align-items-center w-100" style={{ zIndex: '1', top: '0', left: '0', width: '100%'}}>
-                    <p>Please complete your payment:</p>
-                    <div className="d-flex flex-column align-items-center justify-content-center">
-                    {paymentProcessing ? (
-                            <Loading message="Verifying payment..." />
-                        ) : (
-                            <FlutterWaveButton
-                                {...fwConfig}
-                                className="btn btn-primary w-100 py-3"
-                            />
-                        )}
 
-                        <button 
-                            onClick={cancelPayment}
-                            className="btn border-0 mt-3 bg-danger text-white"
-                        >
-                            Cancel Payment
-                        </button>
-                        
-                    </div>
+                    {paymentInitialized && fwConfig && (
+                        <div className="alert alert-success d-flex flex-column gap-2 justify-content-center align-items-center w-100" style={{ zIndex: '1', top: '0', left: '0', width: '100%' }}>
+                            <p>Please complete your payment:</p>
+                            <div className="d-flex flex-column align-items-center justify-content-center">
+                                {paymentProcessing ? (
+                                    <Loading message="Verifying payment..." />
+                                ) : (
+                                    <FlutterWaveButton
+                                        {...fwConfig}
+                                        className="btn btn-primary w-100 py-3"
+                                    />
+                                )}
+
+                                <button
+                                    onClick={cancelPayment}
+                                    className="btn border-0 mt-3 bg-danger text-white"
+                                >
+                                    Cancel Payment
+                                </button>
+
+                            </div>
+                        </div>
+                    )}
                 </div>
-            )}
-        </div>
-        </div>
-        <div className="spacer"></div>
+            </div>
+            <div className="spacer"></div>
         </>
-        
+
     );
 };
 

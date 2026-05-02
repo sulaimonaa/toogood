@@ -102,34 +102,75 @@ const useRecaptcha = (siteKey, version = 'v3') => {
 
 export default function Appointment() {
   const [loading, setLoading] = useState(false);
-  const { isLoaded, error, executeRecaptcha, resetRecaptcha } = useRecaptcha('6Lc__bkrAAAAANXv3oBEBIsjH6NJeW5KGiALifM_', 'v3');
+  const { isLoaded, error, executeRecaptcha } = useRecaptcha('6Lc__bkrAAAAANXv3oBEBIsjH6NJeW5KGiALifM_', 'v3');
+  const [amount_to_pay, setAmountToPay] = useState(0);
+  const [selectedCountry, setSelectedCountry] = useState('');
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
     email_address: '',
     phone_number: '',
-    how_to_contact: '',
+    selected_country: '',
     appointment_date: '',
-    appointment_time: '',
-    reason: '',
-    amount_to_pay: '10000'
-  })
+    amount_to_pay: 0,
+    service_charge: 50000,
+    upload_file: null
+  });
 
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  const countryOptions = [
+    { country: 'USA', amount: 220000, label: '🇺🇸 USA – ₦220,000' },
+    { country: 'Germany', amount: 180000, label: '🇩🇪 Germany – ₦180,000' },
+    { country: 'France', amount: 170000, label: '🇫🇷 France – ₦170,000' },
+    { country: 'Spain', amount: 180000, label: '🇪🇸 Spain – ₦180,000' },
+    { country: 'Mexico', amount: 180000, label: '🇲🇽 Mexico – ₦180,000' },
+    { country: 'Bulgaria', amount: 190000, label: '🇧🇬 Bulgaria – ₦190,000' },
+    { country: 'Italy', amount: 180000, label: '🇮🇹 Italy – ₦180,000' },
+    { country: 'Hungary', amount: 200000, label: '🇭🇺 Hungary – ₦200,000' },
+    { country: 'Austria', amount: 150000, label: '🇦🇹 Austria – ₦150,000' },
+    { country: 'Netherlands', amount: 180000, label: '🇳🇱 Netherlands – ₦180,000' },
+    { country: 'Norway', amount: 180000, label: '🇳🇴 Norway – ₦180,000' },
+    { country: 'Iceland', amount: 200000, label: '🇮🇸 Iceland – ₦200,000' },
+  ];
+
+  // Ensure formData stays in sync when selectedCountry or amount_to_pay change
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      selected_country: selectedCountry,
+      amount_to_pay: amount_to_pay
+    }));
+  }, [selectedCountry, amount_to_pay]);
+
+  const handleCountrySelect = useCallback((e) => {
+    const val = e.target.value;
+    if (!val) {
+      setSelectedCountry('');
+      setAmountToPay(0);
+      setFormData(prev => ({ ...prev, selected_country: '', amount_to_pay: 0 }));
+      return;
+    }
+    const [amt, country] = val.split('|');
+    const amountNum = Number(amt);
+    setAmountToPay(amountNum);
+    setSelectedCountry(country);
+  }, []);
+
+  const handleChange = useCallback((e) => {
     const { name, type, value } = e.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: type === "number"
-        ? (
-          value === ""
-            ? ""
-            : Number(value)
-        )
+        ? (value === "" ? "" : Number(value))
         : value
     }));
-  };
+  }, []);
+
+  const handleFileChange = useCallback((e) => {
+    const file = e.target.files && e.target.files[0];
+    setFormData(prev => ({ ...prev, upload_file: file || null }));
+  }, []);
 
   const subAppointment = async (e) => {
     e.preventDefault();
@@ -141,150 +182,217 @@ export default function Appointment() {
         setLoading(false);
         return;
       }
-      const response = await fetch("https://toogood-1.onrender.com/visa/appointment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json", // Tell backend it's JSON
-          "Accept": "application/json"
-        },
-        body: JSON.stringify(formData) // Send JSON
-      });
 
-      const data = await response.json();
+      // snapshot values to use after reset
+      const payloadFirst = formData.first_name;
+      const payloadLast = formData.last_name;
+      const payloadPhone = formData.phone_number;
+      const payloadEmail = formData.email_address;
+      const payloadAmount = amount_to_pay;
+      const payloadService = formData.service_charge;
+      const payloadCountry = selectedCountry;
+
+      let response;
+      if (formData.upload_file) {
+        const body = new FormData();
+        body.append('first_name', formData.first_name);
+        body.append('last_name', formData.last_name);
+        body.append('email_address', formData.email_address);
+        body.append('phone_number', formData.phone_number);
+        body.append('appointment_date', formData.appointment_date);
+        body.append('selected_country', payloadCountry);
+        body.append('amount_to_pay', payloadAmount);
+        body.append('service_charge', payloadService);
+        body.append('recaptcha_token', token);
+        body.append('upload_file', formData.upload_file);
+
+        response = await fetch("https://toogood-1.onrender.com/visa/appointment", {
+          method: "POST",
+          body
+        });
+      } else {
+        const payload = {
+          ...formData,
+          selected_country: payloadCountry,
+          amount_to_pay: payloadAmount,
+          recaptcha_token: token
+        };
+        response = await fetch("https://toogood-1.onrender.com/visa/appointment", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+      }
+
+      const data = await (async () => {
+        const ct = response.headers.get('content-type') || '';
+        if (ct.includes('application/json')) return await response.json();
+        const text = await response.text();
+        try { return JSON.parse(text); } catch { return { message: text }; }
+      })();
 
       if (response.ok) {
+        // reset form
         setFormData({
           first_name: '',
           last_name: '',
           email_address: '',
           phone_number: '',
-          how_to_contact: '',
+          selected_country: '',
           appointment_date: '',
-          appointment_time: '',
-          reason: '',
-          amount_to_pay: '10000'
+          amount_to_pay: 0,
+          service_charge: 50000,
+          upload_file: null
         });
+        setSelectedCountry('');
+        setAmountToPay(0);
 
         navigate(`/apt-payment`, {
           state: {
             tnx_id: data.id,
-            last_name: formData.last_name,
-            first_name: formData.first_name,
-            phone_number: formData.phone_number,
-            email_address: formData.email_address,
-            amount_to_pay: formData.amount_to_pay
+            last_name: payloadLast,
+            first_name: payloadFirst,
+            phone_number: payloadPhone,
+            email_address: payloadEmail,
+            amount_to_pay: payloadAmount,
+            service_charge: payloadService,
+            selected_country: payloadCountry
           }
         });
       } else {
-        alert(`Error: ${data.message}`);
+        alert(`Error: ${data?.message || 'Unknown server error'}`);
       }
     } catch (error) {
       console.error("Submission error:", error);
+      alert("Submission failed. Check console for details.");
     } finally {
       setLoading(false);
     }
   };
+
   if (loading) {
     return <Loading message='Making appointment schedule...' />;
   }
+
   return (
-    <> < div className="container-fluid appointment-banner p-0" > <div
-      className='container vh-100 vw-100 d-flex justify-content-center align-items-center'>
-      <div className="d-flex flex-column p-5 bg-light-subtle opacity-75">
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <h4 className="fw-bold mb-0">Schedule an appointment</h4>
-          <h4 className="fw-bold mb-0">&#x20A6;10,000</h4>
-        </div>
-        <p className="text-gray-100 mb-0">Your details are safe with us</p>
-        <hr />
-        <form onSubmit={subAppointment}>
-          <div className="d-flex flex-column gap-2">
-            <h4 className="text-dark fw-bold text-capitalize">Enter customer details</h4>
-            <div className="d-md-flex gap-3 mb-2">
-              <input
-                className="form-control p-3 rounded shadow mb-3 h-[40px]"
-                type="text"
-                name="first_name"
-                placeholder="First Name"
-                required="required"
-                onChange={handleChange}
-                value={formData.first_name} />
-              <input
-                className="form-control p-3 rounded shadow mb-3 h-[40px]"
-                type="text"
-                name="last_name"
-                placeholder="Last Name"
-                required="required"
-                onChange={handleChange}
-                value={formData.last_name} />
+    <div className="container-fluid appointment-banner p-0">
+      <div className='container py-5 d-flex justify-content-center align-items-start align-items-md-center'>
+        <div className="d-flex flex-column p-4 bg-light-subtle rounded" style={{ width: '100%', maxWidth: 980, maxHeight: '85vh', overflowY: 'auto' }}>
+          <div className="d-flex flex-column align-items-center flex-md-row justify-content-md-between p-4 p-md-0 bg-light-subtle rounded">
+            <h4 className="fw-bold mb-0 text-center text-md-start">Schedule an appointment</h4>
+            <div className="d-flex flex-column align-items-end gap-1">
+              <div className="d-flex flex-row align-items-end gap-1">
+                <h6 className="fw-bold mb-0" style={{ fontSize: "0.8rem" }}>Appointment Fee:</h6>
+                <h6 className="fw-bold mb-0 text-gray-100" style={{ fontSize: "0.8rem" }}>&#x20A6;{Number(amount_to_pay).toLocaleString()}</h6>
+              </div>
+              <div className="d-flex flex-row align-items-end gap-1">
+                <h6 className="fw-bold mb-0" style={{ fontSize: "0.8rem" }}>Service Charge:</h6>
+                <h6 className="fw-bold mb-0 text-gray-100" style={{ fontSize: "0.8rem" }}>&#x20A6;{Number(formData.service_charge).toLocaleString()}</h6>
+              </div>
+              <div className="d-flex flex-row align-items-end gap-1">
+                <h6 className="fw-bold mb-0" style={{ fontSize: "0.8rem" }}>Total Amount Due:</h6>
+                <h6 className="fw-bold mb-0 text-gray-100" style={{ fontSize: "0.8rem" }}>&#x20A6;{Number(amount_to_pay + formData.service_charge).toLocaleString()}</h6>
+              </div>
             </div>
-            <div className="d-md-flex gap-3 mb-2">
-              <input
-                className="form-control p-3 rounded shadow mb-3 h-[40px]"
-                type="email"
-                name="email_address"
-                placeholder="Email Address"
-                required="required"
-                onChange={handleChange}
-                value={formData.email_address} />
-              <input
-                className="form-control p-3 rounded shadow mb-3 h-[40px]"
-                type="text"
-                name="phone_number"
-                placeholder="Phone Number"
-                required="required"
-                onChange={handleChange}
-                value={formData.phone_number} />
-            </div>
-            <h4 className="text-dark fw-bold text-capitalize">Choose Your method of appointment</h4>
-            <div className="d-md-flex gap-3 mb-2">
-              <select
-                className="form-control p-3 rounded shadow mb-3 h-[40px]"
-                value={formData.how_to_contact}
-                name="how_to_contact"
-                onChange={handleChange}>
-                <option value="">How can we contact you?</option>
-                <option value="WhatsApp Call">WhatsApp Call</option>
-                <option value="Zoom">Zoom</option>
-              </select>
-              <select
-                className="form-control p-3 rounded shadow mb-3 h-[40px]"
-                value={formData.reason}
-                name="reason"
-                onChange={handleChange}>
-                <option value="">Reason for the appointment</option>
-                <option value="Visa">Visa</option>
-                <option value="Permit">Permit</option>
-                <option value="Others">Others</option>
-              </select>
-            </div>
-            <div className="d-md-flex gap-3 mb-2">
-              <input
-                className="form-control p-3 rounded shadow h-[40px]"
-                type="date"
-                name="appointment_date"
-                required
-                onChange={handleChange}
-                value={formData.appointment_date}
-              />
-              <input
-                className="form-control p-3 rounded shadow h-[40px]"
-                type="time"
-                name="appointment_time"
-                required
-                onChange={handleChange}
-                value={formData.appointment_time}
-              />
-            </div>
-            <input type="hidden" value={formData.amount_to_pay} name="amount_to_pay" />
-            <button type="submit" disabled={!isLoaded || error} className="border-0 p-3 bg-primary text-white rounded">
-              {error ? 'CAPTCHA Error' : isLoaded ? 'Schedule Now' : 'Loading...'}
-            </button>
           </div>
-        </form>
+
+          <p className="text-gray-100 mb-0">Your details are safe with us!<br />
+            We value your privacy and ensure that your information is kept confidential. Please, provide correct information.</p>
+          <hr />
+          <form onSubmit={subAppointment}>
+            <div className="d-flex flex-column gap-2">
+              <div className="d-md-flex gap-3 mb-2">
+                <input
+                  className="form-control p-3 rounded shadow mb-3 h-[40px]"
+                  type="text"
+                  name="first_name"
+                  placeholder="First Name"
+                  required
+                  onChange={handleChange}
+                  value={formData.first_name} />
+                <input
+                  className="form-control p-3 rounded shadow mb-3 h-[40px]"
+                  type="text"
+                  name="last_name"
+                  placeholder="Last Name"
+                  required
+                  onChange={handleChange}
+                  value={formData.last_name} />
+              </div>
+
+              <div className="d-md-flex gap-3 mb-2">
+                <input
+                  className="form-control p-3 rounded shadow mb-3 h-[40px]"
+                  type="email"
+                  name="email_address"
+                  placeholder="Email Address"
+                  required
+                  onChange={handleChange}
+                  value={formData.email_address} />
+                <input
+                  className="form-control p-3 rounded shadow mb-3 h-[40px]"
+                  type="text"
+                  name="phone_number"
+                  placeholder="Phone Number"
+                  required
+                  onChange={handleChange}
+                  value={formData.phone_number} />
+              </div>
+
+              <div className="d-md-flex gap-3 mb-2">
+                <div className="d-flex flex-column gap-1 w-100">
+                  <label className="form-label mb-0">Select country to get fees</label>
+                  <select
+                    className="form-control p-3 rounded shadow mb-3 h-[40px]"
+                    name="selected_country"
+                    value={selectedCountry ? `${amount_to_pay}|${selectedCountry}` : ''}
+                    onChange={handleCountrySelect}
+                  >
+                    <option value=''>Select country & fee</option>
+                    {countryOptions.map(opt => (
+                      <option key={opt.country} value={`${opt.amount}|${opt.country}`}>
+                        {opt.country} - &#x20A6;{opt.amount.toLocaleString()}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="d-md-flex gap-3 mb-2">
+                <div className="d-flex flex-column gap-1 formDualContainer" >
+                  <label className="form-label mb-0">Upload supporting document (optional)</label>
+                  <input
+                    type="file"
+                    accept="image/*,application/pdf"
+                    onChange={handleFileChange}
+                    className="form-control p-3 rounded shadow mb-3 h-[40px]"
+                    name="upload_file"
+                  />
+                </div>
+                <div className="d-flex flex-column gap-1 formDualContainer" >
+                  <label className="form-label mb-0">Select appointment date  (Not guaranteed)</label>
+                  <input
+                    className="form-control p-3 mb-0 rounded shadow h-[40px]"
+                    type="date"
+                    name="appointment_date"
+                    required
+                    onChange={handleChange}
+                    value={formData.appointment_date}
+                  />
+                </div>
+              </div>
+
+              <input type="hidden" name="service_charge" value={formData.service_charge} />
+              <button type="submit" disabled={!isLoaded || error} className="border-0 p-3 bg-primary text-white rounded">
+                {error ? 'CAPTCHA Error' : isLoaded ? 'Schedule Now' : 'Loading...'}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-    </div>
-    </>
-  )
+  );
 }
